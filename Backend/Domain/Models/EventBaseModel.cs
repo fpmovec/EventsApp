@@ -13,7 +13,7 @@ namespace Domain.Models
 
         public string BriefDescription
             => Description[50..];
-        gi
+        
         public string Place {  get; set; } = string.Empty; 
 
         public DateOnly Date {  get; set; }

@@ -1,4 +1,6 @@
 using Domain.AppSettings;
+using Microsoft.AspNetCore.Http.Headers;
+using Microsoft.Net.Http.Headers;
 using Web;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +19,19 @@ builder.Services.AddOptions<AppSettings>()
     .ValidateOnStart();
 
 var app = builder.Build();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = responseContext =>
+    {
+        ResponseHeaders headers = responseContext.Context.Response.GetTypedHeaders();
+        headers.CacheControl = new CacheControlHeaderValue
+        {
+            Public = true,
+            MaxAge = TimeSpan.FromDays(30)
+        };
+    }
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
