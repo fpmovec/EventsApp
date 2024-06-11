@@ -1,3 +1,7 @@
+using Domain.AppSettings;
+using Microsoft.OpenApi.Models;
+using Web;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,7 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.ConfigureSwagger();
+
+builder.Services.AddOptions<AppSettings>()
+    .BindConfiguration(nameof(AppSettings))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
 var app = builder.Build();
 
