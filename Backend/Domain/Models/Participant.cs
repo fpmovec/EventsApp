@@ -15,7 +15,5 @@ namespace Domain.Models
         public string? PhoneNumber { get; set; }
 
         public DateOnly BirthdayDate { get; set; }
-
-        public ICollection<EventBaseModel> Events { get; set; }
     }
 }

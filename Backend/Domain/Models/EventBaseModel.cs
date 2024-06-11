@@ -1,9 +1,10 @@
 ﻿using Domain.Enums;
 using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Models
 {
-    public class EventBaseModel
+    public abstract class EventBaseModel
     {
         public Guid Id { get; set; }
 
@@ -22,7 +23,8 @@ namespace Domain.Models
 
         public EventType EventType { get; set; }
 
-        public IFormFile Image {  get; set; }
+        public double Price { get; set; }
+        public Image Image {  get; set; }
     }
 
     public class EventExtendedModel : EventBaseModel
@@ -34,6 +36,7 @@ namespace Domain.Models
         public int RemainingTicketsCount
             => MaxParticipantsCount - BookedTicketsCount;
 
+        [NotMapped]
         public bool IsSoldOut
             => RemainingTicketsCount == 0;
 

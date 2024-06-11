@@ -1,6 +1,8 @@
-﻿namespace Domain.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Domain.Models
 {
-    class Ticket
+    public class Ticket
     {
         public int Id { get; set; }
 
@@ -10,8 +12,12 @@
 
         public Guid ParticipantId { get; set; }
 
-        public EventExtendedModel Event {  get; set; }
+        public double PricePerOne { get; set; }
 
-        public Participant Participant { get; set; }
+        public int TicketsCount { get; set; }
+
+        [NotMapped]
+        public double TotalPrice 
+            => PricePerOne * TicketsCount;
     }
 }

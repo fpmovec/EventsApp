@@ -22,6 +22,5 @@ namespace Domain.Models
         public string? Login { get; set; }
 
         public string? HashedPassword { get; set; }
-
     }
 }

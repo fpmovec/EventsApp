@@ -1,7 +1,10 @@
 using Domain.AppSettings;
+using Infrastructure;
 using Microsoft.AspNetCore.Http.Headers;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using Web;
+using Web.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +20,13 @@ builder.Services.AddOptions<AppSettings>()
     .BindConfiguration(nameof(AppSettings))
     .ValidateDataAnnotations()
     .ValidateOnStart();
+
+
+builder.Services
+    .AddDbContext<EventContext>(opts =>
+    {
+        opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    });
 
 var app = builder.Build();
 
@@ -39,6 +49,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseExceptionHandlingMiddleware();
+app.UseRequestLogging();
 
 app.UseHttpsRedirection();
 
