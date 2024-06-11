@@ -1,5 +1,4 @@
 using Domain.AppSettings;
-using Microsoft.OpenApi.Models;
 using Web;
 
 var builder = WebApplication.CreateBuilder(args);
