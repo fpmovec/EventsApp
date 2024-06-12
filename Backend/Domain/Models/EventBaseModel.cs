@@ -21,10 +21,13 @@ namespace Domain.Models
 
         public TimeOnly Time { get; set; }
 
-        public EventType EventType { get; set; }
+        public EventCategory Category { get; set; }
 
         public double Price { get; set; }
+
         public Image Image {  get; set; }
+
+        public int CategoryId { get; set; }
     }
 
     public class EventExtendedModel : EventBaseModel

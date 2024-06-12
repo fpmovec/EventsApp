@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Domain.Models;
+using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 using Web.ViewModels;
 

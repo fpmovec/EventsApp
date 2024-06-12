@@ -13,16 +13,21 @@ namespace Infrastructure
             modelBuilder.Entity<EventBaseModel>().ToTable("EventsBase");
             modelBuilder.Entity<EventExtendedModel>().ToTable("ExtendedEvents");
 
+            ConfigureRelations(modelBuilder);
+        }
+
+        private void ConfigureRelations(ModelBuilder modelBuilder)
+        {
             modelBuilder.Entity<EventExtendedModel>()
-                .HasOne<Ticket>()
-                .WithOne()
-                .HasForeignKey<Ticket>(t => t.EventId)
-                .IsRequired();
+                            .HasMany<Ticket>()
+                            .WithOne()
+                            .HasForeignKey(t => t.EventId)
+                            .IsRequired();
 
             modelBuilder.Entity<Participant>()
-                .HasOne<Ticket>()
+                .HasMany<Ticket>()
                 .WithOne()
-                .HasForeignKey<Ticket>(t => t.ParticipantId)
+                .HasForeignKey(t => t.ParticipantId)
                 .IsRequired();
 
             modelBuilder.Entity<EventBaseModel>()
@@ -30,6 +35,10 @@ namespace Infrastructure
                 .WithOne()
                 .HasForeignKey<Image>(i => i.EventId)
                 .IsRequired();
+
+            modelBuilder.Entity<EventBaseModel>()
+                .HasOne(e => e.Category)
+                .WithOne();
         }
 
         public DbSet<EventBaseModel> Events { get; set; }
@@ -38,5 +47,6 @@ namespace Infrastructure
         public DbSet<User> Users { get; set; }
         public DbSet<Image> Images {  get; set; } 
         public DbSet<Participant> Participants { get; set; }
+        public DbSet<EventCategory> Categories { get; set; }
     }
 }
