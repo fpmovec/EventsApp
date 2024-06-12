@@ -5,6 +5,7 @@ using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Runtime.InteropServices;
 
 namespace Infrastructure.Repositories
 {
@@ -32,26 +33,65 @@ namespace Infrastructure.Repositories
 
         protected abstract DbSet<TEntity> dbSet { get; }
 
-        public IQueryable<TEntity> GetAllAsync(
-            EventFilterType? filterType = null, object filterValue = null, EventsSortType sortType = EventsSortType.Default, SortOrder order = SortOrder.Ascending, int currentPage = 1)
+        public async Task AddAsync(TEntity entity)
         {
-            IQueryable<TEntity> events = dbSet;
+            await dbSet.AddAsync(entity);
 
-            if (filterType is not null && filterValue is not null)
-            {
-               events = _filterService.Filter(events, filterType, filterValue);
-            }
-
-            events = _sortService.Sort(events, sortType, order);
-
-            events = SelectItemsForPage(events, currentPage);
-            
-            return events;
+            _logger.LogInformation("Entity has been added");
         }
 
-        public TEntity GetByIdAsync(TId id)
+        public async Task DeleteByIdAsync(TId id)
         {
-            throw new NotImplementedException();
+            TEntity? entity = await dbSet.FindAsync(id);
+
+            if (entity is not null)
+            {
+                dbSet.Remove(entity);
+
+                _logger.LogInformation("Entity has been deleted from DB");
+            }
+
+            _logger.LogWarning("Entity hasn't been deleted because of the null value");
+        }
+
+        public async Task<ICollection<TEntity>> GetAllAsync(
+            EventFilterType filterType = EventFilterType.Default,
+            object filterValue = null,
+            EventsSortType sortType = EventsSortType.Default,
+            SortOrder order = SortOrder.Ascending,
+            int currentPage = 0)
+        {
+            IQueryable<TEntity> entities = dbSet;
+
+            if (filterType is not EventFilterType.Default && filterValue is not null)
+            {
+               entities = _filterService.Filter(entities, filterType, filterValue);
+
+                _logger.LogInformation("Collection has been filtered");
+            }
+
+            entities = _sortService.Sort(entities, sortType, order);
+
+            _logger.LogInformation("Collection has been sorted");
+
+            if (currentPage is not 0)
+            {
+                entities = SelectItemsForPage(entities, currentPage);
+            }
+            
+            return await entities.ToListAsync();
+        }
+
+        public async Task<TEntity?> GetByIdAsync(TId id)
+            => await dbSet.FindAsync(id);
+
+        public async virtual Task UpdateAsync(TEntity entity)
+        {
+           dbSet.Update(entity);
+
+            _logger.LogInformation("Entity has been updated");
+
+           await Task.CompletedTask;
         }
 
         private IQueryable<TEntity> SelectItemsForPage(IQueryable<TEntity> collection, int currentPage)

@@ -1,3 +1,5 @@
+using Application.UnitOfWork;
+using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,10 +15,19 @@ namespace Web.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, IUnitOfWork unitOfWork)
         {
             _logger = logger;
+            _unitOfWork = unitOfWork;
+        }
+
+        [HttpPost("/event")]
+        public async Task PostAsync([FromBody]EventExtendedModel model)
+        {
+           await _unitOfWork.EventsRepository.AddAsync(model);
+            await _unitOfWork.CompleteAsync();
         }
 
         [HttpGet(Name = "GetWeatherForecast")]

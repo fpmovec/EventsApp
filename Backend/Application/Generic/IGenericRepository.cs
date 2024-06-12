@@ -4,8 +4,14 @@ namespace Application.Generic
 {
     public interface IGenericRepository<TEntity, TId> where TEntity : class
     {
-        IQueryable<TEntity> GetAllAsync(EventFilterType? filterType, object filterValue, EventsSortType sortType, SortOrder order, int currentPage);
+        Task<ICollection<TEntity>> GetAllAsync(EventFilterType filterType, object filterValue, EventsSortType sortType, SortOrder order, int currentPage);
 
-        TEntity GetByIdAsync(TId id);
+        Task<TEntity?> GetByIdAsync(TId id);
+
+        Task AddAsync(TEntity entity);
+
+        Task UpdateAsync(TEntity entity);
+
+        Task DeleteByIdAsync(TId id);
     }
 }

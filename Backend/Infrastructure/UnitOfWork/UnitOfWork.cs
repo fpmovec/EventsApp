@@ -1,17 +1,31 @@
-﻿using Application.UnitOfWork;
+﻿using Application.Repositories;
+using Application.UnitOfWork;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.UnitOfWork
 {
-    internal class UnitOfWork : IUnitOfWork, IDisposable
+    public class UnitOfWork : IUnitOfWork, IDisposable
     {
-        public Task CompleteAsync()
+        private readonly EventContext _eventContext;
+        private readonly ILogger<UnitOfWork> _logger;
+
+        public UnitOfWork(EventContext eventContext, ILogger<UnitOfWork> logger, IEventsRepository eventsRepository)
         {
-            throw new NotImplementedException();
+            _eventContext = eventContext;
+            _logger = logger;
+            EventsRepository = eventsRepository;
+        }
+
+        public IEventsRepository EventsRepository { get; private set; }
+        public async Task CompleteAsync()
+        {
+            await _eventContext.SaveChangesAsync();
+            _logger.LogInformation("Changes have been saved!");
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            _eventContext.Dispose();
         }
     }
 }

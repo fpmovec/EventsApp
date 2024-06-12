@@ -30,7 +30,7 @@ namespace Infrastructure.CollectionServices
             return result.AsQueryable();
         }
 
-        private Func<EventBaseModel, object> TryInvokeFunctor(EventsSortType? sortType)
+        private Func<EventBaseModel, object> TryInvokeFunctor(EventsSortType sortType)
         {
             if (Functors.TryGetValue(sortType, out var functor))
             {

@@ -18,7 +18,7 @@ namespace Infrastructure.CollectionServices
             { EventFilterType.ByMaxPrice, (model, value) => model.Price <= (double)value }
         }.ToFrozenDictionary();
 
-        public IQueryable<EventBaseModel> Filter(IQueryable<EventBaseModel> collection, EventFilterType? property, object filterValue)
+        public IQueryable<EventBaseModel> Filter(IQueryable<EventBaseModel> collection, EventFilterType property, object filterValue)
         {
             Func<EventBaseModel, object, bool> functor = TryInvokeFunctor(property);
             Expression<Func<EventBaseModel, bool>> sortFunctor =  model => functor(model, filterValue);

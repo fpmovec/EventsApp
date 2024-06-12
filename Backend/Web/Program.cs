@@ -1,8 +1,12 @@
 using Application.CollectionServices;
+using Application.Repositories;
+using Application.UnitOfWork;
 using Domain.AppSettings;
 using Domain.Models;
 using Infrastructure;
 using Infrastructure.CollectionServices;
+using Infrastructure.Repositories;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http.Headers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
@@ -26,7 +30,9 @@ builder.Services.AddOptions<AppSettings>()
 
 builder.Services.AddSingleton<ISortService<EventBaseModel>, EventsSortService>();
 builder.Services.AddSingleton<IFilterService<EventBaseModel>, EventsFilterService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+builder.Services.AddScoped<IEventsRepository, EventsBaseRepository>();
 builder.Services
     .AddDbContext<EventContext>(opts =>
     {

@@ -1,6 +1,7 @@
 ﻿using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Domain.Models
 {
@@ -17,15 +18,15 @@ namespace Domain.Models
         
         public string Place {  get; set; } = string.Empty; 
 
-        public DateOnly Date {  get; set; }
+        public DateOnly Date {  get; set; } = default(DateOnly);
 
-        public TimeOnly Time { get; set; }
+        public TimeOnly Time { get; set; } = default(TimeOnly);
 
         public EventCategory Category { get; set; }
 
         public double Price { get; set; }
 
-        public Image Image {  get; set; }
+        public Image Image { get; set; } = null;
 
         public int CategoryId { get; set; }
     }
@@ -34,8 +35,10 @@ namespace Domain.Models
     {
         public int MaxParticipantsCount { get; set; }
 
+        [JsonIgnore]
         public int BookedTicketsCount { get; set; }
 
+        [JsonIgnore]
         public int RemainingTicketsCount
             => MaxParticipantsCount - BookedTicketsCount;
 
