@@ -5,6 +5,8 @@ namespace Domain.AppSettings
     public class AppSettings
     {
         public JwtSettings JwtSettings { get; set; }
+
+        public PaginationSettings PaginationSettings { get; set; }
     }
 
     public class JwtSettings
@@ -25,5 +27,11 @@ namespace Domain.AppSettings
     public class SignalRSettings
     {
 
+    }
+
+    public class PaginationSettings
+    {
+        [Required]
+        public int PageSize { get; set; }
     }
 }
