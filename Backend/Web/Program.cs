@@ -34,6 +34,8 @@ builder.Services.AddOptions<AppSettings>()
 builder.Services.AddModelsFilters();
 builder.Services.AddModelsSort();
 
+builder.Services.AddScoped<FilterOptionsConverter>();
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IEventsRepository, EventsBaseRepository>();

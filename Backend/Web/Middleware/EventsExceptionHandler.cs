@@ -27,7 +27,7 @@ namespace Web.Middleware
             context.Response.StatusCode = statusCode;
             //string errorResponse =  JsonConvert.SerializeObject(new ErrorModel(statusCode, ex.Message));
 
-            await context.Response.WriteAsJsonAsync(new ErrorModel(statusCode, ex.InnerException?.Message));
+            await context.Response.WriteAsJsonAsync(new ErrorModel(statusCode, ex.Message));
         }
     }
 }

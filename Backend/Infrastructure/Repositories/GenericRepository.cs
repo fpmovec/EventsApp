@@ -1,5 +1,6 @@
 ﻿using Application.CollectionServices;
 using Application.Generic;
+using Application.Models;
 using Domain.AppSettings;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -54,21 +55,18 @@ namespace Infrastructure.Repositories
             _logger.LogWarning("Entity hasn't been deleted because of the null value");
         }
 
-        public virtual async Task<IQueryable<TEntity>> GetAllAsync(
-            FilterType filterType = FilterType.Default,
-            object filterValue = null,
+        public async Task<IQueryable<TEntity>> GetAllAsync(
+            List<FilterOption> filterOptions,
             SortType sortType = SortType.Default,
             SortOrder order = SortOrder.Ascending,
             int currentPage = 0)
         {
             IQueryable<TEntity> entities = dbSet;
 
-            if (filterType is not FilterType.Default && filterValue is not null)
-            {
-               entities = _filterService.Filter(entities, filterType, filterValue);
+                entities = _filterService.FilterWithManyOptions(entities, filterOptions);
 
                 _logger.LogInformation("Collection has been filtered");
-            }
+
 
             entities = _sortService.Sort(entities, sortType, order);
 

@@ -1,4 +1,5 @@
-﻿using Application.UnitOfWork;
+﻿using Application.Models;
+using Application.UnitOfWork;
 using AutoMapper;
 using Domain.Models;
 using Microsoft.AspNetCore.Http;
@@ -41,12 +42,36 @@ namespace Web.Controllers
                 mappedModel.Image = new() { Name = imageInfo.Name, Path = imageInfo.Path };
             }
 
-            mappedModel.Category = await _unitOfWork.CategoryRepository.GetCategoryByName(eventViewModel.CategoryName);
+            EventCategory? category = await _unitOfWork.CategoryRepository.GetCategoryByName(eventViewModel.CategoryName);
+
+            if (category is null)
+                return BadRequest($"Category {eventViewModel.CategoryName} doesn't exist!");
+
+            mappedModel.Category = category;
 
             await _unitOfWork.EventsRepository.AddAsync(mappedModel);
             await _unitOfWork.CompleteAsync();
 
             return Ok(mappedModel);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetFilteredEvents([FromQuery]FilterOptionsViewModel options)
+        {
+            List<FilterOption> filterOptions = new();
+
+            if (options is not null)
+                filterOptions = _mapper.Map<List<FilterOption>>(options);
+            else
+                return BadRequest();
+
+            var events = await _unitOfWork.EventsRepository.GetFilteredEventsAsync(
+                filterOptions,
+                options.SortType, options.SortOrder, options.CurrentPage);
+
+            _logger.LogInformation("Events were obtained");
+
+            return Ok(events);
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Application.CollectionServices;
+using Application.Models;
 using Domain.Enums;
 using Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Frozen;
 using System.Linq.Expressions;
 
@@ -15,15 +17,47 @@ namespace Infrastructure.CollectionServices.Filter
             { FilterType.ByMaxDate, (model, value) => model.Date <= (DateOnly)value },
             { FilterType.ByMinDate, (model, value) => model.Date >= (DateOnly)value },
             { FilterType.ByMinPrice, (model, value) => model.Price >= (double)value },
-            { FilterType.ByMaxPrice, (model, value) => model.Price <= (double)value }
+            { FilterType.ByMaxPrice, (model, value) => model.Price <= (double)value },
+            { FilterType.ByPlace, (model, value) => model.Place == (string)value    }
         }.ToFrozenDictionary();
 
         public IQueryable<EventBaseModel> Filter(IQueryable<EventBaseModel> collection, FilterType property, object filterValue)
         {
             Func<EventBaseModel, object, bool> functor = TryInvokeFunctor(property);
-            Expression<Func<EventBaseModel, bool>> sortFunctor = model => functor(model, filterValue);
+            Func<EventBaseModel, bool> sortFunctor = model => functor(model, filterValue);
 
-            return collection.Where(sortFunctor);
+            var events = collection
+                .Include(e => e.Image)
+                .Include(e => e.Category)
+                .ToList()
+                .Where(sortFunctor)
+                .AsQueryable();
+
+            return events;
+        }
+
+        public IQueryable<EventBaseModel> FilterWithManyOptions(IQueryable<EventBaseModel> collection, List<FilterOption> filterOptions)
+        {
+            IQueryable<EventBaseModel> source = collection
+                .Include(e => e.Image)
+                .Include(e => e.Category);
+
+            if (filterOptions is null && filterOptions?.Count == 0)
+                return source;
+
+            foreach (FilterOption filterOption in filterOptions)
+            {
+                if (filterOption.Value is not null)
+                {
+                    Func<EventBaseModel, object, bool> functor = TryInvokeFunctor(filterOption.FilterType);
+                    Func<EventBaseModel, bool> sortFunctor = model => functor(model, filterOption.Value);
+
+                    source = source.ToList().Where(sortFunctor).AsQueryable();
+                }
+                
+            }
+
+            return source;
         }
 
         private Func<EventBaseModel, object, bool> TryInvokeFunctor(FilterType filterProperty)

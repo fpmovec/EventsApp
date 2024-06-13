@@ -1,10 +1,11 @@
-﻿using Domain.Enums;
+﻿using Application.Models;
+using Domain.Enums;
 
 namespace Application.Generic
 {
     public interface IGenericRepository<TEntity, TId> where TEntity : class
     {
-        Task<IQueryable<TEntity>> GetAllAsync(FilterType filterType, object filterValue, SortType sortType, SortOrder order, int currentPage);
+        Task<IQueryable<TEntity>> GetAllAsync(List<FilterOption> filterOptions, SortType sortType, SortOrder order, int currentPage);
 
         Task<TEntity?> GetByIdAsync(TId id);
 
