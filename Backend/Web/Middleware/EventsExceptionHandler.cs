@@ -21,13 +21,13 @@ namespace Web.Middleware
 
         private async Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
-            int statusCode = (int)StatusCodes.Status500InternalServerError;
+            int statusCode = StatusCodes.Status500InternalServerError;
 
             _logger.LogCritical($"Exception was thrown! Exception message: {ex.Message}");
+            context.Response.StatusCode = statusCode;
+            //string errorResponse =  JsonConvert.SerializeObject(new ErrorModel(statusCode, ex.Message));
 
-            string errorResponse =  JsonConvert.SerializeObject(new ErrorModel(statusCode, ex.Message));
-
-            await context.Response.WriteAsync(errorResponse);
+            await context.Response.WriteAsJsonAsync(new ErrorModel(statusCode, ex.InnerException?.Message));
         }
     }
 }

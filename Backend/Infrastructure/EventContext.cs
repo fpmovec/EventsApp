@@ -1,4 +1,5 @@
 ﻿using Domain.Models;
+using Infrastructure.ModelsConfiguration;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure
@@ -14,6 +15,12 @@ namespace Infrastructure
             modelBuilder.Entity<EventExtendedModel>().ToTable("ExtendedEvents");
 
             ConfigureRelations(modelBuilder);
+            ApplyModelsConfiguration(modelBuilder);
+        }
+
+        private void ApplyModelsConfiguration(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfiguration(new EventModelConfiguration());
         }
 
         private void ConfigureRelations(ModelBuilder modelBuilder)
@@ -34,7 +41,7 @@ namespace Infrastructure
                 .HasOne(e => e.Image)
                 .WithOne()
                 .HasForeignKey<Image>(i => i.EventId)
-                .IsRequired();
+                .IsRequired(false);
 
             modelBuilder.Entity<EventBaseModel>()
                 .HasOne(e => e.Category)

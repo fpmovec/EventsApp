@@ -227,9 +227,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Models.EventBaseModel", null)
                         .WithOne("Image")
-                        .HasForeignKey("Domain.Models.Image", "EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Domain.Models.Image", "EventId");
                 });
 
             modelBuilder.Entity("Domain.Models.Participant", b =>

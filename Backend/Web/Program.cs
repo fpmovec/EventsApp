@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using Web;
 using Web.Extensions;
+using Web.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +39,11 @@ builder.Services
     {
         opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
     });
+
+builder.Services.AddAutoMapper(config =>
+{
+    config.AddProfile<MappingProfile>();
+});
 
 var app = builder.Build();
 

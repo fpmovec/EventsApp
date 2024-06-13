@@ -18,9 +18,9 @@ namespace Domain.Models
         
         public string Place {  get; set; } = string.Empty; 
 
-        public DateOnly Date {  get; set; } = default(DateOnly);
+        public DateOnly Date {  get; set; } = default;
 
-        public TimeOnly Time { get; set; } = default(TimeOnly);
+        public TimeOnly Time { get; set; } = default;
 
         public EventCategory Category { get; set; }
 
@@ -35,8 +35,7 @@ namespace Domain.Models
     {
         public int MaxParticipantsCount { get; set; }
 
-        [JsonIgnore]
-        public int BookedTicketsCount { get; set; }
+        public int BookedTicketsCount { get; set; } = 0;
 
         [JsonIgnore]
         public int RemainingTicketsCount
