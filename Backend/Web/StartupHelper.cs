@@ -1,4 +1,8 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Application.CollectionServices;
+using Domain.Models;
+using Infrastructure.CollectionServices.Filter;
+using Infrastructure.CollectionServices.Sort;
+using Microsoft.OpenApi.Models;
 
 namespace Web
 {
@@ -33,6 +37,22 @@ namespace Web
                    }
                 });
              });
+
+            return services;
+        }
+
+        public static IServiceCollection AddModelsFilters(this IServiceCollection services)
+        {
+            services.AddSingleton<IFilterService<EventBaseModel>, EventsFilterService>();
+            services.AddSingleton<IFilterService<EventCategory>, CategoriesFilterService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddModelsSort(this IServiceCollection services)
+        {
+            services.AddSingleton<ISortService<EventBaseModel>, EventsSortService>();
+            services.AddSingleton<ISortService<EventCategory>, CategoriesSortService>();
 
             return services;
         }

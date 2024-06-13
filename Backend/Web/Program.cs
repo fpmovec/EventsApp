@@ -4,7 +4,8 @@ using Application.UnitOfWork;
 using Domain.AppSettings;
 using Domain.Models;
 using Infrastructure;
-using Infrastructure.CollectionServices;
+using Infrastructure.CollectionServices.Filter;
+using Infrastructure.CollectionServices.Sort;
 using Infrastructure.Repositories;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http.Headers;
@@ -19,6 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
@@ -29,11 +31,13 @@ builder.Services.AddOptions<AppSettings>()
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
-builder.Services.AddSingleton<ISortService<EventBaseModel>, EventsSortService>();
-builder.Services.AddSingleton<IFilterService<EventBaseModel>, EventsFilterService>();
+builder.Services.AddModelsFilters();
+builder.Services.AddModelsSort();
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IEventsRepository, EventsBaseRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services
     .AddDbContext<EventContext>(opts =>
     {
@@ -67,13 +71,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRouting();
 app.UseExceptionHandlingMiddleware();
 app.UseRequestLogging();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.Run();

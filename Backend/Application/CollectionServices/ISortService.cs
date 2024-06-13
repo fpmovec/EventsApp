@@ -5,7 +5,7 @@ namespace Application.CollectionServices
 {
     public interface ISortService<TEntity> where TEntity : class
     {
-        FrozenDictionary<EventsSortType, Func<TEntity, object>> Functors { get; }
-        IQueryable<TEntity> Sort(IQueryable<TEntity> collection, EventsSortType sortType, SortOrder order);
+        FrozenDictionary<SortType, Func<TEntity, object>> Functors { get; }
+        IQueryable<TEntity> Sort(IQueryable<TEntity> collection, SortType sortType, SortOrder order);
     }
 }

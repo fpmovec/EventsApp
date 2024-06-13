@@ -2,7 +2,7 @@
 
 namespace Domain.Enums
 {
-    public enum EventsSortType
+    public enum SortType
     {
         [Display(Name = "Default")]
         Default = 0,
@@ -17,7 +17,7 @@ namespace Domain.Enums
         ByPrice
     }
 
-    public enum EventFilterType
+    public enum FilterType
     {
         Default = 0,
         ByCategory,

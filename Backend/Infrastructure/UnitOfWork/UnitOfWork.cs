@@ -9,14 +9,21 @@ namespace Infrastructure.UnitOfWork
         private readonly EventContext _eventContext;
         private readonly ILogger<UnitOfWork> _logger;
 
-        public UnitOfWork(EventContext eventContext, ILogger<UnitOfWork> logger, IEventsRepository eventsRepository)
+        public UnitOfWork(
+            EventContext eventContext,
+            ILogger<UnitOfWork> logger,
+            IEventsRepository eventsRepository,
+            ICategoryRepository categoryRepository)
         {
             _eventContext = eventContext;
             _logger = logger;
             EventsRepository = eventsRepository;
+            CategoryRepository = categoryRepository;
         }
 
         public IEventsRepository EventsRepository { get; private set; }
+
+        public ICategoryRepository CategoryRepository { get; private set; }
         public async Task CompleteAsync()
         {
             await _eventContext.SaveChangesAsync();

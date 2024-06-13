@@ -54,16 +54,16 @@ namespace Infrastructure.Repositories
             _logger.LogWarning("Entity hasn't been deleted because of the null value");
         }
 
-        public async Task<ICollection<TEntity>> GetAllAsync(
-            EventFilterType filterType = EventFilterType.Default,
+        public virtual async Task<IQueryable<TEntity>> GetAllAsync(
+            FilterType filterType = FilterType.Default,
             object filterValue = null,
-            EventsSortType sortType = EventsSortType.Default,
+            SortType sortType = SortType.Default,
             SortOrder order = SortOrder.Ascending,
             int currentPage = 0)
         {
             IQueryable<TEntity> entities = dbSet;
 
-            if (filterType is not EventFilterType.Default && filterValue is not null)
+            if (filterType is not FilterType.Default && filterValue is not null)
             {
                entities = _filterService.Filter(entities, filterType, filterValue);
 
@@ -78,8 +78,8 @@ namespace Infrastructure.Repositories
             {
                 entities = SelectItemsForPage(entities, currentPage);
             }
-            
-            return await entities.ToListAsync();
+            await Task.CompletedTask;
+            return entities;
         }
 
         public async Task<TEntity?> GetByIdAsync(TId id)

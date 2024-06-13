@@ -8,7 +8,7 @@ using Web.ViewModels;
 
 namespace Web.Controllers
 {
-    [Route("api/[controller]/")]
+    [Route("[controller]")]
     [ApiController]
     public class EventsController : ControllerBase
     {
@@ -23,7 +23,7 @@ namespace Web.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("/create")]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateEvent(
             [FromForm]EventViewModel eventViewModel,
             IFormFile? image,
@@ -40,7 +40,9 @@ namespace Web.Controllers
 
                 mappedModel.Image = new() { Name = imageInfo.Name, Path = imageInfo.Path };
             }
-            
+
+            mappedModel.Category = await _unitOfWork.CategoryRepository.GetCategoryByName(eventViewModel.CategoryName);
+
             await _unitOfWork.EventsRepository.AddAsync(mappedModel);
             await _unitOfWork.CompleteAsync();
 

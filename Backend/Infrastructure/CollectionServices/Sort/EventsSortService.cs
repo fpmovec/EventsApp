@@ -3,22 +3,22 @@ using Domain.Enums;
 using Domain.Models;
 using System.Collections.Frozen;
 
-namespace Infrastructure.CollectionServices
+namespace Infrastructure.CollectionServices.Sort
 {
     public class EventsSortService : ISortService<EventBaseModel>
     {
-        public FrozenDictionary<EventsSortType, Func<EventBaseModel, object>> Functors
-           => new Dictionary<EventsSortType, Func<EventBaseModel, object>>()
+        public FrozenDictionary<SortType, Func<EventBaseModel, object>> Functors
+           => new Dictionary<SortType, Func<EventBaseModel, object>>()
            {
-            { EventsSortType.Default, model => model.Id },
-            { EventsSortType.ByDate, model => model.Date },
-            { EventsSortType.ByPrice, model => model.Price },
-            { EventsSortType.ByName, model => model.Name }
+            { SortType.Default, model => model.Id },
+            { SortType.ByDate, model => model.Date },
+            { SortType.ByPrice, model => model.Price },
+            { SortType.ByName, model => model.Name }
            }.ToFrozenDictionary();
 
         public IQueryable<EventBaseModel> Sort(
             IQueryable<EventBaseModel> collection,
-            EventsSortType sortType,
+            SortType sortType,
             SortOrder order = SortOrder.Ascending)
         {
             Func<EventBaseModel, object> functor = TryInvokeFunctor(sortType);
@@ -30,7 +30,7 @@ namespace Infrastructure.CollectionServices
             return result.AsQueryable();
         }
 
-        private Func<EventBaseModel, object> TryInvokeFunctor(EventsSortType sortType)
+        private Func<EventBaseModel, object> TryInvokeFunctor(SortType sortType)
         {
             if (Functors.TryGetValue(sortType, out var functor))
             {

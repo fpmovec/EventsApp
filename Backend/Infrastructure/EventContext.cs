@@ -45,7 +45,7 @@ namespace Infrastructure
 
             modelBuilder.Entity<EventBaseModel>()
                 .HasOne(e => e.Category)
-                .WithOne();
+                .WithMany();
         }
 
         public DbSet<EventBaseModel> Events { get; set; }

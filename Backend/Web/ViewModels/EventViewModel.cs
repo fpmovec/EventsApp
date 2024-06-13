@@ -25,6 +25,9 @@ namespace Web.ViewModels
         [Required]
         [Range(1, int.MaxValue)]
         public int MaxParticipantsCount { get; set; }
+
+        [Required]
+        public string CategoryName { get; set; }
     }
 
     public record ImageInfo(string Name, string Path);
