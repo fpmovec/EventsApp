@@ -41,7 +41,7 @@ namespace Infrastructure
                 .HasOne(e => e.Image)
                 .WithOne()
                 .HasForeignKey<Image>(i => i.EventId)
-                .IsRequired(false);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<EventBaseModel>()
                 .HasOne(e => e.Category)

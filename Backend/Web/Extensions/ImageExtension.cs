@@ -1,4 +1,5 @@
-﻿using Web.ViewModels;
+﻿using Domain.Models;
+using Web.ViewModels;
 
 namespace Web.Extensions
 {
@@ -15,7 +16,7 @@ namespace Web.Extensions
                 await image.CopyToAsync(stream);
             }
 
-            return new(fileName, filePath + fileName);
+            return new(fileName, Path.Combine(filePath, fileName));
         }
     }
 }

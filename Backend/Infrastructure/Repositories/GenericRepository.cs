@@ -6,7 +6,6 @@ using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Runtime.InteropServices;
 
 namespace Infrastructure.Repositories
 {
@@ -63,9 +62,9 @@ namespace Infrastructure.Repositories
         {
             IQueryable<TEntity> entities = dbSet;
 
-                entities = _filterService.FilterWithManyOptions(entities, filterOptions);
+            entities = _filterService.FilterWithManyOptions(entities, filterOptions);
 
-                _logger.LogInformation("Collection has been filtered");
+            _logger.LogInformation("Collection has been filtered");
 
 
             entities = _sortService.Sort(entities, sortType, order);
@@ -94,7 +93,8 @@ namespace Infrastructure.Repositories
 
         private IQueryable<TEntity> SelectItemsForPage(IQueryable<TEntity> collection, int currentPage)
         {
-            return collection.Skip(_settings.PageSize * (currentPage - 1))
+            return collection
+                .Skip(_settings.PageSize * (currentPage - 1))
                 .Take(_settings.PageSize);
         }
     }

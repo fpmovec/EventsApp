@@ -10,6 +10,9 @@ namespace Application.Repositories
         Task<ICollection<EventBaseModel>> GetFilteredEventsAsync(List<FilterOption> filterOptions,
             SortType sortType = SortType.Default,
             SortOrder order = SortOrder.Ascending,
-            int currentPage = 0);    
+            int currentPage = 0);
+
+        Task<ICollection<EventBaseModel>> GetEventsByParticipantId(Guid id);
+        Task<EventExtendedModel?> GetExtendedEventById(Guid id);
     }
 }

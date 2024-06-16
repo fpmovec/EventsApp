@@ -14,7 +14,7 @@ namespace Domain.Models
         public string Description { get; set; } = string.Empty;
 
         public string BriefDescription
-            => Description[..50];
+            => Description.Length > 50 ? Description[..50] : Description;
         
         public string Place {  get; set; } = string.Empty; 
 

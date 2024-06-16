@@ -59,7 +59,7 @@ namespace Web.Controllers
             return Ok(categories);
         }
 
-        [HttpDelete("deleteById/{id:int}")]
+        [HttpDelete("delete/{id:int}")]
         public async Task<IActionResult> DeleteCategoryByIdAsync(int id)
         {
             EventCategory? category = await _unitOfWork.CategoryRepository.GetByIdAsync(id);
@@ -98,7 +98,7 @@ namespace Web.Controllers
             await _unitOfWork.CategoryRepository.DeleteByIdAsync(category.Id);
             await _unitOfWork.CompleteAsync();
 
-            _logger.LogInformation($"Category {category.Name} deleted");
+            _logger.LogInformation($"Category {category.Name} was deleted");
 
             return Ok(category.Name);
         }

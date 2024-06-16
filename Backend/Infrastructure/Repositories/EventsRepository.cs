@@ -24,6 +24,18 @@ namespace Infrastructure.Repositories
         protected override DbSet<EventBaseModel> dbSet
             => _eventContext.Events;
 
+        private DbSet<EventExtendedModel> dbSetExtended
+            => _eventContext.ExtendedEvents;
+
+        public async Task<ICollection<EventBaseModel>> GetEventsByParticipantId(Guid id)
+        {
+            return await dbSetExtended.Where(e => e.Participants.Any(c => c.Id == id))
+                .Include(e => e.Category)
+                .Include(e => e.Image)
+                .Select(e => (EventBaseModel)e)
+                .ToListAsync();
+        }
+
         public async Task<ICollection<EventBaseModel>> GetFilteredEventsAsync(List<FilterOption> filterOptions, SortType sortType = SortType.Default, SortOrder order = SortOrder.Ascending, int currentPage = 0)
         {
             var events = await GetAllAsync(filterOptions, sortType, order, currentPage);
@@ -31,9 +43,19 @@ namespace Infrastructure.Repositories
             return events.ToList();
         }
 
-        public override Task UpdateAsync(EventBaseModel entity)
+        public async Task<EventExtendedModel?> GetExtendedEventById(Guid id)
         {
-            return base.UpdateAsync(entity);
+            EventExtendedModel? eventExtended = await dbSetExtended
+                .Include(e => e.Image)
+                .Include(e => e.Category)
+                .FirstOrDefaultAsync(e => e.Id == id);
+
+            return eventExtended;
+        }
+
+        public override async Task UpdateAsync(EventBaseModel entity)
+        {
+            await base.UpdateAsync(entity);
         }
     }
 }
