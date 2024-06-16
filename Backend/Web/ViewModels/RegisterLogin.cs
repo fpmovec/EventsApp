@@ -2,7 +2,12 @@
 
 namespace Web.ViewModels
 {
-    internal record LoginViewModel(string login, string password);
+    public record LoginViewModel(
+        [Required]string Email,
+        [Required]string Password);
 
-    internal record RegidterViewModel(string login, string password, [EmailAddress]string email); 
+    public record RegisterViewModel(
+        [Required]string UserName,
+        [Required]string Password,
+        [Required][EmailAddress]string Email); 
 }

@@ -1,5 +1,6 @@
 using Application.CollectionServices;
 using Application.Repositories;
+using Application.Services;
 using Application.UnitOfWork;
 using Domain.AppSettings;
 using Domain.Models;
@@ -7,10 +8,16 @@ using Infrastructure;
 using Infrastructure.CollectionServices.Filter;
 using Infrastructure.CollectionServices.Sort;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Headers;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
+using System.Text;
 using Web;
 using Web.Extensions;
 using Web.Mapping;
@@ -35,7 +42,7 @@ builder.Services.AddModelsFilters();
 builder.Services.AddModelsSort();
 
 builder.Services.AddScoped<FilterOptionsConverter>();
-
+builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IEventsRepository, EventsBaseRepository>();
@@ -50,6 +57,32 @@ builder.Services.AddAutoMapper(config =>
 {
     config.AddProfile<MappingProfile>();
 });
+
+builder.Services.AddAuthentication(opts =>
+{
+    opts.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(jwtOpts =>
+{
+    string secret = builder.Configuration.GetSection($"{nameof(AppSettings)}:{nameof(JwtSettings)}:SecretKey").Value;
+    byte[] key = Encoding.ASCII.GetBytes(secret);
+
+    jwtOpts.TokenValidationParameters = new()
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        RequireExpirationTime = false,
+        ValidateLifetime = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});
+
+builder.Services.AddDefaultIdentity<IdentityUser>(opts => {
+    opts.SignIn.RequireConfirmedEmail = false;
+    opts.Password.RequireNonAlphanumeric = false;
+}).AddEntityFrameworkStores<EventContext>();
 
 var app = builder.Build();
 
@@ -78,7 +111,7 @@ app.UseExceptionHandlingMiddleware();
 app.UseRequestLogging();
 
 //app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>

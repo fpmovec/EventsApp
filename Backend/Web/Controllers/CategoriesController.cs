@@ -1,7 +1,6 @@
 ﻿using Application.UnitOfWork;
 using AutoMapper;
 using Domain.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Controllers

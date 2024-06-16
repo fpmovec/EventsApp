@@ -2,10 +2,8 @@
 using Application.UnitOfWork;
 using AutoMapper;
 using Domain.Models;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Runtime.InteropServices;
 using Web.Extensions;
 using Web.ViewModels;
 
@@ -66,7 +64,8 @@ namespace Web.Controllers
             return Ok(mappedModel);
         }
 
-        [HttpGet("get-events")]
+        [Authorize]
+        [HttpGet("get-all")]
         public async Task<IActionResult> GetFilteredEvents([FromQuery]FilterOptionsViewModel options)
         {
             List<FilterOption> filterOptions = new();
@@ -85,7 +84,7 @@ namespace Web.Controllers
             return Ok(events);
         }
 
-        [HttpGet("get-event/{id:Guid}")]
+        [HttpGet("get/{id:Guid}")]
         public async Task<IActionResult> GetEventInformation(Guid id)
         {
             EventExtendedModel? extendedEvent = await _unitOfWork.EventsRepository.GetExtendedEventById(id);

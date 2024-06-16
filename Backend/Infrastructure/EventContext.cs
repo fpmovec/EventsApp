@@ -1,10 +1,11 @@
 ﻿using Domain.Models;
 using Infrastructure.ModelsConfiguration;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure
 {
-    public class EventContext : DbContext
+    public class EventContext : IdentityDbContext
     {
         public EventContext(DbContextOptions<EventContext> opts) : base(opts)
         { }
@@ -46,12 +47,13 @@ namespace Infrastructure
             modelBuilder.Entity<EventBaseModel>()
                 .HasOne(e => e.Category)
                 .WithMany();
+
+            base.OnModelCreating(modelBuilder);
         }
 
         public DbSet<EventBaseModel> Events { get; set; }
         public DbSet<EventExtendedModel> ExtendedEvents { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
-        public DbSet<User> Users { get; set; }
         public DbSet<Image> Images {  get; set; } 
         public DbSet<Participant> Participants { get; set; }
         public DbSet<EventCategory> Categories { get; set; }

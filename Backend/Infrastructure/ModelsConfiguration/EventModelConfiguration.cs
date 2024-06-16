@@ -8,7 +8,7 @@ namespace Infrastructure.ModelsConfiguration
     {
         public void Configure(EntityTypeBuilder<EventExtendedModel> modelBuilder)
         {
-
+            
         }
     }
 }

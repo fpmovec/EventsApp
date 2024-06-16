@@ -12,7 +12,7 @@ namespace Domain.AppSettings
     public class JwtSettings
     {
         [Required]
-        public string? SecretKey { get; set; }
+        public string SecretKey { get; set; } = string.Empty;
 
         [Required]
         public string? Audience {  get; set; }
