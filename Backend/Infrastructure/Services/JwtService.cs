@@ -28,7 +28,7 @@ namespace Infrastructure.Services
             _tokenValidationParameters = tokenValidationParameters;
         }
 
-        public async Task<AuthTokens> GenerateJwtTokens(IdentityUser user)
+        public async Task<AuthTokens> GenerateJwtTokensAsync(IdentityUser user)
         {
            var jwtHandler = new JwtSecurityTokenHandler();
            byte[] key = Encoding.UTF8.GetBytes(_jwtSettings.SecretKey);
@@ -54,7 +54,7 @@ namespace Infrastructure.Services
             return new() { MainToken = jwtToken, RefreshToken = refreshToken };
         }
 
-        public async Task<AuthTokens?> VerifyAndGenerateToken(AuthTokens tokenRequest, UserManager<IdentityUser> userManager)
+        public async Task<AuthTokens?> VerifyAndGenerateTokenAsync(AuthTokens tokenRequest, UserManager<IdentityUser> userManager)
         {
             JwtSecurityTokenHandler tokenHandler = new();
 
@@ -115,11 +115,30 @@ namespace Infrastructure.Services
                     return null;
                 }
 
-                return await GenerateJwtTokens(user);
+                return await GenerateJwtTokensAsync(user);
             }
             catch (Exception)
             {
                 throw;
+            }
+        }
+
+        public async Task DeleteUserRefreshTokensAsync(string userId)
+        {
+            await _eventContext.RefreshTokens.Where(r => r.UserId.Equals(userId)).ExecuteDeleteAsync();
+            await _eventContext.SaveChangesAsync();
+        }
+
+        public async Task ClearUnusedRefreshTokensAsync()
+        {
+            if (_eventContext.RefreshTokens.Any())
+            {
+                await _eventContext.RefreshTokens
+                    .Where(r => r.IsUsed)
+                    .Where(r => r.ExpiryDate < DateTime.UtcNow)
+                    .ExecuteDeleteAsync();
+
+                await _eventContext.SaveChangesAsync();
             }
         }
 

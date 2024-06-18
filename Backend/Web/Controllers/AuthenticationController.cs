@@ -3,6 +3,7 @@ using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 using Web.Filters;
 using Web.ViewModels;
 
@@ -50,7 +51,7 @@ namespace Web.Controllers
 
             if (isSucessfullyCreated.Succeeded)
             {
-                AuthTokens tokens = await _jwtService.GenerateJwtTokens(newUser);
+                AuthTokens tokens = await _jwtService.GenerateJwtTokensAsync(newUser);
 
                 _logger.LogInformation("User was sucessfully registered!");
 
@@ -86,7 +87,7 @@ namespace Web.Controllers
                 return BadRequest("Invalid password");
             }
 
-            AuthTokens tokens = await _jwtService.GenerateJwtTokens(user);
+            AuthTokens tokens = await _jwtService.GenerateJwtTokensAsync(user);
 
             return Ok(tokens);
         }
@@ -101,7 +102,7 @@ namespace Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            AuthTokens? tokens = await _jwtService.VerifyAndGenerateToken(new() {
+            AuthTokens? tokens = await _jwtService.VerifyAndGenerateTokenAsync(new() {
                 MainToken = tokenRequest.MainToken,
                 RefreshToken = tokenRequest.RefreshToken
             }, _userManager);
@@ -113,6 +114,31 @@ namespace Web.Controllers
             }
 
             return Ok(tokens);
+        }
+
+        [Authorize]
+        [HttpDelete("logout")]
+        public async Task<IActionResult> LogOut()
+        {
+            if (!HttpContext.User.Identity.IsAuthenticated)
+            {
+                _logger.LogError("Unathorized! You cannot log out");
+                return Unauthorized();
+            }
+
+            string currentUserId = HttpContext.User.Identities.First().Claims.FirstOrDefault(c => c.Type == "Id").Value;
+
+            IdentityUser? currentUser = await _userManager.FindByIdAsync(currentUserId);
+
+            if (currentUser is not null)
+            {
+                await _jwtService.DeleteUserRefreshTokensAsync(currentUser.Id);
+                _logger.LogInformation("You logged out");
+                return Ok();
+            }
+
+            _logger.LogError("Server Error");
+            return BadRequest();
         }
     }
 }
