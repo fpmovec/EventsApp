@@ -9,11 +9,14 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Roles;
 
 namespace Infrastructure.Services
 {
     public class JwtService : IJwtService
     {
+        private const string AdminTestEmail = "admin@example.com";
+
         private readonly JwtSettings _jwtSettings;
         private readonly EventContext _eventContext;
         private readonly TokenValidationParameters _tokenValidationParameters;
@@ -41,11 +44,20 @@ namespace Infrastructure.Services
                     new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToUniversalTime().ToString())
+                    new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToUniversalTime().ToString()),
                 }),
                 Expires = DateTime.UtcNow.Add(_jwtSettings.ExpirationTimeFrame),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
             };
+
+            if (user.Email.Equals(AdminTestEmail))
+            {
+                tokenDescriptor.Subject.AddClaim(new Claim(ClaimTypes.Role, nameof(Admin)));
+            }
+            else
+            {
+                tokenDescriptor.Subject.AddClaim(new Claim(ClaimTypes.Role, nameof(User)));
+            }
 
             SecurityToken token = jwtHandler.CreateToken(tokenDescriptor);
             string jwtToken = jwtHandler.WriteToken(token);
@@ -60,7 +72,7 @@ namespace Infrastructure.Services
 
             try
             {
-                _tokenValidationParameters.ValidateLifetime = false; // for testing
+                _tokenValidationParameters.ValidateLifetime = true; // for testing
 
                 ClaimsPrincipal? tokenInVerification = tokenHandler.ValidateToken(
                     tokenRequest.MainToken, _tokenValidationParameters, out var securityValidatedToken);
@@ -134,8 +146,7 @@ namespace Infrastructure.Services
             if (_eventContext.RefreshTokens.Any())
             {
                 await _eventContext.RefreshTokens
-                    .Where(r => r.IsUsed)
-                    .Where(r => r.ExpiryDate < DateTime.UtcNow)
+                    .Where(r => r.IsUsed || (r.ExpiryDate < DateTime.UtcNow))
                     .ExecuteDeleteAsync();
 
                 await _eventContext.SaveChangesAsync();

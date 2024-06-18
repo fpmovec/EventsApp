@@ -2,7 +2,7 @@
 
 namespace Domain.Models
 {
-    public class User
+    public class User111
     {
         public Guid Id { get; set; }
 

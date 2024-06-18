@@ -1,6 +1,6 @@
 ﻿using Application.UnitOfWork;
-using AutoMapper;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Controllers
@@ -18,6 +18,7 @@ namespace Web.Controllers
             _logger = logger;
         }
 
+        [Authorize(Roles = nameof(Roles.Admin))]
         [HttpPost("create")]
         public async Task<IActionResult> CreateCategoryAsync(string name)
         {
@@ -50,11 +51,12 @@ namespace Web.Controllers
             return Ok(category);
         }
 
+        [Authorize(Roles = nameof(Roles.User))]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAllCategoriesAsync()
         {
-            _logger.LogInformation("All categories were obtained");
             var categories = await _unitOfWork.CategoryRepository.GetAllCategoriesAsync();
+            _logger.LogInformation("All categories were obtained");
             return Ok(categories);
         }
 

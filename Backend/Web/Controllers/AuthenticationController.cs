@@ -76,7 +76,7 @@ namespace Web.Controllers
             if (user is null)
             {
                 _logger.LogInformation($"User with email \"{loginViewModel.Email} doe not exist\"");
-                return NotFound($"User with email \"{loginViewModel.Email} doe not exist\"");
+                return NotFound($"User with email \"{loginViewModel.Email} does not exist\"");
             }
 
             bool isPasswordCorrect = await _userManager.CheckPasswordAsync(user, loginViewModel.Password);
@@ -102,7 +102,8 @@ namespace Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            AuthTokens? tokens = await _jwtService.VerifyAndGenerateTokenAsync(new() {
+            AuthTokens? tokens = await _jwtService.VerifyAndGenerateTokenAsync(new()
+            {
                 MainToken = tokenRequest.MainToken,
                 RefreshToken = tokenRequest.RefreshToken
             }, _userManager);
@@ -134,6 +135,7 @@ namespace Web.Controllers
             {
                 await _jwtService.DeleteUserRefreshTokensAsync(currentUser.Id);
                 _logger.LogInformation("You logged out");
+                
                 return Ok();
             }
 

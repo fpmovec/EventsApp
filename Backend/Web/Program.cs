@@ -19,6 +19,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using System.Text;
 using Web;
+using Web.Background;
 using Web.Extensions;
 using Web.Mapping;
 
@@ -46,6 +47,8 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IEventsRepository, EventsBaseRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
+builder.Services.AddHostedService<BackgroundWorker>();
+
 builder.Services
     .AddDbContext<EventContext>(opts =>
     {
@@ -64,9 +67,10 @@ TokenValidationParameters tokenValidationParameters = new()
 {
     ValidateIssuer = false,
     ValidateAudience = false,
-    RequireExpirationTime = false,
+    RequireExpirationTime = true,
     ValidateLifetime = true,
-    IssuerSigningKey = new SymmetricSecurityKey(key)
+    IssuerSigningKey = new SymmetricSecurityKey(key),
+    ClockSkew = TimeSpan.Zero
 };
 
 builder.Services.AddSingleton(sp => tokenValidationParameters);
@@ -82,7 +86,8 @@ builder.Services.AddAuthentication(opts =>
     jwtOpts.TokenValidationParameters = tokenValidationParameters;
 });
 
-builder.Services.AddDefaultIdentity<IdentityUser>(opts => {
+builder.Services.AddDefaultIdentity<IdentityUser>(opts =>
+{
     opts.SignIn.RequireConfirmedEmail = false;
     opts.Password.RequireNonAlphanumeric = false;
 }).AddEntityFrameworkStores<EventContext>();
@@ -117,9 +122,6 @@ app.UseRequestLogging();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-});
+app.MapControllers();
 
 app.Run();
