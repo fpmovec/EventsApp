@@ -1,11 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.Extensions.Options;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.AppSettings
 {
     public class AppSettings
     {
+        [Required]
+        [ValidateObjectMembers]
         public JwtSettings JwtSettings { get; set; }
 
+        [Required]
+        [ValidateObjectMembers]
         public PaginationSettings PaginationSettings { get; set; }
     }
 
@@ -21,7 +26,11 @@ namespace Domain.AppSettings
         public string? Authority { get; set; }
 
         [Required]
-        public int ExpirationTimeInHours { get; set; }
+        public TimeSpan ExpirationTimeFrame { get; set; }
+
+        [Required]
+        [Range(0, int.MaxValue)]
+        public int RefreshTokenExpirationInHours { get; set; }
     }
 
     public class SignalRSettings
@@ -32,6 +41,7 @@ namespace Domain.AppSettings
     public class PaginationSettings
     {
         [Required]
+        [Range(1, int.MaxValue)]
         public int PageSize { get; set; }
     }
 }

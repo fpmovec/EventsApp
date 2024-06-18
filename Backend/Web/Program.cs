@@ -24,8 +24,6 @@ using Web.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -47,6 +45,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IEventsRepository, EventsBaseRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
 builder.Services
     .AddDbContext<EventContext>(opts =>
     {
@@ -58,6 +57,20 @@ builder.Services.AddAutoMapper(config =>
     config.AddProfile<MappingProfile>();
 });
 
+string secret = builder.Configuration.GetSection($"{nameof(AppSettings)}:{nameof(JwtSettings)}:SecretKey").Value;
+byte[] key = Encoding.ASCII.GetBytes(secret);
+
+TokenValidationParameters tokenValidationParameters = new()
+{
+    ValidateIssuer = false,
+    ValidateAudience = false,
+    RequireExpirationTime = false,
+    ValidateLifetime = true,
+    IssuerSigningKey = new SymmetricSecurityKey(key)
+};
+
+builder.Services.AddSingleton(sp => tokenValidationParameters);
+
 builder.Services.AddAuthentication(opts =>
 {
     opts.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -66,17 +79,7 @@ builder.Services.AddAuthentication(opts =>
 })
 .AddJwtBearer(jwtOpts =>
 {
-    string secret = builder.Configuration.GetSection($"{nameof(AppSettings)}:{nameof(JwtSettings)}:SecretKey").Value;
-    byte[] key = Encoding.ASCII.GetBytes(secret);
-
-    jwtOpts.TokenValidationParameters = new()
-    {
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        RequireExpirationTime = false,
-        ValidateLifetime = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key)
-    };
+    jwtOpts.TokenValidationParameters = tokenValidationParameters;
 });
 
 builder.Services.AddDefaultIdentity<IdentityUser>(opts => {

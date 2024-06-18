@@ -1,12 +1,13 @@
 ﻿using Application.Services;
+using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Web.Filters;
 using Web.ViewModels;
 
 namespace Web.Controllers
 {
-    [AllowAnonymous]
     [Route("api/Auth")]
     [ApiController]
     public class AuthenticationController : ControllerBase
@@ -25,6 +26,7 @@ namespace Web.Controllers
             _jwtService = jwtService;
         }
 
+        [AnonymousOnly]
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterViewModel registerViewModel)
         {
@@ -48,16 +50,17 @@ namespace Web.Controllers
 
             if (isSucessfullyCreated.Succeeded)
             {
-                string token = _jwtService.GenerateJwtToken(newUser);
+                AuthTokens tokens = await _jwtService.GenerateJwtTokens(newUser);
 
                 _logger.LogInformation("User was sucessfully registered!");
 
-                return Ok(token);
+                return Ok(tokens);
             }
 
             return BadRequest(isSucessfullyCreated.Errors.FirstOrDefault());
         }
 
+        [AnonymousOnly]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginViewModel loginViewModel)
         {
@@ -83,9 +86,33 @@ namespace Web.Controllers
                 return BadRequest("Invalid password");
             }
 
-            string token = _jwtService.GenerateJwtToken(user);
+            AuthTokens tokens = await _jwtService.GenerateJwtTokens(user);
 
-            return Ok(token);
+            return Ok(tokens);
+        }
+
+        [Authorize]
+        [HttpPost("refresh")]
+        public async Task<IActionResult> RefreshToken([FromBody] TokenRequest tokenRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid data");
+                return BadRequest(ModelState);
+            }
+
+            AuthTokens? tokens = await _jwtService.VerifyAndGenerateToken(new() {
+                MainToken = tokenRequest.MainToken,
+                RefreshToken = tokenRequest.RefreshToken
+            }, _userManager);
+
+            if(tokens is null)
+            {
+                _logger.LogError("Tokens are invalid");
+                return BadRequest("Tokens are invalid");
+            }
+
+            return Ok(tokens);
         }
     }
 }

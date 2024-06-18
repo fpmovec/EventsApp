@@ -57,5 +57,6 @@ namespace Infrastructure
         public DbSet<Image> Images {  get; set; } 
         public DbSet<Participant> Participants { get; set; }
         public DbSet<EventCategory> Categories { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }

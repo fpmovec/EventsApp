@@ -69,7 +69,7 @@ namespace Web.Controllers
         public async Task<IActionResult> GetFilteredEvents([FromQuery]FilterOptionsViewModel options)
         {
             List<FilterOption> filterOptions = new();
-
+           
             if (options is not null)
                 filterOptions = _mapper.Map<List<FilterOption>>(options);
             else
@@ -130,7 +130,7 @@ namespace Web.Controllers
 
             Image prevImage = extendedEvent.Image;
 
-            extendedEvent = _mapper.Map<EventViewModel, EventExtendedModel>(eventViewModel, extendedEvent);
+            extendedEvent = _mapper.Map(eventViewModel, extendedEvent);
 
             if (image is not null)
             {
