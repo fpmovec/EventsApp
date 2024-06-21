@@ -1,0 +1,13 @@
+.block {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    height: 50px;
+    max-width: 140px;
+    width: auto;
+    position: relative;
+    justify-self: flex-end;
+    margin-right: 50px;
+}

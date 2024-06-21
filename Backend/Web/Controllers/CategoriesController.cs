@@ -37,7 +37,6 @@ namespace Web.Controllers
                 return BadRequest("Category is already exist");
             }
                 
-
             category = new()
             {
                 Name = name
@@ -60,6 +59,7 @@ namespace Web.Controllers
             return Ok(categories);
         }
 
+        [Authorize(Roles = nameof(Roles.Admin))]
         [HttpDelete("delete/{id:int}")]
         public async Task<IActionResult> DeleteCategoryByIdAsync(int id)
         {

@@ -1,0 +1,68 @@
+.eventsSelector {
+  background-image: url("../../assets/main.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 50% 15%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  height: 80vh;
+}
+
+.eventsSelectorBlock {
+  background-color: $transparent-gray;
+  border-radius: 10px;
+
+  box-sizing: border-box;
+  padding: 10px;
+
+  width: 50vw;
+}
+
+.eventsSelectorContent {
+  background-color: $white;
+  border-radius: 10px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  box-sizing: border-box;
+  padding: 10px;
+}
+
+.mainTitle {
+  font-family: "Madimi One", sans-serif;
+  font-weight: 400;
+  color: $light-black;
+  text-align: center;
+}
+
+.subtitle {
+  color: $light-black;
+  text-align: center;
+}
+
+.search {
+  background-color: $blue;
+  border-radius: 10px;
+  height: 56px;
+  width: 56px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    background-color: $blue;
+    cursor: pointer;
+  }
+  & > i {
+    color: $white;
+  }
+}
