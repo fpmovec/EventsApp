@@ -1,0 +1,20 @@
+.price {
+    position: relative;
+}
+
+.price::before {
+    position: absolute;
+    content: "$";
+    font-weight: 200;
+    font-size: 15px;
+    left: -8px;
+}
+
+.price::after {
+    position: absolute;
+    content: "/person";
+    font-weight: 200;
+    font-size: 15px;
+    right: -52px;
+    bottom: 0
+}

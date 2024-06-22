@@ -37,7 +37,6 @@ namespace Domain.Models
 
         public int BookedTicketsCount { get; set; } = 0;
 
-        [JsonIgnore]
         public int RemainingTicketsCount
             => MaxParticipantsCount - BookedTicketsCount;
 
