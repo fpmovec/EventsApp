@@ -2,10 +2,7 @@ import { useEffect, useState } from "react";
 import Calendar from "../../Components/Generic/Calendar/Calendar";
 import Selector from "../../Components/Generic/Select/Selector";
 import styles from "./Home.module.scss";
-import {
-  BlueButton,
-  WhiteButton,
-} from "../../Components/Generic/Button/Buttons";
+import { WhiteButton } from "../../Components/Generic/Button/Buttons";
 import EventBrief from "../../Components/EventItem/EventItem";
 
 const HomePage = () => {
@@ -40,14 +37,14 @@ const HomePage = () => {
               source={["Minsk", "Moscow", "Mogilev"]}
               handleValue={setTransport}
             />
-            {/* <button className={styles.search}>
-              <i className="fa fa-search fa-lg" aria-hidden={true}></i>
-            </button> */}
             <WhiteButton text="Search" onClick={() => console.log()} />
           </div>
         </div>
       </div>
-      <h3 style={{ fontWeight: 500, textAlign: "center", marginTop: 30 }}>
+      <h3
+        id="popular"
+        style={{ fontWeight: 500, textAlign: "center", marginTop: 30 }}
+      >
         Explore our the most popular events
       </h3>
       <div className={styles.popular}>

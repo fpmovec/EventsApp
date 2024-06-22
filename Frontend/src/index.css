@@ -7,6 +7,10 @@
   z-index: 0;
 }
 
+html {
+  scroll-margin-top: 72px;
+}
+
 h1 {
   font-size: 56px;
 }
@@ -21,4 +25,8 @@ h3 {
 
 h4 {
   font-size: 28px;
+}
+
+h5 {
+  font-size: 22px;
 }

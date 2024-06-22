@@ -11,8 +11,9 @@ type Props = {
 
 const EventBrief = () => {
   const currentDate = new Date();
+  const id: number = 5;
   currentDate.setSeconds(0, 0);
-
+  const navigate = useNavigate();
   return (
     <div className={styles.item}>
       <div className={styles.info}>
@@ -25,14 +26,13 @@ const EventBrief = () => {
             <div className={styles.category}>Concert</div>
           </div>
           <p>
-            dkbdfkhdzbfdbgsdbvs,nbdbgbgdbg,nzdbghsgbhdsbgdbdbhdsbsghbgsdgzfgdsgsdhthtdfhdfhtdhdfhfhhtjjdjjtjdsjvdskdsbkbxvksdhfsdbjcbdjkhseufbsdvsdbsejkbesjkgf
+            Lorem Ipsum is simply dummy text of the printing and typesetting
+            industry. Lorem Ipsum has been the industry's standard dummy text
+            ever since the 1500s, when an unknown printer...
           </p>
         </div>
         <div className={styles.buttonBlock}>
-          <BlueButton
-            text="More..."
-            onClick={() => console.log("Hello, I'm the custom event!")}
-          />
+          <BlueButton text="More..." onClick={() => navigate(`/event/${id}`)} />
         </div>
       </div>
       <div className={styles.additionalInfo}>
