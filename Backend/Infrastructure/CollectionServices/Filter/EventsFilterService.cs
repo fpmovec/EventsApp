@@ -56,7 +56,6 @@ namespace Infrastructure.CollectionServices.Filter
 
                     source = source.ToList().Where(sortFunctor).AsQueryable();
                 }
-                
             }
 
             return source;

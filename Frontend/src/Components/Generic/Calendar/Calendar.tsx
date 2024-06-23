@@ -3,14 +3,16 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import "./Calendar.module.scss";
+import dayjs from "dayjs";
 
 interface Props {
   handleValue: (v: Date) => void;
+  valueDate: Date;
 }
 
-const Calendar = ({ handleValue }: Props) => {
+const Calendar = ({ handleValue, valueDate }: Props) => {
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="de">
         <DatePicker
           label="Select date"
           disablePast={true}
@@ -18,6 +20,7 @@ const Calendar = ({ handleValue }: Props) => {
           slotProps={{
             actionBar: { actions: ["today"] },
           }}
+          value={dayjs(valueDate)}
           closeOnSelect={true}
         />
     </LocalizationProvider>

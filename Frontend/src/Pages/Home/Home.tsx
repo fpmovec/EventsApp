@@ -11,7 +11,7 @@ const HomePage = () => {
   const [category, setCategory] = useState<string>("");
 
   useEffect(() => {
-    console.log(date);
+    //console.log(date);
   }, [date]);
 
   return (
@@ -25,7 +25,7 @@ const HomePage = () => {
         </div>
         <div className={styles.eventsSelectorBlock}>
           <div className={styles.eventsSelectorContent}>
-            <Calendar handleValue={setDate} />
+            <Calendar valueDate={date} handleValue={setDate} />
             <Selector
               label="City"
               value={city}

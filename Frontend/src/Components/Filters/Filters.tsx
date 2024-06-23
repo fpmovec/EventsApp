@@ -9,44 +9,58 @@ import { useState } from "react";
 import Calendar from "../Generic/Calendar/Calendar";
 import Selector from "../Generic/Select/Selector";
 import { Slider } from "@mui/material";
-import { BlueButton, WhiteButton } from "../Generic/Button/Buttons";
+import { WhiteButton } from "../Generic/Button/Buttons";
 import { TextField } from "@mui/material";
+import { useSearchParams } from "react-router-dom";
+import { SortType } from "../../lib/Utils/SortUtils";
+import {
+  maxEventPrice,
+  minEventPrice,
+  priceSliderStep,
+} from "../../lib/Constants";
 
 type Props = {
   filterOptions: EventsFilterOptions;
-  setOptions: (arg: EventsFilterOptions) => void;
+  setFilterOptions: (value: React.SetStateAction<EventsFilterOptions>) => void;
 };
 
-const Filters = () => {
-  const [options, setOptions] = useState<EventsFilterOptions>({
-    sortType: 0,
-    sortOrder: 0,
-    category: "",
-    minDate: null,
-    maxDate: null,
-    minPrice: 0,
-    maxPrice: 2147483647,
-    place: "",
-    currentPage: 1,
-  });
+const Filters = ({ filterOptions, setFilterOptions }: Props) => {
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const [city, setCity] = useState<string>("");
-  const [category, setCategory] = useState<string>("");
-  const [priceRange, setPriceRange] = useState<number[]>([10, 200]);
-  const [sortType, setSortType] = useState<string>("Default");
-  const [sortOrder, setSortOrder] = useState<boolean>(false);
 
   const handleExpand = () => setIsExpanded((prev) => !prev);
+
+  const [sortType, setSortType] = useState<string>("Default");
+  const dateInYear = new Date();
+  dateInYear.setDate(dateInYear.getDate() + 365);
+  const currentPage = filterOptions.currentPage;
+  const clearFilters = () =>
+    setFilterOptions((prev) => ({
+      ...prev,
+      sortType: 0,
+      sortOrder: 0,
+      category: "",
+      minDate: new Date(),
+      maxDate: dateInYear,
+      minPrice: 0,
+      maxPrice: maxEventPrice,
+      place: "",
+      searchString: "",
+    }));
+
   const handleChangeSlider = (
     event: React.SyntheticEvent | Event,
     newValue: number | Array<number>
   ) => {
     if (!Array.isArray(newValue)) return;
-    console.log(newValue);
-    setPriceRange(newValue as number[]);
+    setFilterOptions((prev) => ({
+      ...prev,
+      minPrice: newValue[0],
+      maxPrice: newValue[1],
+    }));
   };
-
+  console.log(filterOptions);
   return (
     <div className={styles.main}>
       <div className={styles.search}>
@@ -55,8 +69,25 @@ const Filters = () => {
           id="outlined-size-small"
           defaultValue="Small"
           size="small"
+          value={filterOptions.searchString}
+          onChange={(v) => {
+            setFilterOptions((prev) => ({
+              ...prev,
+              searchString: v.target.value,
+            }));
+          }}
         />
-        <WhiteButton text="Search" onClick={() => console.log()}/>
+        <WhiteButton
+          text="Search"
+          onClick={() =>
+            setSearchParams((prevParams) => {
+              return new URLSearchParams({
+                ...Object.fromEntries(prevParams.entries()),
+                searchString: filterOptions.searchString ?? "",
+              });
+            })
+          }
+        />
       </div>
       <div className={styles.expander}>
         <div className={styles.expanderHeader} onClick={handleExpand}>
@@ -71,54 +102,83 @@ const Filters = () => {
           <div className={styles.expanderBody}>
             <div className={styles.filterItem}>
               <h6 style={{ marginRight: 10 }}>Date range:</h6>
-              <Calendar handleValue={(v) => console.log(v)} />
+              <Calendar
+                valueDate={filterOptions.minDate ?? new Date()}
+                handleValue={(v) =>
+                  setFilterOptions((prev) => ({ ...prev, minDate: v ?? new Date() }))
+                }
+              />
               --
-              <Calendar handleValue={(v) => console.log(v)} />
+              <Calendar
+                valueDate={filterOptions.maxDate ?? dateInYear}
+                handleValue={(v) =>
+                  setFilterOptions((prev) => ({ ...prev, maxDate: v ?? dateInYear }))
+                }
+              />
             </div>
             <div className={styles.filterItem}>
               <h6 style={{ marginRight: 10 }}>City:</h6>
               <Selector
                 label="City"
-                value={city}
+                value={filterOptions.place ?? ""}
                 source={["Minsk", "Moscow", "Mogilev"]}
-                handleValue={setCity}
+                handleValue={(v) =>
+                  setFilterOptions((prev) => ({ ...prev, place: v }))
+                }
               />
             </div>
             <div className={styles.filterItem}>
               <h6 style={{ marginRight: 10 }}>Category:</h6>
               <Selector
                 label="Category"
-                value={category}
+                value={filterOptions.category as string}
                 source={["Festival", "Concert", "Conference"]}
-                handleValue={setCategory}
+                handleValue={(v) =>
+                  setFilterOptions((prev) => ({ ...prev, category: v }))
+                }
               />
             </div>
             <div className={styles.filterItem}>
               <h6 style={{ marginRight: 10 }}>Price range:</h6>
               <Slider
-                value={priceRange}
-                onChangeCommitted={(e, v) => handleChangeSlider(e, v)}
+                value={[
+                  filterOptions.minPrice ?? 0,
+                  filterOptions.maxPrice ?? 0,
+                ]}
                 onChange={(e, v) => handleChangeSlider(e, v)}
                 valueLabelDisplay="on"
                 disableSwap
                 color="primary"
-                min={0}
-                max={2000}
-                step={5}
+                min={minEventPrice}
+                max={maxEventPrice}
+                step={priceSliderStep}
               />
             </div>
             <div className={styles.filterItem}>
               <h6 style={{ marginRight: 10 }}>Sort:</h6>
               <Selector
                 label="Sort by"
-                value={sortType}
-                source={["Default", "By name", "By date"]}
-                handleValue={setSortType}
+                value={sortType ?? ""}
+                source={["Default", "By name", "By date", "By price"]}
+                handleValue={(v) => {
+                  setFilterOptions((prev) => ({
+                    ...prev,
+                    sortType: SortType[v],
+                  }));
+                  setSortType(v);
+                }}
               />
               <div
-                onClick={() => setSortOrder((prev) => !prev)}
+                onClick={() =>
+                  setFilterOptions((prev) => ({
+                    ...prev,
+                    sortOrder: prev.sortOrder == 1 ? 0 : 1,
+                  }))
+                }
                 className={
-                  sortOrder ? styles.descendingOrder : styles.ascendingOrder
+                  filterOptions.sortOrder
+                    ? styles.descendingOrder
+                    : styles.ascendingOrder
                 }
                 style={{ marginLeft: 30 }}
               >
@@ -127,8 +187,45 @@ const Filters = () => {
             </div>
             <div></div>
             <div className={styles.filterButtons}>
-              <WhiteButton text="Apply" onClick={() => console.log()} />
-              <WhiteButton text="Clear all" onClick={() => console.log()} />
+              <WhiteButton
+                text="Apply"
+                onClick={() => {
+                  setSearchParams((prevParams) => {
+                    return new URLSearchParams({
+                      ...Object.fromEntries(prevParams.entries()),
+                      sortType: filterOptions.sortType.toString(),
+                      sortOrder: filterOptions.sortOrder.toString(),
+                      category: filterOptions.category ?? "",
+                      place: filterOptions.place ?? "",
+                      minDate: (filterOptions.minDate ?? new Date()).toDateString(),
+                      maxDate: (filterOptions.maxDate ?? dateInYear).toDateString(),
+                      minPrice:
+                        filterOptions.minPrice?.toString() ??
+                        minEventPrice.toString(),
+                      maxPrice:
+                        filterOptions.maxPrice?.toString() ??
+                        maxEventPrice.toString(),
+                    });
+                  });
+                  setIsExpanded(false);
+                }}
+              />
+              <WhiteButton
+                text="Clear all"
+                onClick={() => {
+                  clearFilters();
+                  /* navigate(
+                    `/events?searchString=${filterOptions.searchString}&currentPage=${currentPage}`
+                  ); */
+                  setSearchParams(() => {
+                    return new URLSearchParams({
+                      searchString: filterOptions.searchString ?? "",
+                      currentPage: currentPage.toString(),
+                    });
+                  });
+                  setIsExpanded(false);
+                }}
+              />
             </div>
           </div>
         </div>

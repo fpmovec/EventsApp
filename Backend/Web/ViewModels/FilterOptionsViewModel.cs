@@ -13,6 +13,6 @@ namespace Web.ViewModels
         public double? MinPrice { get; set; } = null;
         public string? Place { get; set; } = null;
         public string? SearchString { get; set; } = null;   
-        public int CurrentPage { get; set; } = 0;
+        public int CurrentPage { get; set; } = 1;
     }
 }
