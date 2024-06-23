@@ -18,7 +18,9 @@ namespace Infrastructure.CollectionServices.Filter
             { FilterType.ByMinDate, (model, value) => model.Date >= (DateOnly)value },
             { FilterType.ByMinPrice, (model, value) => model.Price >= (double)value },
             { FilterType.ByMaxPrice, (model, value) => model.Price <= (double)value },
-            { FilterType.ByPlace, (model, value) => model.Place == (string)value    }
+            { FilterType.ByPlace, (model, value) => model.Place == (string)value    },
+            { FilterType.ByName, (model, value) => model.Name.Contains((string)value,
+                StringComparison.InvariantCultureIgnoreCase) }
         }.ToFrozenDictionary();
 
         public IQueryable<EventBaseModel> Filter(IQueryable<EventBaseModel> collection, FilterType property, object filterValue)

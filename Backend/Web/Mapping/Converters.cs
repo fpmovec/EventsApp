@@ -28,6 +28,9 @@ namespace Web.Mapping
             if (!string.IsNullOrEmpty(source.Place))
                 filterOptions.Add(new() { FilterType = Domain.Enums.FilterType.ByPlace, Value = source.Place });
 
+            if (!string.IsNullOrEmpty(source.SearchString))
+                filterOptions.Add(new() { FilterType = Domain.Enums.FilterType.ByName, Value = source.SearchString });
+
             return filterOptions;        
         }
     }

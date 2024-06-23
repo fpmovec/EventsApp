@@ -26,6 +26,7 @@ namespace Domain.Enums
         ByMinPrice,
         ByMaxPrice,
         ByPlace,
+        ByName
     }
 
     public enum SortOrder

@@ -9,6 +9,7 @@
 
 html {
   scroll-margin-top: 72px;
+  overflow-x: hidden;
 }
 
 h1 {

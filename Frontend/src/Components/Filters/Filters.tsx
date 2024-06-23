@@ -1,10 +1,16 @@
 import { EventsFilterOptions } from "../../lib/DTOs/FilterOptions";
-import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
+import {
+  KeyboardArrowDown,
+  KeyboardArrowUp,
+  ArrowUpward,
+} from "@mui/icons-material";
 import styles from "./Filters.module.scss";
 import { useState } from "react";
 import Calendar from "../Generic/Calendar/Calendar";
 import Selector from "../Generic/Select/Selector";
 import { Slider } from "@mui/material";
+import { BlueButton, WhiteButton } from "../Generic/Button/Buttons";
+import { TextField } from "@mui/material";
 
 type Props = {
   filterOptions: EventsFilterOptions;
@@ -28,6 +34,8 @@ const Filters = () => {
   const [city, setCity] = useState<string>("");
   const [category, setCategory] = useState<string>("");
   const [priceRange, setPriceRange] = useState<number[]>([10, 200]);
+  const [sortType, setSortType] = useState<string>("Default");
+  const [sortOrder, setSortOrder] = useState<boolean>(false);
 
   const handleExpand = () => setIsExpanded((prev) => !prev);
   const handleChangeSlider = (
@@ -41,9 +49,18 @@ const Filters = () => {
 
   return (
     <div className={styles.main}>
+      <div className={styles.search}>
+        <TextField
+          label="Search event by name..."
+          id="outlined-size-small"
+          defaultValue="Small"
+          size="small"
+        />
+        <WhiteButton text="Search" onClick={() => console.log()}/>
+      </div>
       <div className={styles.expander}>
         <div className={styles.expanderHeader} onClick={handleExpand}>
-          <div className={styles.expanderTitle}>Filters</div>
+          <div className={styles.expanderTitle}>Filter and Sort</div>
           {isExpanded ? (
             <KeyboardArrowUp fontSize="large" />
           ) : (
@@ -89,6 +106,29 @@ const Filters = () => {
                 max={2000}
                 step={5}
               />
+            </div>
+            <div className={styles.filterItem}>
+              <h6 style={{ marginRight: 10 }}>Sort:</h6>
+              <Selector
+                label="Sort by"
+                value={sortType}
+                source={["Default", "By name", "By date"]}
+                handleValue={setSortType}
+              />
+              <div
+                onClick={() => setSortOrder((prev) => !prev)}
+                className={
+                  sortOrder ? styles.descendingOrder : styles.ascendingOrder
+                }
+                style={{ marginLeft: 30 }}
+              >
+                <ArrowUpward color="primary" fontSize="large" />
+              </div>
+            </div>
+            <div></div>
+            <div className={styles.filterButtons}>
+              <WhiteButton text="Apply" onClick={() => console.log()} />
+              <WhiteButton text="Clear all" onClick={() => console.log()} />
             </div>
           </div>
         </div>

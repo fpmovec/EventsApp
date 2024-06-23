@@ -64,7 +64,6 @@ namespace Web.Controllers
             return Ok(mappedModel);
         }
 
-        [Authorize]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetFilteredEvents([FromQuery]FilterOptionsViewModel options)
         {
