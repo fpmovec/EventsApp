@@ -27,7 +27,7 @@ namespace Infrastructure.Repositories
         private DbSet<EventExtendedModel> dbSetExtended
             => _eventContext.ExtendedEvents;
 
-        public async Task<ICollection<EventBaseModel>> GetEventsByParticipantId(Guid id)
+        public async Task<ICollection<EventBaseModel>> GetEventsByParticipantIdAsync(Guid id)
         {
             return await dbSetExtended.Where(e => e.Participants.Any(c => c.Id == id))
                 .Include(e => e.Category)
@@ -43,7 +43,7 @@ namespace Infrastructure.Repositories
             return events.ToList();
         }
 
-        public async Task<EventExtendedModel?> GetExtendedEventById(Guid id)
+        public async Task<EventExtendedModel?> GetExtendedEventByIdAsync(Guid id)
         {
             EventExtendedModel? eventExtended = await dbSetExtended
                 .Include(e => e.Image)
@@ -51,6 +51,22 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(e => e.Id == id);
 
             return eventExtended;
+        }
+
+        public async Task<ICollection<EventBaseModel>> GetMostPopularAsync()
+        {
+            var popularEvents = await dbSetExtended
+                .AsNoTracking()
+                .Include(e => e.Image)
+                .Include(e => e.Category)
+                .OrderByDescending(e => e.BookedTicketsCount)
+                .Where(e => e.MaxParticipantsCount != e.BookedTicketsCount)
+                .Where(e => e.Date > DateOnly.FromDateTime(DateTime.UtcNow))
+                .Take(5)
+                .Select(e => (EventBaseModel)e)
+                .ToListAsync();
+
+            return popularEvents;
         }
 
         public override async Task UpdateAsync(EventBaseModel entity)

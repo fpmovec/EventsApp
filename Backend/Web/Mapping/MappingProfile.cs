@@ -9,7 +9,7 @@ namespace Web.Mapping
     {
         public MappingProfile()
         {
-            CreateMap<EventViewModel, EventExtendedModel>();
+            CreateMap<EventViewModel, EventExtendedModel>().ReverseMap();
             CreateMap<FilterOptionsViewModel, List<FilterOption>>()
                 .ConvertUsing<FilterOptionsConverter>();
         }

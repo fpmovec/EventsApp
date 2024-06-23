@@ -12,7 +12,9 @@ namespace Application.Repositories
             SortOrder order = SortOrder.Ascending,
             int currentPage = 0);
 
-        Task<ICollection<EventBaseModel>> GetEventsByParticipantId(Guid id);
-        Task<EventExtendedModel?> GetExtendedEventById(Guid id);
+        Task<ICollection<EventBaseModel>> GetEventsByParticipantIdAsync(Guid id);
+        Task<EventExtendedModel?> GetExtendedEventByIdAsync(Guid id);
+
+        Task<ICollection<EventBaseModel>> GetMostPopularAsync();
     }
 }

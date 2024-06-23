@@ -15,11 +15,9 @@ import { BlueButton } from "../../Components/Generic/Button/Buttons";
 
 const EventInfo = () => {
   const { eventId } = useParams();
-  const [currentEvent, setCurrentEvent] = useState<EventItemExtended | null>(
-    null
-  );
   const currentDate = new Date();
   currentDate.setSeconds(0, 0);
+  
   useEffect(() => {
     // get eventInfo
   }, [eventId]);

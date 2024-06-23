@@ -87,7 +87,7 @@ namespace Web.Controllers
         [HttpGet("get/{id:Guid}")]
         public async Task<IActionResult> GetEventInformation(Guid id)
         {
-            EventExtendedModel? extendedEvent = await _unitOfWork.EventsRepository.GetExtendedEventById(id);
+            EventExtendedModel? extendedEvent = await _unitOfWork.EventsRepository.GetExtendedEventByIdAsync(id);
 
             if (extendedEvent is null)
             {
@@ -103,7 +103,7 @@ namespace Web.Controllers
         [HttpGet("participant/{participantId:Guid}")]
         public async Task<IActionResult> GetParticipantEvents(Guid participantId)
         {
-            ICollection<EventBaseModel> events = await _unitOfWork.EventsRepository.GetEventsByParticipantId(participantId);
+            ICollection<EventBaseModel> events = await _unitOfWork.EventsRepository.GetEventsByParticipantIdAsync(participantId);
 
             return Ok(events);
         }
@@ -120,7 +120,7 @@ namespace Web.Controllers
                 return BadRequest();
             }
 
-            EventExtendedModel? extendedEvent = await _unitOfWork.EventsRepository.GetExtendedEventById(id);
+            EventExtendedModel? extendedEvent = await _unitOfWork.EventsRepository.GetExtendedEventByIdAsync(id);
 
             if (extendedEvent is null)
             {
@@ -173,6 +173,14 @@ namespace Web.Controllers
             await _unitOfWork.CompleteAsync();
 
             return Ok();
+        }
+
+        [HttpGet("popular")]
+        public async Task<IActionResult> GetMostPopular()
+        {
+            var events =  await _unitOfWork.EventsRepository.GetMostPopularAsync();
+
+            return Ok(events);
         }
     }
 }

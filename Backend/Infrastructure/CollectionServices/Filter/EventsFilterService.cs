@@ -42,7 +42,7 @@ namespace Infrastructure.CollectionServices.Filter
                 .Include(e => e.Image)
                 .Include(e => e.Category);
 
-            if (filterOptions is null && filterOptions?.Count == 0)
+            if (filterOptions is null || filterOptions?.Count == 0)
                 return source;
 
             foreach (FilterOption filterOption in filterOptions)

@@ -7,7 +7,8 @@ import EventBrief from "../../Components/EventItem/EventItem";
 
 const HomePage = () => {
   const [date, setDate] = useState<Date>(new Date());
-  const [transport, setTransport] = useState<string>("");
+  const [city, setCity] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
 
   useEffect(() => {
     console.log(date);
@@ -27,15 +28,15 @@ const HomePage = () => {
             <Calendar handleValue={setDate} />
             <Selector
               label="City"
-              value={transport}
+              value={city}
               source={["Minsk", "Moscow", "Mogilev"]}
-              handleValue={setTransport}
+              handleValue={setCity}
             />
             <Selector
-              label="City"
-              value={transport}
-              source={["Minsk", "Moscow", "Mogilev"]}
-              handleValue={setTransport}
+              label="Category"
+              value={category}
+              source={["Festival", "Concert", "Conference"]}
+              handleValue={setCategory}
             />
             <WhiteButton text="Search" onClick={() => console.log()} />
           </div>
