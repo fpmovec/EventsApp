@@ -181,5 +181,9 @@ namespace Web.Controllers
 
             return Ok(events);
         }
+
+        [HttpGet("pages")]
+        public async Task<IActionResult> GetPagesCount()
+            => Ok(await _unitOfWork.EventsRepository.GetPagesCountAsync());
     }
 }

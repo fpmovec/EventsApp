@@ -22,9 +22,15 @@ import {
 type Props = {
   filterOptions: EventsFilterOptions;
   setFilterOptions: (value: React.SetStateAction<EventsFilterOptions>) => void;
+  onApply: () => void;
 };
 
-const Filters = ({ filterOptions, setFilterOptions }: Props) => {
+const Filters = ({
+  filterOptions,
+  setFilterOptions,
+  onApply
+}: Props) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
@@ -33,7 +39,24 @@ const Filters = ({ filterOptions, setFilterOptions }: Props) => {
 
   const [sortType, setSortType] = useState<string>("Default");
   const dateInYear = new Date();
-  dateInYear.setDate(dateInYear.getDate() + 365);
+  dateInYear.setDate(dateInYear.getDate() + 365 * 2);
+
+  const minDate = ({
+    v = filterOptions.minDate,
+  }: { v?: Date | null | undefined } = {}) => {
+    if (!isFinite(+(v as Date))) {
+      return new Date();
+    } else return v as Date;
+  };
+
+  const maxDate = ({
+    v = filterOptions.maxDate,
+  }: { v?: Date | null | undefined } = {}) => {
+    if (!isFinite(+(v as Date))) {
+      return dateInYear;
+    } else return v as Date;
+  };
+
   const currentPage = filterOptions.currentPage;
   const clearFilters = () =>
     setFilterOptions((prev) => ({
@@ -60,7 +83,7 @@ const Filters = ({ filterOptions, setFilterOptions }: Props) => {
       maxPrice: newValue[1],
     }));
   };
-  console.log(filterOptions);
+
   return (
     <div className={styles.main}>
       <div className={styles.search}>
@@ -79,14 +102,15 @@ const Filters = ({ filterOptions, setFilterOptions }: Props) => {
         />
         <WhiteButton
           text="Search"
-          onClick={() =>
+          onClick={() => {
             setSearchParams((prevParams) => {
               return new URLSearchParams({
                 ...Object.fromEntries(prevParams.entries()),
                 searchString: filterOptions.searchString ?? "",
               });
-            })
-          }
+            });
+            onApply();
+          }}
         />
       </div>
       <div className={styles.expander}>
@@ -103,16 +127,22 @@ const Filters = ({ filterOptions, setFilterOptions }: Props) => {
             <div className={styles.filterItem}>
               <h6 style={{ marginRight: 10 }}>Date range:</h6>
               <Calendar
-                valueDate={filterOptions.minDate ?? new Date()}
-                handleValue={(v) =>
-                  setFilterOptions((prev) => ({ ...prev, minDate: v ?? new Date() }))
+                valueDate={minDate()}
+                handleValue={(value) =>
+                  setFilterOptions((prev) => ({
+                    ...prev,
+                    minDate: minDate({ v: value }),
+                  }))
                 }
               />
               --
               <Calendar
-                valueDate={filterOptions.maxDate ?? dateInYear}
-                handleValue={(v) =>
-                  setFilterOptions((prev) => ({ ...prev, maxDate: v ?? dateInYear }))
+                valueDate={maxDate()}
+                handleValue={(value) =>
+                  setFilterOptions((prev) => ({
+                    ...prev,
+                    maxDate: maxDate({ v: value }),
+                  }))
                 }
               />
             </div>
@@ -142,11 +172,14 @@ const Filters = ({ filterOptions, setFilterOptions }: Props) => {
               <h6 style={{ marginRight: 10 }}>Price range:</h6>
               <Slider
                 value={[
-                  filterOptions.minPrice ?? 0,
-                  filterOptions.maxPrice ?? 0,
+                  filterOptions.minPrice ?? minEventPrice,
+                  filterOptions.maxPrice === 0
+                    ? maxEventPrice
+                    : (filterOptions.maxPrice as number),
                 ]}
                 onChange={(e, v) => handleChangeSlider(e, v)}
                 valueLabelDisplay="on"
+                defaultValue={[minEventPrice, maxEventPrice]}
                 disableSwap
                 color="primary"
                 min={minEventPrice}
@@ -197,8 +230,8 @@ const Filters = ({ filterOptions, setFilterOptions }: Props) => {
                       sortOrder: filterOptions.sortOrder.toString(),
                       category: filterOptions.category ?? "",
                       place: filterOptions.place ?? "",
-                      minDate: (filterOptions.minDate ?? new Date()).toDateString(),
-                      maxDate: (filterOptions.maxDate ?? dateInYear).toDateString(),
+                      minDate: minDate().toDateString(),
+                      maxDate: maxDate().toDateString(),
                       minPrice:
                         filterOptions.minPrice?.toString() ??
                         minEventPrice.toString(),
@@ -208,15 +241,13 @@ const Filters = ({ filterOptions, setFilterOptions }: Props) => {
                     });
                   });
                   setIsExpanded(false);
+                  onApply();
                 }}
               />
               <WhiteButton
                 text="Clear all"
                 onClick={() => {
                   clearFilters();
-                  /* navigate(
-                    `/events?searchString=${filterOptions.searchString}&currentPage=${currentPage}`
-                  ); */
                   setSearchParams(() => {
                     return new URLSearchParams({
                       searchString: filterOptions.searchString ?? "",
@@ -224,6 +255,7 @@ const Filters = ({ filterOptions, setFilterOptions }: Props) => {
                     });
                   });
                   setIsExpanded(false);
+                  onApply();
                 }}
               />
             </div>

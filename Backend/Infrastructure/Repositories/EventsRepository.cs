@@ -12,14 +12,17 @@ namespace Infrastructure.Repositories
 {
     public class EventsBaseRepository : GenericRepository<EventBaseModel, Guid>, IEventsRepository
     {
-
+        private readonly PaginationSettings paginationSettings;
         public EventsBaseRepository(
             EventContext eventContext,
             ILogger<EventsBaseRepository> logger,
             IOptions<AppSettings> options,
             IFilterService<EventBaseModel> filterService,
             ISortService<EventBaseModel> sortService) 
-            : base(eventContext, logger, options, filterService, sortService) { }
+            : base(eventContext, logger, options, filterService, sortService)
+        {
+            paginationSettings = options.Value.PaginationSettings;
+        }
 
         protected override DbSet<EventBaseModel> dbSet
             => _eventContext.Events;
@@ -38,6 +41,7 @@ namespace Infrastructure.Repositories
 
         public async Task<ICollection<EventBaseModel>> GetFilteredEventsAsync(List<FilterOption> filterOptions, SortType sortType = SortType.Default, SortOrder order = SortOrder.Ascending, int currentPage = 0)
         {
+            
             var events = await GetAllAsync(filterOptions, sortType, order, currentPage);
 
             return events.ToList();
@@ -60,8 +64,9 @@ namespace Infrastructure.Repositories
                 .Include(e => e.Image)
                 .Include(e => e.Category)
                 .OrderByDescending(e => e.BookedTicketsCount)
-                .Where(e => e.MaxParticipantsCount != e.BookedTicketsCount)
-                .Where(e => e.Date > DateOnly.FromDateTime(DateTime.UtcNow))
+                .ThenBy(e => e.Date)
+                //.Where(e => e.MaxParticipantsCount != e.BookedTicketsCount)
+                //.Where(e => e.Date > DateTime.UtcNow)
                 .Take(5)
                 .Select(e => (EventBaseModel)e)
                 .ToListAsync();
@@ -73,5 +78,8 @@ namespace Infrastructure.Repositories
         {
             await base.UpdateAsync(entity);
         }
+
+        public async Task<int> GetPagesCountAsync() 
+            => await Task.FromResult(dbSet.Count() / paginationSettings.PageSize + 1);
     }
 }

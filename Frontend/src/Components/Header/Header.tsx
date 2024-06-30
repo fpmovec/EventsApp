@@ -8,7 +8,7 @@ const Header = () => {
       <div className={styles.header}>
         <div className={styles.links}>
           <HeaderLink text="Home" path="/" />
-          <HeaderLink text="All events" path="/events" />
+          <HeaderLink text="All events" path="/events?currentPage=1" />
           <HeaderLink text="My tickets" path="/" />
           <HeaderLink text="About" path="/" />
         </div>

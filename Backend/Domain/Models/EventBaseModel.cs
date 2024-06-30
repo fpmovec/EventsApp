@@ -18,9 +18,7 @@ namespace Domain.Models
         
         public string Place {  get; set; } = string.Empty; 
 
-        public DateOnly Date {  get; set; } = default;
-
-        public TimeOnly Time { get; set; } = default;
+        public DateTime Date {  get; set; } = default;
 
         public EventCategory Category { get; set; }
 

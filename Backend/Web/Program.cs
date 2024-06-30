@@ -87,6 +87,16 @@ builder.Services.AddDefaultIdentity<IdentityUser>(opts =>
     opts.Password.RequireNonAlphanumeric = false;
 }).AddEntityFrameworkStores<EventContext>();
 
+builder.Services.AddCors(opts =>
+{
+    opts.AddDefaultPolicy(build =>
+    {
+        build.AllowAnyHeader();
+        build.AllowAnyMethod();
+        build.AllowAnyOrigin();
+    });
+});
+
 var app = builder.Build();
 
 app.UseStaticFiles(new StaticFileOptions
@@ -109,7 +119,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
 app.UseRouting();
+app.UseCors();
 app.UseExceptionHandlingMiddleware();
 app.UseRequestLogging();
 

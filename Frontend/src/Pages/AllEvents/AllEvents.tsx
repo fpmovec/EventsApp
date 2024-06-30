@@ -5,8 +5,10 @@ import { Pagination, PaginationItem } from "@mui/material";
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { EventsFilterOptions } from "../../lib/DTOs/FilterOptions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { maxEventPrice } from "../../lib/Constants";
+import { EventItem } from "../../lib/DTOs/Event";
+import { GetEvents, GetPagesCount } from "../../lib/Requests/GET/EventsRequests";
 
 const AllEvents = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -27,7 +29,23 @@ const AllEvents = () => {
 
   const navigate = useNavigate();
   const page = pageFromQuery == 0 ? 1 : pageFromQuery;
-  //const [currentPage, setPage] = useState<number>(page);
+
+  const [eventItems, setEventItems] = useState<EventItem[]>([]);
+const [pagesCount, setPagesCount] = useState<number>(1);
+  const getEvents = async () => {
+    const items = await GetEvents(filterOptions);
+    setEventItems(items);
+  };
+
+  useEffect(() => {
+    const getPagesCount = async () => {
+      const pages = await GetPagesCount();
+      setPagesCount(pages);
+    }
+    getEvents();
+
+    getPagesCount();
+  }, [pageFromQuery]);
 
   return (
     <div>
@@ -35,40 +53,54 @@ const AllEvents = () => {
         <Filters
           filterOptions={filterOptions}
           setFilterOptions={setFilterOptions}
+          onApply={getEvents}
         />
       </div>
-      <div className={styles.eventsList}>
-        <EventBrief />
-        <EventBrief />
-        <EventBrief />
-      </div>
-      <div className={styles.pagination}>
-        <Pagination
-          count={10}
-          defaultPage={1}
-          onChange={(e, p) => {
-            setFilterOptions((prev) => ({ ...prev, currentPage: p }));
-            /* navigate(
-              `/events?searchString=${filterOptions.searchString}&sortType=${filterOptions.sortType}&sortOrder=${filterOptions.sortOrder}&category=${filterOptions.category}&place=${filterOptions.place}&minDate=${filterOptions.minDate}&maxDate=${filterOptions.maxDate}&minPrice=${filterOptions.minPrice}&maxPrice=${filterOptions.maxPrice}&currentPage=${p}`
-            ); */
-            setSearchParams((prevParams) => {
-              return new URLSearchParams({
-                ...Object.fromEntries(prevParams.entries()),
-                currentPage: p.toString(),
-              });
-            });
-          }}
-          page={page}
-          renderItem={(item) => (
-            <PaginationItem
-              slots={{ previous: ArrowBack, next: ArrowForward }}
-              {...item}
-              size="large"
-              color="primary"
+      {eventItems.length > 0 ? (
+        <>
+          <div className={styles.eventsList}>
+            {eventItems.map((e, i) => (
+              <EventBrief eventItem={e} key={i} />
+            ))}
+          </div>
+          <div className={styles.pagination}>
+            <Pagination
+              count={pagesCount}
+              defaultPage={1}
+              onChange={(e, p) => {
+                setFilterOptions((prev) => ({ ...prev, currentPage: p }));
+                setSearchParams((prevParams) => {
+                  return new URLSearchParams({
+                    ...Object.fromEntries(prevParams.entries()),
+                    currentPage: p.toString(),
+                  });
+                });
+              }}
+              page={page}
+              renderItem={(item) => (
+                <PaginationItem
+                  slots={{ previous: ArrowBack, next: ArrowForward }}
+                  {...item}
+                  size="large"
+                  color="primary"
+                />
+              )}
             />
-          )}
-        />
-      </div>
+          </div>
+        </>
+      ) : (
+        <h4
+          style={{
+            fontWeight: 300,
+            letterSpacing: 2,
+            textAlign: "center",
+            marginTop: 35,
+            marginBottom: 350,
+          }}
+        >
+          No events found
+        </h4>
+      )}
     </div>
   );
 };

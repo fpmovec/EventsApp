@@ -4,10 +4,11 @@ interface Props {
   label: string;
   source: string[];
   value: string;
+  isRequired?: boolean;
   handleValue: (i: string) => void;
 }
 
-const Selector = ({ label, value, source, handleValue }: Props) => {
+const Selector = ({ label, value, source, handleValue, isRequired = false }: Props) => {
   return (
     <>
       <FormControl style={{width: 170}}>
@@ -19,6 +20,7 @@ const Selector = ({ label, value, source, handleValue }: Props) => {
           value={value}
           MenuProps={{ disableScrollLock: true }}
           fullWidth={false}
+          required={isRequired}
         >
           {source.map((item, index) => {
             return (

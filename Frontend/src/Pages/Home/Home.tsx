@@ -4,15 +4,25 @@ import Selector from "../../Components/Generic/Select/Selector";
 import styles from "./Home.module.scss";
 import { WhiteButton } from "../../Components/Generic/Button/Buttons";
 import EventBrief from "../../Components/EventItem/EventItem";
+import { useNavigate } from "react-router-dom";
+import { EventItem } from "../../lib/DTOs/Event";
+import { GetPopularEvents } from "../../lib/Requests/GET/EventsRequests";
 
 const HomePage = () => {
   const [date, setDate] = useState<Date>(new Date());
   const [city, setCity] = useState<string>("");
   const [category, setCategory] = useState<string>("");
+  const [popularEvents, setPopularEvents] = useState<EventItem[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    //console.log(date);
-  }, [date]);
+    const getPopularEvents = async () => {
+      const events = await GetPopularEvents();
+      setPopularEvents(events);
+    };
+
+    getPopularEvents();
+  }, []);
 
   return (
     <>
@@ -31,14 +41,23 @@ const HomePage = () => {
               value={city}
               source={["Minsk", "Moscow", "Mogilev"]}
               handleValue={setCity}
+              isRequired={true}
             />
             <Selector
               label="Category"
               value={category}
               source={["Festival", "Concert", "Conference"]}
               handleValue={setCategory}
+              isRequired={true}
             />
-            <WhiteButton text="Search" onClick={() => console.log()} />
+            <WhiteButton
+              text="Search"
+              onClick={() =>
+                navigate(
+                  `/events?minDate=${date.toDateString()}&maxDate=${date.toDateString()}&category=${category}&place=${city}&currentPage=1`
+                )
+              }
+            />
           </div>
         </div>
       </div>
@@ -49,14 +68,13 @@ const HomePage = () => {
         Explore our the most popular events
       </h3>
       <div className={styles.popular}>
-        <EventBrief />
-        <EventBrief />
-        <EventBrief />
-        <EventBrief />
-        <EventBrief />
+        {popularEvents.map((e, i) => (
+          <EventBrief eventItem={e} key={i} />
+        ))}
       </div>
     </>
   );
 };
 
 export default HomePage;
+

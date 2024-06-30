@@ -4,16 +4,17 @@ import styles from "./EventItem.module.scss";
 import noImage from "../../assets/main.png";
 import { BlueButton } from "../Generic/Button/Buttons";
 import Price from "../Generic/Price/Price";
+import { Place, CalendarMonth } from "@mui/icons-material";
 
 type Props = {
   eventItem: EventItem;
 };
 
-const EventBrief = () => {
+const EventBrief = ({eventItem}: Props) => {
   const currentDate = new Date();
-  const id: number = 5;
   currentDate.setSeconds(0, 0);
   const navigate = useNavigate();
+
   return (
     <div className={styles.item}>
       <div className={styles.info}>
@@ -22,23 +23,21 @@ const EventBrief = () => {
         </div>
         <div className={styles.mainInfo}>
           <div className={styles.title}>
-            <h4>Any test name</h4>
-            <div className={styles.category}>Concert</div>
+            <h4>{eventItem.name}</h4>
+            <div className={styles.category}>{eventItem.category.name}</div>
           </div>
           <p>
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer...
+            {eventItem.briefDescription}
           </p>
         </div>
         <div className={styles.buttonBlock}>
-          <BlueButton text="More..." onClick={() => navigate(`/event/${id}`)} />
+          <BlueButton text="More..." onClick={() => navigate(`/event/${eventItem.id}`)} />
         </div>
       </div>
       <div className={styles.additionalInfo}>
-        <div>Minsk</div>
-        <div>{currentDate.toLocaleString()}</div>
-        <Price value={10} />
+        <div><Place color="primary"/><span>{eventItem.place}</span></div>
+        <div><CalendarMonth color="primary"/><span>{new Date(eventItem.date).toLocaleString()}</span></div>
+        <Price value={eventItem.price} />
       </div>
     </div>
   );

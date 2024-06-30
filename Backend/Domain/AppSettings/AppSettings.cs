@@ -12,6 +12,10 @@ namespace Domain.AppSettings
         [Required]
         [ValidateObjectMembers]
         public PaginationSettings PaginationSettings { get; set; }
+
+        [Required]
+        [ValidateObjectMembers]
+        public EventsSettings EventsSettings { get; set; }
     }
 
     public class JwtSettings
@@ -20,7 +24,7 @@ namespace Domain.AppSettings
         public string SecretKey { get; set; } = string.Empty;
 
         [Required]
-        public string? Audience {  get; set; }
+        public string? Audience { get; set; }
 
         [Required]
         public string? Authority { get; set; }
@@ -43,5 +47,13 @@ namespace Domain.AppSettings
         [Required]
         [Range(1, int.MaxValue)]
         public int PageSize { get; set; }
+    }
+    public class EventsSettings
+    {
+        [Required]
+        public int MinEventPrice { get; set; }
+
+        [Required]
+        public int MaxEventPrice { get; set; }
     }
 }

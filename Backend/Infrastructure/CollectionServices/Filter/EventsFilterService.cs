@@ -14,8 +14,8 @@ namespace Infrastructure.CollectionServices.Filter
             => new Dictionary<FilterType, Func<EventBaseModel, object, bool>>()
         {
             { FilterType.ByCategory, (model, value) => model.Category.Name == (string)value },
-            { FilterType.ByMaxDate, (model, value) => model.Date <= (DateOnly)value },
-            { FilterType.ByMinDate, (model, value) => model.Date >= (DateOnly)value },
+            { FilterType.ByMaxDate, (model, value) => model.Date <= (DateTime)value },
+            { FilterType.ByMinDate, (model, value) => model.Date >= (DateTime)value },
             { FilterType.ByMinPrice, (model, value) => model.Price >= (double)value },
             { FilterType.ByMaxPrice, (model, value) => model.Price <= (double)value },
             { FilterType.ByPlace, (model, value) => model.Place == (string)value    },

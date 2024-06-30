@@ -1,13 +1,13 @@
 interface EventsFilterOptions {
   sortType: number;
   sortOrder: number;
-  category?: string | null;
-  minDate?: Date | null;
-  maxDate?: Date | null;
-  minPrice?: number | null;
-  maxPrice?: number | null;
-  place?: string | null;
-  searchString?: string | null;
+  category: string;
+  minDate: Date;
+  maxDate: Date;
+  minPrice: number;
+  maxPrice: number;
+  place: string;
+  searchString: string;
   currentPage: number;
 }
 

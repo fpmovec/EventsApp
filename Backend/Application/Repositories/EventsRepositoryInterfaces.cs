@@ -16,5 +16,7 @@ namespace Application.Repositories
         Task<EventExtendedModel?> GetExtendedEventByIdAsync(Guid id);
 
         Task<ICollection<EventBaseModel>> GetMostPopularAsync();
+
+        Task<int> GetPagesCountAsync();
     }
 }
