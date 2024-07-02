@@ -5,9 +5,25 @@
     justify-content: space-between;
 
     height: 50px;
-    max-width: 140px;
     width: auto;
     position: relative;
     justify-self: flex-end;
     margin-right: 50px;
 }
+
+.expanderHeader {
+    width: 150px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  
+  .expanderTitle {
+    font-weight: 400;
+    letter-spacing: 2px;
+    line-height: 40px;
+  }

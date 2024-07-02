@@ -32,6 +32,8 @@ builder.Services.AddOptions<AppSettings>()
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 builder.Services.AddModelsFilters();
 builder.Services.AddModelsSort();
 
@@ -41,6 +43,8 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IEventsRepository, EventsBaseRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+builder.Services.AddSingleton<IAuthService, AuthService>();
 
 builder.Services.AddHostedService<BackgroundWorker>();
 

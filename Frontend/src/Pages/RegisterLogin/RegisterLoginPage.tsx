@@ -3,8 +3,13 @@ import styles from "./RegisterLoginPage.module.scss";
 import { Box, Tab, Tabs } from "@mui/material";
 import { TextField } from "@mui/material";
 import { WhiteButton } from "../../Components/Generic/Button/Buttons";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { ErrorField } from "../../Components/Generic/ErrorField/ErrorField";
+import { signIn, reg, setTokens } from "../../lib/Redux/Slices";
+import { useAppDispath } from "../../lib/Redux/Hooks";
+import { Login, Register } from "../../lib/Requests/POST/Auth";
+import { GetCurrentUser } from "../../lib/Requests/GET/Auth";
+import { useNavigate } from "react-router-dom";
 
 type FormData = {
   email: string;
@@ -20,8 +25,32 @@ const RegisterLoginPage = () => {
   } = useForm<FormData>({ mode: "onBlur" });
 
   const [tab, setTab] = useState(0);
-  const [password, setPassword] = useState<string>("");
-  const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+  const dispatch = useAppDispath();
+  const navigate = useNavigate();
+  const onLogin: SubmitHandler<FormData> = (data) => {
+    const sign = async () => {
+      const tokens = await Login(data);
+      dispatch(setTokens(tokens));
+      const user = await GetCurrentUser(tokens.mainToken);
+      dispatch(signIn({ user: user!, tokens: tokens }));
+    };
+
+    sign();
+    navigate("/");
+  };
+
+  const onRegister: SubmitHandler<FormData> = (data) => {
+    const regis = async () => {
+      const tokens = await Register(data);
+      dispatch(setTokens(tokens));
+      const user = await GetCurrentUser(tokens.mainToken);
+
+      dispatch(reg({ user: user!, tokens: tokens }));
+    };
+
+    regis();
+    navigate("/");
+  };
 
   return (
     <>
@@ -46,11 +75,9 @@ const RegisterLoginPage = () => {
               Sign in
             </h4>
             <form
-              onSubmit={(event) =>
-                void handleSubmit(() => console.log("Form was submitted"))(
-                  event
-                )
-              }
+              onSubmit={(e) => {
+                void handleSubmit(onLogin)(e);
+              }}
               className={styles.form}
             >
               <TextField
@@ -109,7 +136,7 @@ const RegisterLoginPage = () => {
               Register
             </h4>
             <form
-              onSubmit={(event) => void handleSubmit(() => {})(event)}
+              onSubmit={(event) => void handleSubmit(onRegister)(event)}
               className={styles.form}
             >
               <TextField
@@ -117,13 +144,8 @@ const RegisterLoginPage = () => {
                 type="text"
                 margin="normal"
                 fullWidth
-                {...register("name", {
-                  required: true,
-                })}
+                {...register("name")}
               />
-              {errors.name && errors.name.type === "required" && (
-                <ErrorField data="Name is required" />
-              )}
               <TextField
                 label="Email"
                 type="text"

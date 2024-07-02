@@ -3,12 +3,15 @@ import Filters from "../../Components/Filters/Filters";
 import styles from "./AllEvents.module.scss";
 import { Pagination, PaginationItem } from "@mui/material";
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { EventsFilterOptions } from "../../lib/DTOs/FilterOptions";
 import { useEffect, useState } from "react";
 import { maxEventPrice } from "../../lib/Constants";
 import { EventItem } from "../../lib/DTOs/Event";
-import { GetEvents, GetPagesCount } from "../../lib/Requests/GET/EventsRequests";
+import {
+  GetEvents,
+  GetPagesCount,
+} from "../../lib/Requests/GET/EventsRequests";
 
 const AllEvents = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -27,11 +30,10 @@ const AllEvents = () => {
     searchString: searchParams.get("searchString") ?? "",
   });
 
-  const navigate = useNavigate();
   const page = pageFromQuery == 0 ? 1 : pageFromQuery;
 
   const [eventItems, setEventItems] = useState<EventItem[]>([]);
-const [pagesCount, setPagesCount] = useState<number>(1);
+  const [pagesCount, setPagesCount] = useState<number>(1);
   const getEvents = async () => {
     const items = await GetEvents(filterOptions);
     setEventItems(items);
@@ -41,7 +43,7 @@ const [pagesCount, setPagesCount] = useState<number>(1);
     const getPagesCount = async () => {
       const pages = await GetPagesCount();
       setPagesCount(pages);
-    }
+    };
     getEvents();
 
     getPagesCount();
