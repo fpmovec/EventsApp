@@ -75,6 +75,7 @@ const RegisterLoginPage = () => {
               Sign in
             </h4>
             <form
+              id="sign"
               onSubmit={(e) => {
                 void handleSubmit(onLogin)(e);
               }}
@@ -120,7 +121,7 @@ const RegisterLoginPage = () => {
                 <ErrorField data="Password does not satisfy the restrictions" />
               )}
               <div style={{ justifySelf: "flex-end", marginTop: 25 }}>
-                <WhiteButton type="submit" text="Sign In" />
+                <WhiteButton type="submit" form="sign" text="Sign In" />
               </div>
             </form>
           </CustomTabPanel>
@@ -136,6 +137,7 @@ const RegisterLoginPage = () => {
               Register
             </h4>
             <form
+              id="register"
               onSubmit={(event) => void handleSubmit(onRegister)(event)}
               className={styles.form}
             >
@@ -187,7 +189,7 @@ const RegisterLoginPage = () => {
               )}
 
               <div style={{ justifySelf: "flex-end", marginTop: 25 }}>
-                <WhiteButton type="submit" text="Register" />
+                <WhiteButton type="submit" form="register" text="Register" />
               </div>
             </form>
           </CustomTabPanel>

@@ -5,6 +5,7 @@ type Props = {
   onClick?: () => void;
   type?: "submit" | "reset" | "button" | undefined;
   isDisabled?: boolean;
+  form?: string;
 };
 
 const BlueButton = ({
@@ -12,6 +13,7 @@ const BlueButton = ({
   onClick = () => {},
   type = "button",
   isDisabled = false,
+  form = ''
 }: Props) => {
   return (
     <button
@@ -19,6 +21,7 @@ const BlueButton = ({
       className={`${styles.btn} ${styles.blueButton}`}
       onClick={onClick}
       disabled={isDisabled}
+      form={form}
     >
       {text}
     </button>
@@ -30,6 +33,7 @@ const WhiteButton = ({
   onClick = () => {},
   type = "button",
   isDisabled = false,
+  form = "",
 }: Props) => {
   return (
     <button
@@ -37,6 +41,7 @@ const WhiteButton = ({
       className={`${styles.btn} ${styles.whiteButton}`}
       onClick={onClick}
       disabled={isDisabled}
+      form={form}
     >
       {text}
     </button>

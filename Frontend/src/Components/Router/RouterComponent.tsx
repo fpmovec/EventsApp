@@ -6,6 +6,7 @@ import RegisterLoginPage from "../../Pages/RegisterLogin/RegisterLoginPage";
 import Profile from "../../Pages/Profile/Profile";
 import MyTickets from "../../Pages/MyTickets/Mytickets";
 import About from "../../Pages/About/About";
+import Booking from "../../Pages/Booking/Booking";
 
 const RouterComponent = () => {
   return (
@@ -16,6 +17,7 @@ const RouterComponent = () => {
       <Route path="/profile" element={<Profile />} />
       <Route path="/booked" element={<MyTickets />}/>
       <Route path="/about" element={<About />} />
+      <Route path="/booking/:eventId" element={<Booking />}/>
       <Route path="/" element={<HomePage />} />
       <Route path="*" element={<HomePage />} />
     </Routes>

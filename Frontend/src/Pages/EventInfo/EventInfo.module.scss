@@ -73,16 +73,16 @@ ul {
   word-break: break-all;
 
   & > p {
-    font-family: sans-serif;
-  font-weight: 400;
-  color: $light-black;
+    font-family: "Open Sans";
+    font-weight: 400;
+    color: $light-black;
   }
 }
 
 .buyBlock {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    gap: 10px;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 10px;
+  align-items: center;
 }

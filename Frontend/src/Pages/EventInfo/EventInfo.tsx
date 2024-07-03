@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import testImage from "../../assets/main.png";
 import styles from "./EventInfo.module.scss";
@@ -13,18 +13,21 @@ import Price from "../../Components/Generic/Price/Price";
 import { BlueButton } from "../../Components/Generic/Button/Buttons";
 import { EventItemExtended } from "../../lib/DTOs/Event";
 import { GetEventById } from "../../lib/Requests/GET/EventsRequests";
+import { IsAuthenticated } from "../../lib/Requests/GET/Auth";
+import { useAppSelector } from "../../lib/Redux/Hooks";
 
 const EventInfo = () => {
   const { eventId } = useParams();
+  const navigate = useNavigate();
   const currentDate = new Date();
   currentDate.setSeconds(0, 0);
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const [currentEvent, setCurrentEvent] = useState<EventItemExtended | null>(
     null
   );
   useEffect(() => {
     const getEvent = async () => {
       const event = await GetEventById(eventId as string);
-      console.log(event);
       setCurrentEvent(event);
     };
     getEvent();
@@ -101,7 +104,11 @@ const EventInfo = () => {
                 </h5>
                 <BlueButton
                   text="Buy ticket"
-                  onClick={() => console.log()}
+                  onClick={() =>
+                    isAuthenticated
+                      ? navigate(`/booking/${eventId}`)
+                      : navigate(`/login`)
+                  }
                   isDisabled={currentEvent.isSoldOut}
                 />
               </div>
