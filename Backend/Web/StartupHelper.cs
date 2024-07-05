@@ -1,12 +1,8 @@
 ﻿using Application.CollectionServices;
-using Domain.AppSettings;
 using Domain.Models;
 using Infrastructure.CollectionServices.Filter;
 using Infrastructure.CollectionServices.Sort;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
 
 namespace Web
 {
@@ -49,6 +45,8 @@ namespace Web
         {
             services.AddSingleton<IFilterService<EventBaseModel>, EventsFilterService>();
             services.AddSingleton<IFilterService<EventCategory>, CategoriesFilterService>();
+            services.AddSingleton<IFilterService<Booking>, BookingFilterService>();
+            services.AddSingleton<IFilterService<Participant>, ParticipantsFilterService>();
 
             return services;
         }
@@ -57,6 +55,8 @@ namespace Web
         {
             services.AddSingleton<ISortService<EventBaseModel>, EventsSortService>();
             services.AddSingleton<ISortService<EventCategory>, CategoriesSortService>();
+            services.AddSingleton<ISortService<Booking>, BookingSortService>();
+            services.AddSingleton<ISortService<Participant>, ParticipantsSortService>();
 
             return services;
         }

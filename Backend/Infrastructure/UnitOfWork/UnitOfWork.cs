@@ -13,17 +13,21 @@ namespace Infrastructure.UnitOfWork
             EventContext eventContext,
             ILogger<UnitOfWork> logger,
             IEventsRepository eventsRepository,
-            ICategoryRepository categoryRepository)
+            ICategoryRepository categoryRepository,
+            IBookingRepository bookingRepository)
         {
             _eventContext = eventContext;
             _logger = logger;
             EventsRepository = eventsRepository;
             CategoryRepository = categoryRepository;
+            BookingRepository = bookingRepository;
         }
 
         public IEventsRepository EventsRepository { get; private set; }
 
         public ICategoryRepository CategoryRepository { get; private set; }
+
+        public IBookingRepository BookingRepository { get; private set; }
         public async Task CompleteAsync()
         {
             await _eventContext.SaveChangesAsync();

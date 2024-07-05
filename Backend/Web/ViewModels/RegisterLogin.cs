@@ -9,5 +9,6 @@ namespace Web.ViewModels
     public record RegisterViewModel(
         [Required]string Name,
         [Required]string Password,
-        [Required][EmailAddress]string Email); 
+        [Required][EmailAddress]string Email,
+        [Required][Phone]string Phone); 
 }

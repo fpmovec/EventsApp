@@ -33,5 +33,19 @@ namespace Web.Controllers
         [HttpGet("isAuthenticated")]
         public async Task<IActionResult> IsAuthenticatedAsync()
             => Ok(await _authService.IsAuthenticatedAsync());
+
+
+        [HttpGet("get/{id:string}")]
+        public async Task<IActionResult> GetUserInfoById(string id)
+        {
+            UserResponse? user = await _authService.GetUserByIdAsync(id);
+
+            if (user is null)
+            {
+                return NotFound("User does not exist!");
+            }
+
+            return Ok(user);
+        }
     }
 }

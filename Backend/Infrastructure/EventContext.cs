@@ -1,5 +1,6 @@
 ﻿using Domain.Models;
 using Infrastructure.ModelsConfiguration;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,16 +28,23 @@ namespace Infrastructure
         private void ConfigureRelations(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<EventExtendedModel>()
-                            .HasMany<Ticket>()
+                            .HasMany<Booking>()
                             .WithOne()
                             .HasForeignKey(t => t.EventId)
-                            .IsRequired();
+                            .IsRequired()
+                            .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Participant>()
-                .HasMany<Ticket>()
+            modelBuilder.Entity<IdentityUser>()
+                .HasMany<Booking>()
                 .WithOne()
-                .HasForeignKey(t => t.ParticipantId)
-                .IsRequired();
+                .HasForeignKey(u => u.UserId)
+                .IsRequired(false);
+
+            //modelBuilder.Entity<Participant>()
+            //    .HasMany<Booking>()
+            //    .WithOne()
+            //    .HasForeignKey(t => t.ParticipantId)
+            //    .IsRequired();
 
             modelBuilder.Entity<EventBaseModel>()
                 .HasOne(e => e.Image)
@@ -53,7 +61,7 @@ namespace Infrastructure
 
         public DbSet<EventBaseModel> Events { get; set; }
         public DbSet<EventExtendedModel> ExtendedEvents { get; set; }
-        public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
         public DbSet<Image> Images {  get; set; } 
         public DbSet<Participant> Participants { get; set; }
         public DbSet<EventCategory> Categories { get; set; }

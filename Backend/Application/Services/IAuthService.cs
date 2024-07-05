@@ -7,5 +7,6 @@ namespace Application.Services
     {
         Task<bool> IsAuthenticatedAsync();
         Task<UserResponse> GetCurrentUserAsync();
+        Task<UserResponse?> GetUserByIdAsync(string id);
     }
 }

@@ -15,6 +15,7 @@ type FormData = {
   email: string;
   password: string;
   name: string;
+  phone: string;
 };
 
 const RegisterLoginPage = () => {
@@ -23,7 +24,7 @@ const RegisterLoginPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({ mode: "onBlur" });
-
+  const [isRegister, setIsRegister] = useState<boolean>(false);
   const [tab, setTab] = useState(0);
   const dispatch = useAppDispath();
   const navigate = useNavigate();
@@ -59,7 +60,14 @@ const RegisterLoginPage = () => {
       </h3>
       <div className={styles.main}>
         <div className={styles.block}>
-          <Tabs value={tab} onChange={(e, n) => setTab(n)}>
+          <Tabs
+            value={tab}
+            onChange={(e, n) => {
+              if (n === 0) setIsRegister(false);
+              if (n === 1) setIsRegister(true);
+              setTab(n);
+            }}
+          >
             <Tab label="Sign In" />
             <Tab label="Register" />
           </Tabs>
@@ -154,7 +162,7 @@ const RegisterLoginPage = () => {
                 margin="normal"
                 fullWidth
                 {...register("email", {
-                  required: true,
+                  required: isRegister,
                   pattern: new RegExp(
                     /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
                   ),
@@ -165,6 +173,22 @@ const RegisterLoginPage = () => {
               )}
               {errors.email && errors.email.type === "pattern" && (
                 <ErrorField data="Email is not correct" />
+              )}
+              <TextField
+                label="Phone number"
+                type="text"
+                margin="normal"
+                fullWidth
+                {...register("phone", {
+                  required: isRegister,
+                  pattern: new RegExp(/^\+?[1-9][0-9]{7,14}$/),
+                })}
+              />
+              {errors.phone && errors.phone.type === "required" && (
+                <ErrorField data="Phone number is required" />
+              )}
+              {errors.phone && errors.phone.type === "pattern" && (
+                <ErrorField data="Phone number is not correct" />
               )}
               <TextField
                 label="Password"

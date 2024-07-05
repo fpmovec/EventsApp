@@ -1,10 +1,30 @@
-﻿namespace Web.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Web.ViewModels
 {
     public record BookingViewModel
     {
+        [Required]
         public Guid EventId { get; set; }
+
+        [Required]
         public string UserId { get; set; }
+
+        [Required]
+        public string FullName { get; set; }
+        
+        [Required]
+        [Phone]
+        public string Phone {  get; set; }
+
+        [Required, Range(1, int.MaxValue)]
         public int PersonsQuantity { get; set; }
-        public double Price { get; set; }
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        public DateOnly Birthday { get; set; }
     }
 }

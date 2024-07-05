@@ -99,12 +99,12 @@ namespace Web.Controllers
             return Ok(extendedEvent);
         }
 
-        [HttpGet("participant/{participantId:Guid}")]
-        public async Task<IActionResult> GetParticipantEvents(Guid participantId)
+        [HttpGet("participants/{eventId:Guid}")]
+        public async Task<IActionResult> GetParticipantsByEventId(Guid eventId)
         {
-            ICollection<EventBaseModel> events = await _unitOfWork.EventsRepository.GetEventsByParticipantIdAsync(participantId);
+            ICollection<UserBrief> users = await _unitOfWork.BookingRepository.GetEventParticipants(eventId);
 
-            return Ok(events);
+            return Ok(users);
         }
 
         [HttpPut("edit/{id:Guid}")]

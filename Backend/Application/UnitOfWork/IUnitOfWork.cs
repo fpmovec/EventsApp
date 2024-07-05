@@ -6,6 +6,7 @@ namespace Application.UnitOfWork
     {
         IEventsRepository EventsRepository { get; }
         ICategoryRepository CategoryRepository { get; }
+        IBookingRepository BookingRepository { get; }
         Task CompleteAsync();
     }
 }

@@ -9,12 +9,14 @@ import { useForm } from "react-hook-form";
 import { TextField } from "@mui/material";
 import { ErrorField } from "../../Components/Generic/ErrorField/ErrorField";
 import Calendar from "../../Components/Generic/Calendar/Calendar";
+import { Done } from "@mui/icons-material";
 
 type FormData = {
   fullName: string;
   birthday: Date;
   personsCount: number;
   email: string;
+  phone: string;
 };
 
 const Booking = () => {
@@ -34,7 +36,7 @@ const Booking = () => {
   } = useForm<FormData>({ mode: "onBlur" });
 
   const currentUser = useAppSelector((state) => state.auth.user);
-
+  console.log(currentUser);
   const [bookingData, setBookingData] = useState<FormData>();
 
   const onSubmit = (data: FormData) =>
@@ -122,6 +124,7 @@ const Booking = () => {
                 type="number"
                 margin="normal"
                 fullWidth
+                defaultValue={1}
                 {...register("personsCount", {
                   required: true,
                   min: 1,
@@ -133,6 +136,24 @@ const Booking = () => {
                 )}
               {errors.personsCount && errors.personsCount.type === "min" && (
                 <ErrorField data="Persons count cannot be less than 1" />
+              )}
+              <TextField
+                sx={{ width: 400 }}
+                label="Phone number"
+                type="text"
+                margin="normal"
+                fullWidth
+                defaultValue={currentUser?.phone}
+                {...register("phone", {
+                  required: true,
+                  pattern: new RegExp(/^\+?[1-9][0-9]{7,14}$/),
+                })}
+              />
+              {errors.phone && errors.phone.type === "required" && (
+                <ErrorField data="Phone number is required" />
+              )}
+              {errors.phone && errors.phone.type === "pattern" && (
+                <ErrorField data="Phone number is not correct" />
               )}
               <br />
               <Calendar
@@ -168,6 +189,10 @@ const Booking = () => {
                 {bookingData?.email}
               </li>
               <li>
+                <span>Your phone number: </span>
+                {bookingData?.phone}
+              </li>
+              <li>
                 <span>Participants count: </span>
                 {bookingData?.personsCount}
               </li>
@@ -190,6 +215,9 @@ const Booking = () => {
               <br />
               Click "Next" to move to your booked tickets
             </h4>
+            <div>
+              <Done color="primary" sx={{fontSize: 96}}/>
+            </div>
           </div>
         </div>
         <div className={styles.buttons}>

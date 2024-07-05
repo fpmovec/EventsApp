@@ -45,7 +45,7 @@ namespace Web.Controllers
                 return BadRequest($"User with email \"{registerViewModel.Email}\" already exists");
             }
 
-            IdentityUser newUser = new() { Email = registerViewModel.Email, UserName = registerViewModel.Name };
+            IdentityUser newUser = new() { Email = registerViewModel.Email, UserName = registerViewModel.Name, PhoneNumber = registerViewModel.Phone };
 
             IdentityResult isSucessfullyCreated = await _userManager.CreateAsync(newUser, registerViewModel.Password);
 

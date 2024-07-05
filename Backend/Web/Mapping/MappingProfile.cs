@@ -12,6 +12,8 @@ namespace Web.Mapping
             CreateMap<EventViewModel, EventExtendedModel>().ReverseMap();
             CreateMap<FilterOptionsViewModel, List<FilterOption>>()
                 .ConvertUsing<FilterOptionsConverter>();
+            CreateMap<BookingViewModel, Booking>()
+                .ForMember(b => b.CreatedDate, opt => new DateTime());
         }
     }
 }
