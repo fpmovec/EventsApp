@@ -12,5 +12,7 @@ namespace Application.Repositories
         Task CancelBooking(int bookingId);
 
         Task<ICollection<UserBrief>> GetEventParticipants(Guid eventId);
+
+        Task<ICollection<Booking>> GetParticipantBookingsAsync(string userId);
    }
 }

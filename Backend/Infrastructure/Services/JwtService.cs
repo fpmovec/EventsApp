@@ -43,7 +43,7 @@ namespace Infrastructure.Services
                     new Claim("Id", user.Id),
                     new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                    new Claim("Phone", user.PhoneNumber),
+                    new Claim("Phone", user.PhoneNumber ?? string.Empty),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToUniversalTime().ToString()),
                 }),

@@ -5,7 +5,7 @@ import styles from "./Home.module.scss";
 import { WhiteButton } from "../../Components/Generic/Button/Buttons";
 import EventBrief from "../../Components/EventItem/EventItem";
 import { useNavigate } from "react-router-dom";
-import { EventItem } from "../../lib/DTOs/Event";
+import { EventItem } from "../../lib/Models/Event";
 import { GetPopularEvents } from "../../lib/Requests/GET/EventsRequests";
 
 const HomePage = () => {
@@ -77,4 +77,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-

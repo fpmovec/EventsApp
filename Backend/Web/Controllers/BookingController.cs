@@ -9,6 +9,7 @@ using Web.ViewModels;
 namespace Web.Controllers
 {
     [Route("api/[controller]")]
+    [ApiController]
     public class BookingController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -29,8 +30,8 @@ namespace Web.Controllers
         }
 
         //[Authorize(Roles = nameof(Roles.User))]
-        [HttpGet("book")]
-        public async Task<IActionResult> BookEvent(BookingViewModel viewModel)
+        [HttpPost("book")]
+        public async Task<IActionResult> BookEvent([FromBody]BookingViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
@@ -46,11 +47,13 @@ namespace Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            Booking booking = new();
+            Booking booking = new()
+            {
+                EventName = bookedEvent.Name,
+                PricePerOne = bookedEvent.Price
+            };
 
             booking = _mapper.Map(viewModel, booking);
-
-            booking.PricePerOne = bookedEvent.Price;
 
             await _unitOfWork.BookingRepository.BookEventAsync(booking);
             await _unitOfWork.CompleteAsync();
@@ -82,6 +85,16 @@ namespace Web.Controllers
 
             _logger.LogInformation("Booking was sucessfully cancelled!");
             return Ok();
+        }
+
+        [HttpGet("get-by-participant/{userId}")] 
+        public async Task<IActionResult> GetParticipantBookings(string userId)
+        {
+            ICollection<Booking> bookings = await _unitOfWork.BookingRepository.GetParticipantBookingsAsync(userId);
+
+            _logger.LogInformation($"Bookings have been obtained. User ID: {userId}");
+
+            return Ok(bookings);
         }
     }
 }

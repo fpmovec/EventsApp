@@ -4,10 +4,10 @@ import styles from "./AllEvents.module.scss";
 import { Pagination, PaginationItem } from "@mui/material";
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
 import { useSearchParams } from "react-router-dom";
-import { EventsFilterOptions } from "../../lib/DTOs/FilterOptions";
+import { EventsFilterOptions } from "../../lib/Models/FilterOptions";
 import { useEffect, useState } from "react";
 import { maxEventPrice } from "../../lib/Constants";
-import { EventItem } from "../../lib/DTOs/Event";
+import { EventItem } from "../../lib/Models/Event";
 import {
   GetEvents,
   GetPagesCount,

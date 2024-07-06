@@ -7,6 +7,8 @@ namespace Domain.Models
     {
         public int Id { get; set; }
 
+        public string EventName { get; set; }
+
         public DateTime CreatedDate { get; set; }
 
         public Guid EventId { get; set; }

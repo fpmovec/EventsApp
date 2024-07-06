@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import styles from "./Booking.module.scss";
 import { useEffect, useState } from "react";
 import { WhiteButton } from "../../Components/Generic/Button/Buttons";
-import { EventItemExtended } from "../../lib/DTOs/Event";
+import { EventItemExtended } from "../../lib/Models/Event";
 import { GetEventById } from "../../lib/Requests/GET/EventsRequests";
 import { useAppSelector } from "../../lib/Redux/Hooks";
 import { useForm } from "react-hook-form";
@@ -10,6 +10,9 @@ import { TextField } from "@mui/material";
 import { ErrorField } from "../../Components/Generic/ErrorField/ErrorField";
 import Calendar from "../../Components/Generic/Calendar/Calendar";
 import { Done } from "@mui/icons-material";
+import { BookingDTO } from "../../lib/Models/Booking";
+import { BookEvent } from "../../lib/Requests/POST/Booking";
+import { excludeTimeFromISODate } from "../../lib/Utils/Date";
 
 type FormData = {
   fullName: string;
@@ -36,11 +39,23 @@ const Booking = () => {
   } = useForm<FormData>({ mode: "onBlur" });
 
   const currentUser = useAppSelector((state) => state.auth.user);
+  const token = useAppSelector((state) => state.auth.tokens.mainToken);
   console.log(currentUser);
-  const [bookingData, setBookingData] = useState<FormData>();
 
-  const onSubmit = (data: FormData) =>
-    setBookingData({ ...data, birthday: birthday });
+  const [bookingData, setBookingData] = useState<BookingDTO | null>(null);
+
+  const onSubmit = (data: FormData) => {
+    const formData: FormData = { ...data, birthday: birthday };
+    setBookingData({
+      eventId: eventId as string,
+      userId: currentUser?.id as string,
+      email: formData.email,
+      birthday: excludeTimeFromISODate(formData.birthday),
+      phone: formData.phone,
+      personsQuantity: formData.personsCount,
+      fullName: formData.fullName,
+    });
+  };
 
   useEffect(() => {
     const getEvent = async () => {
@@ -68,6 +83,16 @@ const Booking = () => {
     if (currentStep === 3) return styles.step3;
   };
 
+  const sendBookRequest = () => {
+    const sendRequest = async () => {
+      if (bookingData !== null) {
+        await BookEvent(bookingData, token);
+      }
+    };
+
+    sendRequest();
+  };
+  console.log(currentStep);
   return (
     <div className={styles.main}>
       <div className={styles.content}>
@@ -194,11 +219,11 @@ const Booking = () => {
               </li>
               <li>
                 <span>Participants count: </span>
-                {bookingData?.personsCount}
+                {bookingData?.personsQuantity}
               </li>
               <li>
                 <span>Your birthday: </span>
-                {bookingData?.birthday.toLocaleDateString()}
+                {bookingData?.birthday}
               </li>
             </ul>
           </div>
@@ -216,7 +241,7 @@ const Booking = () => {
               Click "Next" to move to your booked tickets
             </h4>
             <div>
-              <Done color="primary" sx={{fontSize: 96}}/>
+              <Done color="primary" sx={{ fontSize: 96 }} />
             </div>
           </div>
         </div>
@@ -230,8 +255,11 @@ const Booking = () => {
             type="submit"
             form={currentStep < 3 ? "bookingForm" : ""}
             onClick={() => {
+              if (currentStep === 2) {
+                sendBookRequest();
+              }
               if (currentStep === stepsCount) navigate("/booked");
-              else nextStep();
+              nextStep();
             }}
           />
         </div>

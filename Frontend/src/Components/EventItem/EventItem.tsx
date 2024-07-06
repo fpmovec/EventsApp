@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { EventItem } from "../../lib/DTOs/Event";
+import { EventItem } from "../../lib/Models/Event";
 import styles from "./EventItem.module.scss";
 import noImage from "../../assets/main.png";
 import { BlueButton } from "../Generic/Button/Buttons";
@@ -10,7 +10,7 @@ type Props = {
   eventItem: EventItem;
 };
 
-const EventBrief = ({eventItem}: Props) => {
+const EventBrief = ({ eventItem }: Props) => {
   const currentDate = new Date();
   currentDate.setSeconds(0, 0);
   const navigate = useNavigate();
@@ -26,17 +26,24 @@ const EventBrief = ({eventItem}: Props) => {
             <h4>{eventItem.name}</h4>
             <div className={styles.category}>{eventItem.category.name}</div>
           </div>
-          <p>
-            {eventItem.briefDescription}
-          </p>
+          <p>{eventItem.briefDescription}</p>
         </div>
         <div className={styles.buttonBlock}>
-          <BlueButton text="More..." onClick={() => navigate(`/event/${eventItem.id}`)} />
+          <BlueButton
+            text="More..."
+            onClick={() => navigate(`/event/${eventItem.id}`)}
+          />
         </div>
       </div>
       <div className={styles.additionalInfo}>
-        <div><Place color="primary"/><span>{eventItem.place}</span></div>
-        <div><CalendarMonth color="primary"/><span>{new Date(eventItem.date).toLocaleString()}</span></div>
+        <div>
+          <Place color="primary" />
+          <span>{eventItem.place}</span>
+        </div>
+        <div>
+          <CalendarMonth color="primary" />
+          <span>{new Date(eventItem.date).toLocaleString()}</span>
+        </div>
         <Price value={eventItem.price} />
       </div>
     </div>

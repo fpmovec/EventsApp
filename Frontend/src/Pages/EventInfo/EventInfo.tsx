@@ -11,7 +11,7 @@ import {
 } from "@mui/icons-material";
 import Price from "../../Components/Generic/Price/Price";
 import { BlueButton } from "../../Components/Generic/Button/Buttons";
-import { EventItemExtended } from "../../lib/DTOs/Event";
+import { EventItemExtended } from "../../lib/Models/Event";
 import { GetEventById } from "../../lib/Requests/GET/EventsRequests";
 import { IsAuthenticated } from "../../lib/Requests/GET/Auth";
 import { useAppSelector } from "../../lib/Redux/Hooks";

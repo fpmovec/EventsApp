@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
-import { AuthResult } from "../../DTOs/AuthResponse";
-import { LoginUserDTO, RegisterUserDTO } from "../../DTOs/RegisterLogin";
+import { AuthResult } from "../../Models/AuthResponse";
+import { LoginUserDTO, RegisterUserDTO } from "../../Models/RegisterLogin";
 import { useAppSelector } from "../../Redux/Hooks";
 import { refresh } from "../../Redux/Slices";
 

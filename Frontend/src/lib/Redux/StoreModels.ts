@@ -1,5 +1,5 @@
 import { AuthUser } from "../Authorization/Auth";
-import { AuthResult } from "../DTOs/AuthResponse";
+import { AuthResult } from "../Models/AuthResponse";
 
 interface AuthState {
   readonly isAuthenticated: boolean;

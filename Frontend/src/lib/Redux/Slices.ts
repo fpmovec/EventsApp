@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { initialState } from "./StoreModels";
 import { AuthUser } from "../Authorization/Auth";
-import { AuthResult } from "../DTOs/AuthResponse";
+import { AuthResult } from "../Models/AuthResponse";
 
 type SignData = {
   user: AuthUser;
@@ -37,7 +37,7 @@ const authSlice = createSlice({
 
     setTokens: (state, action: PayloadAction<AuthResult>) => {
       state.tokens = action.payload;
-    }
+    },
   },
 });
 

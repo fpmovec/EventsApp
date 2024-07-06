@@ -1,6 +1,6 @@
 import React from "react";
-import { AuthResult } from "../DTOs/AuthResponse";
-import { LoginUserDTO, RegisterUserDTO } from "../DTOs/RegisterLogin";
+import { AuthResult } from "../Models/AuthResponse";
+import { LoginUserDTO, RegisterUserDTO } from "../Models/RegisterLogin";
 
 interface AuthContext {
   isAuthenticated: boolean;

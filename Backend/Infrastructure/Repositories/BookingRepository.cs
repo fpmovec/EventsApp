@@ -37,14 +37,23 @@ namespace Infrastructure.Repositories
                 .Where(b => b.EventId == eventId)
                 .Select(b => new UserBrief
                 {
-                    Id = b.UserId, 
+                    Id = b.UserId,
                     FullName = b.FullName,
                     Email = b.Email,
                     Phone = b.Phone,
                     Birthday = b.Birthday,
-                }).ToListAsync();
+                })
+                .Distinct()
+                .ToListAsync();
 
             return users;
+        }
+
+        public async Task<ICollection<Booking>> GetParticipantBookingsAsync(string userId)
+        {
+            return await dbSet.AsNoTracking()
+                 .Where(b => b.UserId == userId)
+                 .ToListAsync();
         }
     }
 }

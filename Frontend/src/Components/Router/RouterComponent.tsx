@@ -4,9 +4,9 @@ import HomePage from "../../Pages/Home/Home";
 import AllEvents from "../../Pages/AllEvents/AllEvents";
 import RegisterLoginPage from "../../Pages/RegisterLogin/RegisterLoginPage";
 import Profile from "../../Pages/Profile/Profile";
-import MyTickets from "../../Pages/MyTickets/Mytickets";
 import About from "../../Pages/About/About";
 import Booking from "../../Pages/Booking/Booking";
+import MyTickets from "../../Pages/MyTickets/MyTickets";
 
 const RouterComponent = () => {
   return (

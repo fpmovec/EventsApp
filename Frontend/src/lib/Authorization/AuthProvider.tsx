@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { AuthContext, AuthUser } from "./Auth";
 import { Login, Logout, Refresh, Register } from "../Requests/POST/Auth";
-import { AuthResult } from "../DTOs/AuthResponse";
+import { AuthResult } from "../Models/AuthResponse";
 import { GetCurrentUser, IsAuthenticated } from "../Requests/GET/Auth";
-import { LoginUserDTO, RegisterUserDTO } from "../DTOs/RegisterLogin";
+import { LoginUserDTO, RegisterUserDTO } from "../Models/RegisterLogin";
 
 type Props = {
   children?: React.ReactNode;

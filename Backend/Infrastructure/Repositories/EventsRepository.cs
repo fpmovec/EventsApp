@@ -41,7 +41,6 @@ namespace Infrastructure.Repositories
 
         public async Task<ICollection<EventBaseModel>> GetFilteredEventsAsync(List<FilterOption> filterOptions, SortType sortType = SortType.Default, SortOrder order = SortOrder.Ascending, int currentPage = 0)
         {
-            
             var events = await GetAllAsync(filterOptions, sortType, order, currentPage);
 
             return events.ToList();

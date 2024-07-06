@@ -35,7 +35,7 @@ namespace Web.Controllers
             => Ok(await _authService.IsAuthenticatedAsync());
 
 
-        [HttpGet("get/{id:string}")]
+        [HttpGet("get/{id}")]
         public async Task<IActionResult> GetUserInfoById(string id)
         {
             UserResponse? user = await _authService.GetUserByIdAsync(id);

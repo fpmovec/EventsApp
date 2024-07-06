@@ -68,7 +68,7 @@ const Sign = () => {
               },
             }}
           >
-            <MenuItem
+            {/* <MenuItem
               onClick={() => {
                 navigate(`/profile`);
                 handleClose();
@@ -77,7 +77,7 @@ const Sign = () => {
               sx={{ justifyContent: "center" }}
             >
               Profile
-            </MenuItem>
+            </MenuItem> */}
             <MenuItem
               onClick={() => {
                 navigate("/booked");

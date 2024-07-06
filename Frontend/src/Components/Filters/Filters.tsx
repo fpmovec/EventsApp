@@ -1,4 +1,4 @@
-import { EventsFilterOptions } from "../../lib/DTOs/FilterOptions";
+import { EventsFilterOptions } from "../../lib/Models/FilterOptions";
 import {
   KeyboardArrowDown,
   KeyboardArrowUp,
@@ -25,11 +25,7 @@ type Props = {
   onApply: () => void;
 };
 
-const Filters = ({
-  filterOptions,
-  setFilterOptions,
-  onApply
-}: Props) => {
+const Filters = ({ filterOptions, setFilterOptions, onApply }: Props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [searchParams, setSearchParams] = useSearchParams();
 
