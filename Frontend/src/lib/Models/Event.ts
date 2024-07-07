@@ -29,4 +29,14 @@ interface EventItemExtended {
   category: Category;
 }
 
-export type { EventItem, EventItemExtended };
+interface EventDTO {
+  name: string;
+  description: string;
+  place: string;
+  price: number;
+  dateTime: Date;
+  maxParticipantsCount: number;
+  categoryName: string;
+}
+
+export type { EventItem, EventItemExtended, EventDTO };

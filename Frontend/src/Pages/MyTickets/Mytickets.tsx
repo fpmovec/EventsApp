@@ -28,10 +28,10 @@ const MyTickets = () => {
   const cancelBooking = (id: number) => {
     const cancel = async () => {
       await CancelBooking(id, currentUser?.id as string, token);
+      await getBookings();
     };
 
     cancel();
-    getBookings();
   };
 
   return (

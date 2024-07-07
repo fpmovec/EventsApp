@@ -4,6 +4,7 @@ using AutoMapper;
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Roles;
 using Web.ViewModels;
 
 namespace Web.Controllers
@@ -29,7 +30,7 @@ namespace Web.Controllers
             _mapper = mapper;
         }
 
-        //[Authorize(Roles = nameof(Roles.User))]
+        [Authorize]
         [HttpPost("book")]
         public async Task<IActionResult> BookEvent([FromBody]BookingViewModel viewModel)
         {
@@ -56,6 +57,7 @@ namespace Web.Controllers
             booking = _mapper.Map(viewModel, booking);
 
             await _unitOfWork.BookingRepository.BookEventAsync(booking);
+            await _unitOfWork.EventsRepository.BookTickets(bookedEvent.Id, booking.PersonsQuantity);
             await _unitOfWork.CompleteAsync();
 
             _logger.LogInformation("Event has been booked");
@@ -63,6 +65,7 @@ namespace Web.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpDelete("cancel/{id:int}")]
         public async Task<IActionResult> CancelBooking([FromRoute]int id, [FromBody]string userId)
         {
@@ -81,6 +84,7 @@ namespace Web.Controllers
             }
 
             await _unitOfWork.BookingRepository.CancelBooking(booking.Id);
+            await _unitOfWork.EventsRepository.CancelTickets(booking.EventId, booking.PersonsQuantity);
             await _unitOfWork.CompleteAsync();
 
             _logger.LogInformation("Booking was sucessfully cancelled!");

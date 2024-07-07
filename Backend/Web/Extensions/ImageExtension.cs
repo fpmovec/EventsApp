@@ -16,7 +16,7 @@ namespace Web.Extensions
                 await image.CopyToAsync(stream);
             }
 
-            return new(fileName, Path.Combine(filePath, fileName));
+            return new(fileName, Path.Combine(PathToImageFolder, fileName));
         }
     }
 }

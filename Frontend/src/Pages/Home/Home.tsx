@@ -7,12 +7,16 @@ import EventBrief from "../../Components/EventItem/EventItem";
 import { useNavigate } from "react-router-dom";
 import { EventItem } from "../../lib/Models/Event";
 import { GetPopularEvents } from "../../lib/Requests/GET/EventsRequests";
+import { useAppSelector } from "../../lib/Redux/Hooks";
 
 const HomePage = () => {
   const [date, setDate] = useState<Date>(new Date());
   const [city, setCity] = useState<string>("");
   const [category, setCategory] = useState<string>("");
   const [popularEvents, setPopularEvents] = useState<EventItem[]>([]);
+
+  const currentUser = useAppSelector((state) => state.auth.user);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -69,7 +73,13 @@ const HomePage = () => {
       </h3>
       <div className={styles.popular}>
         {popularEvents.map((e, i) => (
-          <EventBrief eventItem={e} key={i} />
+          <EventBrief
+            eventItem={e}
+            key={i}
+            isExtendedFunctionality={
+              currentUser === undefined || !currentUser.isAdmin ? false : true
+            }
+          />
         ))}
       </div>
     </>

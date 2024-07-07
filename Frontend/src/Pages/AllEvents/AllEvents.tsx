@@ -12,6 +12,8 @@ import {
   GetEvents,
   GetPagesCount,
 } from "../../lib/Requests/GET/EventsRequests";
+import { useAppSelector } from "../../lib/Redux/Hooks";
+import { DeleteEvent } from "../../lib/Requests/DELETE/Events";
 
 const AllEvents = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -34,6 +36,7 @@ const AllEvents = () => {
 
   const [eventItems, setEventItems] = useState<EventItem[]>([]);
   const [pagesCount, setPagesCount] = useState<number>(1);
+
   const getEvents = async () => {
     const items = await GetEvents(filterOptions);
     setEventItems(items);
@@ -49,6 +52,18 @@ const AllEvents = () => {
     getPagesCount();
   }, [pageFromQuery]);
 
+  const currentUser = useAppSelector((state) => state.auth.user);
+  const token = useAppSelector((state) => state.auth.tokens).mainToken;
+
+  const deleteEvent = (eventId: string) => {
+    const deleteE = async () => {
+      await DeleteEvent(eventId, token);
+      await getEvents();
+    };
+
+    deleteE();
+  };
+
   return (
     <div>
       <div className={styles.filters}>
@@ -62,7 +77,16 @@ const AllEvents = () => {
         <>
           <div className={styles.eventsList}>
             {eventItems.map((e, i) => (
-              <EventBrief eventItem={e} key={i} />
+              <EventBrief
+                eventItem={e}
+                key={i}
+                isExtendedFunctionality={
+                  currentUser === undefined || !currentUser.isAdmin
+                    ? false
+                    : true
+                }
+                onDelete={deleteEvent}
+              />
             ))}
           </div>
           <div className={styles.pagination}>

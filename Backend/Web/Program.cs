@@ -117,6 +117,8 @@ app.UseStaticFiles(new StaticFileOptions
     }
 });
 
+app.UseImagesCaching();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

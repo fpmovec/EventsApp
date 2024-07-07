@@ -2,6 +2,7 @@
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Roles;
 
 namespace Web.Controllers
 {
@@ -50,7 +51,6 @@ namespace Web.Controllers
             return Ok(category);
         }
 
-        [Authorize(Roles = nameof(Roles.User))]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAllCategoriesAsync()
         {
@@ -79,6 +79,7 @@ namespace Web.Controllers
             return Ok(category.Name);
         }
 
+        [Authorize(Roles = nameof(Admin))]
         [HttpDelete("deleteByName/{name}")]
         public async Task<IActionResult> DeleteCategoryByNameAsync(string? name)
         {

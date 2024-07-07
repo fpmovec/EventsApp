@@ -2,6 +2,7 @@
 using Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Roles;
 using System.Security.Claims;
 
 namespace Infrastructure.Services
@@ -25,6 +26,7 @@ namespace Infrastructure.Services
                 return null;
 
             string? email = currentUser.FindFirstValue(ClaimTypes.Email);
+            string role = currentUser.FindFirstValue(ClaimTypes.Role);
             string? name = currentUser.FindFirstValue(ClaimTypes.NameIdentifier);
             string id = currentUser.Claims.FirstOrDefault(c => c.Type == "Id")!.Value;
             string? phone = currentUser.Claims.FirstOrDefault(c => c.Type == "Phone")?.Value;
@@ -34,7 +36,8 @@ namespace Infrastructure.Services
                 Email = email,
                 Id = id,
                 Name = name,
-                Phone = phone ?? ""
+                Phone = phone ?? "",
+                IsAdmin = role.Equals(nameof(Admin))
             });
         }
 
@@ -50,7 +53,7 @@ namespace Infrastructure.Services
                 Id = user.Id,
                 Name = user.UserName,
                 Email = user.Email,
-                Phone = user.PhoneNumber
+                Phone = user.PhoneNumber,
             };
         }
 

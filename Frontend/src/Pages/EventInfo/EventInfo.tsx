@@ -1,6 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import testImage from "../../assets/main.png";
 import styles from "./EventInfo.module.scss";
 import {
   Category,
@@ -13,7 +12,6 @@ import Price from "../../Components/Generic/Price/Price";
 import { BlueButton } from "../../Components/Generic/Button/Buttons";
 import { EventItemExtended } from "../../lib/Models/Event";
 import { GetEventById } from "../../lib/Requests/GET/EventsRequests";
-import { IsAuthenticated } from "../../lib/Requests/GET/Auth";
 import { useAppSelector } from "../../lib/Redux/Hooks";
 
 const EventInfo = () => {
@@ -25,13 +23,17 @@ const EventInfo = () => {
   const [currentEvent, setCurrentEvent] = useState<EventItemExtended | null>(
     null
   );
+
   useEffect(() => {
     const getEvent = async () => {
       const event = await GetEventById(eventId as string);
       setCurrentEvent(event);
     };
     getEvent();
+    //import(currentEvent?.image.path as string).then((i) => setL(i));
+    //eventLogo();
   }, [eventId]);
+  console.log(currentEvent);
 
   return (
     <>
@@ -45,7 +47,10 @@ const EventInfo = () => {
           <div className={styles.info}>
             <div className={styles.mainInfo}>
               <div className={styles.image}>
-                <img src={testImage} alt="Event image" />
+                <img
+                  src={`https://localhost:7107/${currentEvent.image.path}`}
+                  alt="Event image"
+                />
               </div>
               <div style={{ marginLeft: 50 }}>
                 <ul className={styles.list}>
@@ -97,8 +102,9 @@ const EventInfo = () => {
                     <>Sold out</>
                   ) : (
                     <>
-                      Buy now! Tickets left:{" "}
-                      {currentEvent?.remainingTicketsCount}
+                      {currentEvent.isSoldOut
+                        ? "Sold out"
+                        : `Buy now! Tickets left: ${currentEvent?.remainingTicketsCount}`}
                     </>
                   )}
                 </h5>

@@ -68,16 +68,18 @@ const Sign = () => {
               },
             }}
           >
-            {/* <MenuItem
-              onClick={() => {
-                navigate(`/profile`);
-                handleClose();
-              }}
-              divider={true}
-              sx={{ justifyContent: "center" }}
-            >
-              Profile
-            </MenuItem> */}
+            {user?.isAdmin && (
+              <MenuItem
+                onClick={() => {
+                  navigate(`/event/edit`);
+                  handleClose();
+                }}
+                divider={true}
+                sx={{ justifyContent: "center" }}
+              >
+                Create event
+              </MenuItem>
+            )}
             <MenuItem
               onClick={() => {
                 navigate("/booked");

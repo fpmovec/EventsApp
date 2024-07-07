@@ -1,16 +1,18 @@
 import { useNavigate } from "react-router-dom";
 import { EventItem } from "../../lib/Models/Event";
 import styles from "./EventItem.module.scss";
-import noImage from "../../assets/main.png";
 import { BlueButton } from "../Generic/Button/Buttons";
+import { Edit, Delete } from "@mui/icons-material";
 import Price from "../Generic/Price/Price";
 import { Place, CalendarMonth } from "@mui/icons-material";
 
 type Props = {
   eventItem: EventItem;
+  isExtendedFunctionality?: boolean;
+  onDelete: (eventId: string) => void;
 };
 
-const EventBrief = ({ eventItem }: Props) => {
+const EventBrief = ({ eventItem, onDelete, isExtendedFunctionality = false}: Props) => {
   const currentDate = new Date();
   currentDate.setSeconds(0, 0);
   const navigate = useNavigate();
@@ -19,7 +21,7 @@ const EventBrief = ({ eventItem }: Props) => {
     <div className={styles.item}>
       <div className={styles.info}>
         <div className={styles.eventImage}>
-          <img src={noImage} alt="No Image" />
+          <img src={`https://localhost:7107/${eventItem.image.path}`} alt="No Image" />
         </div>
         <div className={styles.mainInfo}>
           <div className={styles.title}>
@@ -33,6 +35,18 @@ const EventBrief = ({ eventItem }: Props) => {
             text="More..."
             onClick={() => navigate(`/event/${eventItem.id}`)}
           />
+          {isExtendedFunctionality && (
+            <>
+              <div className={styles.extendedButtons}>
+                <div onClick={() => navigate(`/event/edit/${eventItem.id}`)}>
+                  <Edit color="primary" />
+                </div>
+                <div onClick={() => onDelete(eventItem.id)}>
+                  <Delete color="primary" />
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
       <div className={styles.additionalInfo}>
@@ -42,7 +56,7 @@ const EventBrief = ({ eventItem }: Props) => {
         </div>
         <div>
           <CalendarMonth color="primary" />
-          <span>{new Date(eventItem.date).toLocaleString()}</span>
+          <span>{new Date(eventItem.date).toLocaleDateString()}</span>
         </div>
         <Price value={eventItem.price} />
       </div>

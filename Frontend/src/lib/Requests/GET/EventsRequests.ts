@@ -32,7 +32,7 @@ export const GetEvents = async (
         sortType: options.sortType.toString(),
         sortOrder: options.sortOrder.toString(),
         category: options.category,
-        minDate: "0001-01-01T00:00:00", //minDate().toDateString(),
+        minDate: minDate().toDateString(),
         maxDate: maxDate().toDateString(),
         minPrice: options.minPrice.toString(),
         maxPrice: (options.maxPrice == 0

@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Booking } from "../../lib/Models/Booking";
 import styles from "./BookingItem.module.scss";
-import { Delete } from "@mui/icons-material";
 import { WhiteButton } from "../Generic/Button/Buttons";
 
 type Props = {

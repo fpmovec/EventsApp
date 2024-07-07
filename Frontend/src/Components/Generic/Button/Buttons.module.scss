@@ -1,10 +1,11 @@
 .btn {
     display: flex;
-    width: 120px;
+    min-width: 120px;
+    width: auto;
     height: 40px;
     justify-content: center;
     align-items: center;
-    margin: 0.5rem;
+    margin: 0 0.5rem;
     line-height: 35px;
     border: 1px solid;
     border-radius: $border-radius;

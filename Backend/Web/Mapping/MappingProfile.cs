@@ -9,11 +9,14 @@ namespace Web.Mapping
     {
         public MappingProfile()
         {
-            CreateMap<EventViewModel, EventExtendedModel>().ReverseMap();
+            CreateMap<EventViewModel, EventExtendedModel>()
+                .ReverseMap();
+
             CreateMap<FilterOptionsViewModel, List<FilterOption>>()
                 .ConvertUsing<FilterOptionsConverter>();
+
             CreateMap<BookingViewModel, Booking>()
-                .ForMember(b => b.CreatedDate, opt => new DateTime());
+                .ForMember(b => b.CreatedDate, ops => ops.MapFrom(b => DateTime.Now));
         }
     }
 }

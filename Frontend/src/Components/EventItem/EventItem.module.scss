@@ -89,4 +89,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  gap: 5px
+}
+
+.extendedButtons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+
+  & > div {
+    border: 1px solid $gray;
+    box-sizing: border-box;
+    padding: 3px;
+    padding-bottom: 0;
+    border-radius: $border-radius;
+  }
+
+  & > div:hover {
+    background-color: $dark-white;
+    cursor: pointer;
+  }
 }

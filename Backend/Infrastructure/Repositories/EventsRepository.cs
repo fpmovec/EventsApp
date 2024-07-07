@@ -30,14 +30,14 @@ namespace Infrastructure.Repositories
         private DbSet<EventExtendedModel> dbSetExtended
             => _eventContext.ExtendedEvents;
 
-        public async Task<ICollection<EventBaseModel>> GetEventsByParticipantIdAsync(Guid id)
-        {
-            return await dbSetExtended.Where(e => e.Participants.Any(c => c.Id == id))
-                .Include(e => e.Category)
-                .Include(e => e.Image)
-                .Select(e => (EventBaseModel)e)
-                .ToListAsync();
-        }
+        //public async Task<ICollection<EventBaseModel>> GetEventsByParticipantIdAsync(Guid id)
+        //{
+        //    return await dbSetExtended.Where(e => e.Participants.Any(c => c.Id == id))
+        //        .Include(e => e.Category)
+        //        .Include(e => e.Image)
+        //        .Select(e => (EventBaseModel)e)
+        //        .ToListAsync();
+        //}
 
         public async Task<ICollection<EventBaseModel>> GetFilteredEventsAsync(List<FilterOption> filterOptions, SortType sortType = SortType.Default, SortOrder order = SortOrder.Ascending, int currentPage = 0)
         {
@@ -54,6 +54,13 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(e => e.Id == id);
 
             return eventExtended;
+        }
+
+        public async Task BookTickets(Guid eventId, int bookedTickets)
+        {
+            EventExtendedModel extendedEvent = await dbSetExtended.FindAsync(eventId);
+
+            extendedEvent.BookedTicketsCount += bookedTickets;
         }
 
         public async Task<ICollection<EventBaseModel>> GetMostPopularAsync()
@@ -80,5 +87,12 @@ namespace Infrastructure.Repositories
 
         public async Task<int> GetPagesCountAsync() 
             => await Task.FromResult(dbSet.Count() / paginationSettings.PageSize + 1);
+
+        public async Task CancelTickets(Guid eventId, int bookedTickets)
+        {
+            EventExtendedModel extendedEvent = await dbSetExtended.FindAsync(eventId);
+
+            extendedEvent.BookedTicketsCount -= bookedTickets;
+        }
     }
 }

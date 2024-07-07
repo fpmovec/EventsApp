@@ -23,7 +23,7 @@ namespace Web.Middleware
         {
             int statusCode = StatusCodes.Status500InternalServerError;
 
-            _logger.LogCritical($"Exception was thrown! Exception message: {ex.Message}");
+            _logger.LogCritical($"Exception was thrown! Exception message: {ex.Message} \n Inner exception message: {ex.InnerException?.Message}");
             context.Response.StatusCode = statusCode;
             //string errorResponse =  JsonConvert.SerializeObject(new ErrorModel(statusCode, ex.Message));
 

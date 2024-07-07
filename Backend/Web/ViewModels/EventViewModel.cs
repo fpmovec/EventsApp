@@ -20,7 +20,7 @@ namespace Web.ViewModels
         [Range(0, double.MaxValue)]
         public double Price { get; set; }
 
-        public DateTime DateTime { get; set; }
+        public DateTime Date { get; set; }
 
         [Required]
         [Range(1, int.MaxValue)]
@@ -28,6 +28,8 @@ namespace Web.ViewModels
 
         [Required]
         public string CategoryName { get; set; }
+
+        public IFormFile? ImageFile {  get; set; } 
     }
 
     public record ImageInfo(string Name, string Path);

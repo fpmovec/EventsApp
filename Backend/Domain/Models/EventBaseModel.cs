@@ -42,6 +42,6 @@ namespace Domain.Models
         public bool IsSoldOut
             => RemainingTicketsCount == 0;
 
-        public ICollection<Participant> Participants { get; set; }
+        //public ICollection<Participant> Participants { get; set; }
     }
 }

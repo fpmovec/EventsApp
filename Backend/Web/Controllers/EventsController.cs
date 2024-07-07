@@ -4,6 +4,7 @@ using AutoMapper;
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Roles;
 using Web.Extensions;
 using Web.ViewModels;
 
@@ -26,19 +27,19 @@ namespace Web.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
+        [Authorize(Roles = nameof(Admin))]
         [HttpPost("create")]
         public async Task<IActionResult> CreateEvent(
-            [FromForm]EventViewModel eventViewModel,
-            IFormFile? image)
+            [FromForm]EventViewModel eventViewModel)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             EventExtendedModel mappedModel = _mapper.Map<EventExtendedModel>(eventViewModel);
 
-            if (image is not null)
+            if (eventViewModel.ImageFile is not null)
             {
-                ImageInfo imageInfo = await image.AddImageAsync(_webHostEnvironment.WebRootPath);
+                ImageInfo imageInfo = await eventViewModel.ImageFile.AddImageAsync(_webHostEnvironment.WebRootPath);
 
                 mappedModel.Image = new() { Name = imageInfo.Name, Path = imageInfo.Path };
             }
@@ -47,21 +48,25 @@ namespace Web.Controllers
                 mappedModel.Image = new()
                 {
                     Name = "no-image",
-                    Path = Path.Combine(_webHostEnvironment.WebRootPath, "images", "no-image.jpg")
+                    Path = Path.Combine("images", "no-image.jpg")
                 };
             }
 
             EventCategory? category = await _unitOfWork.CategoryRepository.GetCategoryByName(eventViewModel.CategoryName);
 
             if (category is null)
-                return BadRequest($"Category {eventViewModel.CategoryName} doesn't exist!");
+            {
+                category = new() { Name = eventViewModel.CategoryName };
+                await _unitOfWork.CategoryRepository.AddAsync(category);
+            }
+                //return BadRequest($"Category {eventViewModel.CategoryName} doesn't exist!");
 
             mappedModel.Category = category;
 
             await _unitOfWork.EventsRepository.AddAsync(mappedModel);
             await _unitOfWork.CompleteAsync();
 
-            return Ok(mappedModel);
+            return Created();
         }
 
         [HttpGet("get-all")]
@@ -107,11 +112,11 @@ namespace Web.Controllers
             return Ok(users);
         }
 
+        [Authorize(Roles = nameof(Admin))]
         [HttpPut("edit/{id:Guid}")]
         public async Task<IActionResult> EditEvent(
             [FromRoute]Guid id,
-            [FromForm]EventViewModel eventViewModel,
-            IFormFile? image)
+            [FromForm]EventViewModel eventViewModel)
         {
             if(!ModelState.IsValid)
             {
@@ -131,9 +136,9 @@ namespace Web.Controllers
 
             extendedEvent = _mapper.Map(eventViewModel, extendedEvent);
 
-            if (image is not null)
+            if (eventViewModel.ImageFile is not null)
             {
-                ImageInfo imageInfo = await image.AddImageAsync(_webHostEnvironment.WebRootPath);
+                ImageInfo imageInfo = await eventViewModel.ImageFile.AddImageAsync(_webHostEnvironment.WebRootPath);
 
                 extendedEvent.Image = new() { Name = imageInfo.Name, Path = imageInfo.Path };
             }
@@ -145,7 +150,7 @@ namespace Web.Controllers
             EventCategory? category = await _unitOfWork.CategoryRepository.GetCategoryByName(eventViewModel.CategoryName);
 
             if (category is null)
-                return BadRequest($"Category {eventViewModel.CategoryName} doesn't exist!");
+                await _unitOfWork.CategoryRepository.AddAsync(new() { Name = eventViewModel.CategoryName });//return BadRequest($"Category {eventViewModel.CategoryName} doesn't exist!");
 
             extendedEvent.Category = category;
 
@@ -157,6 +162,7 @@ namespace Web.Controllers
             return Ok(extendedEvent);
         }
 
+        [Authorize(Roles = nameof(Admin))]
         [HttpDelete("delete/{id:Guid}")]
         public async Task<IActionResult> DeleteEventAsync(Guid id)
         {

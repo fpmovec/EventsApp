@@ -18,6 +18,7 @@ export interface AuthUser {
   email: string;
   name: string;
   phone: string;
+  isAdmin: boolean;
 }
 
 export const AuthContext = React.createContext<AuthContext>({
