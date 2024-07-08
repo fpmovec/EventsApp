@@ -7,17 +7,21 @@ import EventBrief from "../../Components/EventItem/EventItem";
 import { useNavigate } from "react-router-dom";
 import { EventItem } from "../../lib/Models/Event";
 import { GetPopularEvents } from "../../lib/Requests/GET/EventsRequests";
-import { useAppSelector } from "../../lib/Redux/Hooks";
+import { useAppDispath, useAppSelector } from "../../lib/Redux/Hooks";
+import { GetAllCategories } from "../../lib/Requests/GET/Categories";
+import { setCategoriesList } from "../../lib/Redux/Slices";
 
 const HomePage = () => {
   const [date, setDate] = useState<Date>(new Date());
   const [city, setCity] = useState<string>("");
   const [category, setCategory] = useState<string>("");
   const [popularEvents, setPopularEvents] = useState<EventItem[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
 
   const currentUser = useAppSelector((state) => state.auth.user);
 
   const navigate = useNavigate();
+  const dispatch = useAppDispath();
 
   useEffect(() => {
     const getPopularEvents = async () => {
@@ -25,7 +29,14 @@ const HomePage = () => {
       setPopularEvents(events);
     };
 
+    const getCategories = async () => {
+      const categories = await GetAllCategories();
+      setCategories(categories);
+      dispatch(setCategoriesList(categories))
+    };
+
     getPopularEvents();
+    getCategories();
   }, []);
 
   return (
@@ -50,7 +61,7 @@ const HomePage = () => {
             <Selector
               label="Category"
               value={category}
-              source={["Festival", "Concert", "Conference"]}
+              source={categories}
               handleValue={setCategory}
               isRequired={true}
             />
@@ -79,6 +90,7 @@ const HomePage = () => {
             isExtendedFunctionality={
               currentUser === undefined || !currentUser.isAdmin ? false : true
             }
+            onDelete={() => {}}
           />
         ))}
       </div>

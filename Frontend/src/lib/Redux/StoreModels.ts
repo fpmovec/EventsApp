@@ -5,6 +5,7 @@ interface AuthState {
   readonly isAuthenticated: boolean;
   readonly user: AuthUser | undefined;
   readonly tokens: AuthResult;
+  readonly categories: string[];
 }
 
 export interface AppState {
@@ -18,4 +19,5 @@ export const initialState: AuthState = {
     mainToken: "",
     refreshToken: "",
   },
+  categories: []
 };

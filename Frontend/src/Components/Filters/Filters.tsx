@@ -18,6 +18,7 @@ import {
   minEventPrice,
   priceSliderStep,
 } from "../../lib/Constants";
+import { useAppSelector } from "../../lib/Redux/Hooks";
 
 type Props = {
   filterOptions: EventsFilterOptions;
@@ -32,7 +33,7 @@ const Filters = ({ filterOptions, setFilterOptions, onApply }: Props) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   const handleExpand = () => setIsExpanded((prev) => !prev);
-
+  const categories = useAppSelector((state) => state.auth.categories);
   const [sortType, setSortType] = useState<string>("Default");
   const dateInYear = new Date();
   dateInYear.setDate(dateInYear.getDate() + 365 * 2);
@@ -158,7 +159,7 @@ const Filters = ({ filterOptions, setFilterOptions, onApply }: Props) => {
               <Selector
                 label="Category"
                 value={filterOptions.category as string}
-                source={["Festival", "Concert", "Conference"]}
+                source={categories}
                 handleValue={(v) =>
                   setFilterOptions((prev) => ({ ...prev, category: v }))
                 }

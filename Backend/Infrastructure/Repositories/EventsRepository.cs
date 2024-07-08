@@ -39,11 +39,11 @@ namespace Infrastructure.Repositories
         //        .ToListAsync();
         //}
 
-        public async Task<ICollection<EventBaseModel>> GetFilteredEventsAsync(List<FilterOption> filterOptions, SortType sortType = SortType.Default, SortOrder order = SortOrder.Ascending, int currentPage = 0)
+        public async Task<(ICollection<EventBaseModel>, int)> GetFilteredEventsAsync(List<FilterOption> filterOptions, SortType sortType = SortType.Default, SortOrder order = SortOrder.Ascending, int currentPage = 0)
         {
             var events = await GetAllAsync(filterOptions, sortType, order, currentPage);
 
-            return events.ToList();
+            return (events.Item1.ToList(), events.Item2);
         }
 
         public async Task<EventExtendedModel?> GetExtendedEventByIdAsync(Guid id)
@@ -84,9 +84,6 @@ namespace Infrastructure.Repositories
         {
             await base.UpdateAsync(entity);
         }
-
-        public async Task<int> GetPagesCountAsync() 
-            => await Task.FromResult(dbSet.Count() / paginationSettings.PageSize + 1);
 
         public async Task CancelTickets(Guid eventId, int bookedTickets)
         {

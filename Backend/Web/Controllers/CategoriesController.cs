@@ -56,7 +56,7 @@ namespace Web.Controllers
         {
             var categories = await _unitOfWork.CategoryRepository.GetAllCategoriesAsync();
             _logger.LogInformation("All categories were obtained");
-            return Ok(categories);
+            return Ok(categories.Select(c => c.Name));
         }
 
         [Authorize(Roles = nameof(Roles.Admin))]

@@ -10,10 +10,19 @@ interface Props {
   handleValue: (i: string) => void;
 }
 
-const Selector = ({ label, value, source, handleValue, isRequired = false, fullWidth = false, defaultValue = '' }: Props) => {
+const Selector = ({
+  label,
+  value,
+  source,
+  handleValue,
+  isRequired = false,
+  fullWidth = false,
+  defaultValue = "",
+}: Props) => {
+  console.log(source);
   return (
     <>
-      <FormControl style={{width: 170}}>
+      <FormControl style={{ width: 170 }}>
         <InputLabel id={label}>{label}</InputLabel>
         <Select
           labelId={label}

@@ -23,7 +23,7 @@ namespace Infrastructure.Repositories
 
         public async Task<ICollection<EventCategory>> GetAllCategoriesAsync(SortType sortType = SortType.Default, SortOrder order = SortOrder.Ascending)
         {
-            return (await GetAllAsync(filterOptions: new(), sortType: sortType, order: order)).ToList();
+            return (await GetAllAsync(filterOptions: new(), sortType: sortType, order: order)).Item1.ToList();
         }
 
         public async Task<EventCategory?> GetCategoryByName(string name)

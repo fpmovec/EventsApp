@@ -85,7 +85,7 @@ namespace Web.Controllers
 
             _logger.LogInformation("Events were obtained");
 
-            return Ok(events);
+            return Ok(new { Events = events.Item1, pages = events.Item2});
         }
 
         [HttpGet("get/{id:Guid}")]
@@ -188,8 +188,8 @@ namespace Web.Controllers
             return Ok(events);
         }
 
-        [HttpGet("pages")]
-        public async Task<IActionResult> GetPagesCount()
-            => Ok(await _unitOfWork.EventsRepository.GetPagesCountAsync());
+        //[HttpGet("pages")]
+        //public async Task<IActionResult> GetPagesCount()
+        //    => Ok(await _unitOfWork.EventsRepository.GetPagesCountAsync());
     }
 }

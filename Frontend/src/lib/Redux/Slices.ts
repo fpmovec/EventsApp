@@ -38,9 +38,13 @@ const authSlice = createSlice({
     setTokens: (state, action: PayloadAction<AuthResult>) => {
       state.tokens = action.payload;
     },
+
+    setCategoriesList: (state, action: PayloadAction<string[]>) => {
+      state.categories = action.payload;
+    },
   },
 });
 
-export const { signOut, signIn, refresh, reg, setTokens } = authSlice.actions;
+export const { signOut, signIn, refresh, reg, setTokens, setCategoriesList } = authSlice.actions;
 
 export default authSlice.reducer;

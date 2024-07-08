@@ -54,7 +54,7 @@ namespace Infrastructure.Repositories
             _logger.LogWarning("Entity hasn't been deleted because of the null value");
         }
 
-        public async Task<IQueryable<TEntity>> GetAllAsync(
+        public async Task<(IQueryable<TEntity>, int)> GetAllAsync(
             List<FilterOption> filterOptions,
             SortType sortType = SortType.Default,
             SortOrder order = SortOrder.Ascending,
@@ -71,12 +71,15 @@ namespace Infrastructure.Repositories
 
             _logger.LogInformation("Collection has been sorted");
 
+            (IQueryable<TEntity> ent, int pages)  = (entities, 0);
+
             if (currentPage is not 0)
             {
-                entities = SelectItemsForPage(entities, currentPage);
+                (ent, pages) = SelectItemsForPage(entities, currentPage);
+                entities = ent;
             }
             await Task.CompletedTask;
-            return entities;
+            return (ent, pages);
         }
 
         public async Task<TEntity?> GetByIdAsync(TId id)
@@ -91,11 +94,11 @@ namespace Infrastructure.Repositories
            await Task.CompletedTask;
         }
 
-        private IQueryable<TEntity> SelectItemsForPage(IQueryable<TEntity> collection, int currentPage)
+        private (IQueryable<TEntity>, int) SelectItemsForPage(IQueryable<TEntity> collection, int currentPage)
         {
-            return collection
+            return (collection
                 .Skip(_settings.PageSize * (currentPage - 1))
-                .Take(_settings.PageSize);
+                .Take(_settings.PageSize), (int)Math.Ceiling((double)collection.Count() / _settings.PageSize));
         }
     }
 }

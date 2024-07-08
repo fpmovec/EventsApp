@@ -5,7 +5,7 @@ namespace Application.Generic
 {
     public interface IGenericRepository<TEntity, TId> where TEntity : class
     {
-        Task<IQueryable<TEntity>> GetAllAsync(List<FilterOption> filterOptions, SortType sortType, SortOrder order, int currentPage);
+        Task<(IQueryable<TEntity>, int)> GetAllAsync(List<FilterOption> filterOptions, SortType sortType, SortOrder order, int currentPage);
 
         Task<TEntity?> GetByIdAsync(TId id);
 

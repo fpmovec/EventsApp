@@ -39,17 +39,12 @@ const AllEvents = () => {
 
   const getEvents = async () => {
     const items = await GetEvents(filterOptions);
-    setEventItems(items);
+    setEventItems(items.events);
+    setPagesCount(items.pages);
   };
 
   useEffect(() => {
-    const getPagesCount = async () => {
-      const pages = await GetPagesCount();
-      setPagesCount(pages);
-    };
     getEvents();
-
-    getPagesCount();
   }, [pageFromQuery]);
 
   const currentUser = useAppSelector((state) => state.auth.user);

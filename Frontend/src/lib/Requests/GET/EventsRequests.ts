@@ -4,10 +4,14 @@ import { EventsFilterOptions } from "../../Models/FilterOptions";
 
 const baseUrl = "https://localhost:7107";
 
+type EventsReturnType = {
+  events: EventItem[];
+  pages: number;
+}
+
 export const GetEvents = async (
   options: EventsFilterOptions
-): Promise<EventItem[]> => {
-  let events: EventItem[] = [];
+): Promise<EventsReturnType> => {
   const dateInYear = new Date();
   dateInYear.setDate(dateInYear.getDate() + 365 * 2);
   const minDate = ({
@@ -51,7 +55,7 @@ export const GetEvents = async (
       credentials: "omit",
     }
   );
-  events = await response.json();
+  const events = await response.json();
 
   return events;
 };
