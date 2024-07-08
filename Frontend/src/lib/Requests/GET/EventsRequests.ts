@@ -92,6 +92,6 @@ export const GetEventById = async (id: string): Promise<EventItemExtended> => {
     },
     credentials: "omit",
   });
-  console.log(response);
+
   return await response.json();
 };

@@ -29,7 +29,6 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
 
   const sign = async (data: LoginUserDTO) => {
     const result = await Login(data);
-    console.log(result);
     setAuthTokens(result);
   };
 

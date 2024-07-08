@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "./CreateOrEditEventPage.module.scss";
 import { useEffect, useState } from "react";
-import { EventDTO, EventItemExtended } from "../../lib/Models/Event";
+import { EventDTO } from "../../lib/Models/Event";
 import { GetEventById } from "../../lib/Requests/GET/EventsRequests";
 import { useForm } from "react-hook-form";
 import { TextField } from "@mui/material";
@@ -10,20 +10,14 @@ import Selector from "../../Components/Generic/Select/Selector";
 import Calendar from "../../Components/Generic/Calendar/Calendar";
 import { BlueButton } from "../../Components/Generic/Button/Buttons";
 import { useAppSelector } from "../../lib/Redux/Hooks";
-import { CreateEvent } from "../../lib/Requests/POST/Event";
+import { CreateEvent, UpdateEvent } from "../../lib/Requests/POST/Event";
 
 const CreateOrEditEventPage = () => {
   const { eventId } = useParams();
 
-  const [currentEvent, setCurrentEvent] = useState<EventItemExtended | null>(
-    null
-  );
+  const [place, setPlace] = useState<string>("");
+  const [date, setDate] = useState<Date>(new Date());
 
-  const [place, setPlace] = useState<string>(currentEvent?.place as string);
-  const [date, setDate] = useState<Date>(currentEvent?.date as Date);
-  const [category, setCategory] = useState<string>(
-    currentEvent?.category.name as string
-  );
   const [file, setFile] = useState<File>();
   const token = useAppSelector((state) => state.auth.tokens).mainToken;
 
@@ -33,18 +27,25 @@ const CreateOrEditEventPage = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<EventDTO>({
     mode: "onBlur",
   });
 
-  const onSubmit = (data: EventDTO) => {
+  const onEdit = (data: EventDTO) => {
     const editedEvent: EventDTO = {
       ...data,
       place: place,
-      dateTime: date ?? new Date(),
-      categoryName: category,
+      dateTime: date as Date,
     };
+    console.log(editedEvent);
+    const update = async () => {
+      await UpdateEvent(eventId as string, editedEvent, file!, token);
+    };
+
+    update();
+    navigate("/");
   };
 
   const onCreate = (data: EventDTO) => {
@@ -52,7 +53,6 @@ const CreateOrEditEventPage = () => {
       ...data,
       place: place,
       dateTime: date as Date,
-      categoryName: category as string,
     };
 
     const create = async () => {
@@ -64,17 +64,21 @@ const CreateOrEditEventPage = () => {
   };
 
   useEffect(() => {
-    const getEvent = async () => {
-      const e = await GetEventById(eventId as string);
-      setCurrentEvent(e);
-    };
-
     if (eventId !== undefined) {
-      getEvent();
+      GetEventById(eventId as string).then((e) => {
+        setPlace(e.place);
+        setDate(e.date);
+        setValue("name", e.name);
+        setValue("description", e.description);
+        setValue("maxParticipantsCount", e.maxParticipantsCount);
+        setValue("categoryName", e.category.name);
+        setValue("price", e.price);
+        setValue("dateTime", e.date);
+      });
       setIsReady(true);
     }
   }, [eventId]);
-  console.log(currentEvent);
+
   return (
     <>
       <div className={styles.title}>
@@ -83,7 +87,10 @@ const CreateOrEditEventPage = () => {
       {isReady ? (
         <>
           <div className={styles.main}>
-            <form id="editEvent" onSubmit={handleSubmit(onCreate)}>
+            <form
+              id="editEvent"
+              onSubmit={handleSubmit(eventId === undefined ? onCreate : onEdit)}
+            >
               <TextField
                 label="Event name"
                 type="text"
@@ -93,7 +100,6 @@ const CreateOrEditEventPage = () => {
                   required: true,
                   minLength: 3,
                 })}
-                defaultValue={currentEvent?.name}
               />
               {errors.name && errors.name.type === "required" && (
                 <ErrorField data="Event name is required" />
@@ -111,7 +117,6 @@ const CreateOrEditEventPage = () => {
                   minLength: 10,
                 })}
                 multiline
-                defaultValue={currentEvent?.description}
               />
               {errors.description && errors.description.type === "required" && (
                 <ErrorField data="Description is required" />
@@ -124,7 +129,6 @@ const CreateOrEditEventPage = () => {
                 label="Max participants count"
                 type="number"
                 margin="normal"
-                defaultValue={currentEvent?.maxParticipantsCount}
                 sx={{ width: 400 }}
                 {...register("maxParticipantsCount", {
                   required: true,
@@ -143,19 +147,40 @@ const CreateOrEditEventPage = () => {
                 label="Price"
                 type="number"
                 margin="normal"
-                defaultValue={currentEvent?.price}
                 sx={{ width: 400 }}
                 {...register("price", {
                   required: true,
                   min: 0,
+                  max: 5000,
                 })}
               />
               {errors.price && errors.price.type === "required" && (
                 <ErrorField data="This field is required" />
               )}
               {errors.price && errors.price.type === "min" && (
-                <ErrorField data="Price cannot be less than 0" />
+                <ErrorField data="Value cannot be less than 0" />
               )}
+              {errors.price && errors.price.type === "max" && (
+                <ErrorField data="Value cannot be greater than 5000" />
+              )}
+              <TextField
+                label="Category"
+                type="text"
+                margin="normal"
+                sx={{ width: 400 }}
+                {...register("categoryName", {
+                  required: true,
+                  minLength: 3,
+                })}
+              />
+              {errors.categoryName &&
+                errors.categoryName.type === "required" && (
+                  <ErrorField data="This field is required" />
+                )}
+              {errors.categoryName &&
+                errors.categoryName.type === "minLength" && (
+                  <ErrorField data="Name must contain at least 3 characters" />
+                )}
               <div
                 style={{
                   width: 400,
@@ -173,14 +198,6 @@ const CreateOrEditEventPage = () => {
                   handleValue={(v) => setPlace(v)}
                   isRequired={true}
                   fullWidth={true}
-                  defaultValue={currentEvent?.place}
-                />
-                <Selector
-                  label="Category"
-                  value={category ?? ""}
-                  source={["Festival", "Concert", "Conference"]}
-                  handleValue={(v) => setCategory(v)}
-                  defaultValue={currentEvent?.category.name}
                 />
               </div>
               <Calendar valueDate={date as Date} handleValue={setDate} />

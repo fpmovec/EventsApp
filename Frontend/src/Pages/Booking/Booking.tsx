@@ -40,7 +40,7 @@ const Booking = () => {
 
   const currentUser = useAppSelector((state) => state.auth.user);
   const token = useAppSelector((state) => state.auth.tokens.mainToken);
-  console.log(currentUser);
+
 
   const [bookingData, setBookingData] = useState<BookingDTO | null>(null);
 
@@ -92,7 +92,7 @@ const Booking = () => {
 
     sendRequest();
   };
-  console.log(currentStep);
+
   return (
     <div className={styles.main}>
       <div className={styles.content}>

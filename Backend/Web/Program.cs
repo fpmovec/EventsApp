@@ -5,6 +5,7 @@ using Domain.AppSettings;
 using Infrastructure;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
+using Infrastructure.SignalR;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Headers;
@@ -17,6 +18,7 @@ using Web;
 using Web.Background;
 using Web.Extensions;
 using Web.Mapping;
+using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -92,6 +94,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(opts =>
     opts.Password.RequireNonAlphanumeric = false;
 }).AddEntityFrameworkStores<EventContext>();
 
+builder.Services.AddSignalR();
+
 builder.Services.AddCors(opts =>
 {
     opts.AddDefaultPolicy(build =>
@@ -128,14 +132,17 @@ if (app.Environment.IsDevelopment())
 
 
 app.UseRouting();
+
 app.UseCors();
+
+app.MapHub<NotificationsHub>("/signal");
 app.UseExceptionHandlingMiddleware();
 app.UseRequestLogging();
 
 //app.UseHttpsRedirection();
+
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

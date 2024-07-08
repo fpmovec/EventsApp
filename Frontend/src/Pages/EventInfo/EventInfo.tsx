@@ -30,10 +30,7 @@ const EventInfo = () => {
       setCurrentEvent(event);
     };
     getEvent();
-    //import(currentEvent?.image.path as string).then((i) => setL(i));
-    //eventLogo();
   }, [eventId]);
-  console.log(currentEvent);
 
   return (
     <>
@@ -77,14 +74,6 @@ const EventInfo = () => {
                       fontSize="large"
                     />
                     {new Date(currentEvent!.date).toLocaleDateString()}
-                  </li>
-                  <li>
-                    <AccessTime
-                      style={{ marginRight: 10 }}
-                      color="primary"
-                      fontSize="large"
-                    />
-                    {new Date(currentEvent!.date).toLocaleTimeString()}
                   </li>
                   <li>
                     <Payments

@@ -19,7 +19,7 @@ const Selector = ({
   fullWidth = false,
   defaultValue = "",
 }: Props) => {
-  console.log(source);
+
   return (
     <>
       <FormControl style={{ width: 170 }}>
@@ -29,10 +29,18 @@ const Selector = ({
           label={label}
           onChange={(e) => handleValue(e.target.value as string)}
           value={value}
-          MenuProps={{ disableScrollLock: true }}
+          MenuProps={{
+            disableScrollLock: true,
+            PaperProps: {
+              style: {
+                maxHeight: 250,
+              },
+            },
+          }}
           fullWidth={fullWidth}
           required={isRequired}
-          defaultValue={defaultValue}
+          displayEmpty
+          //defaultValue={defaultValue}
         >
           {source.map((item, index) => {
             return (

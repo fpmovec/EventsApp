@@ -32,12 +32,12 @@ const HomePage = () => {
     const getCategories = async () => {
       const categories = await GetAllCategories();
       setCategories(categories);
-      dispatch(setCategoriesList(categories))
+      dispatch(setCategoriesList(categories));
     };
 
     getPopularEvents();
     getCategories();
-  }, []);
+  }, [categories.length, dispatch]);
 
   return (
     <>

@@ -6,7 +6,7 @@ export const BookEvent = async (
   data: BookingDTO,
   token: string
 ): Promise<void> => {
-  console.log(data);
+
   await fetch(`${baseUrl}/api/booking/book`, {
     method: "POST",
     headers: {

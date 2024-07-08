@@ -24,7 +24,7 @@ export const GetCurrentUser = async (
 };
 
 export const IsAuthenticated = async (token: string): Promise<boolean> => {
-  console.log(token);
+
   const response = await fetch(`${baseUrl}/api/user/isAuthenticated`, {
     method: "GET",
     headers: {
