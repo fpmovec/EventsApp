@@ -16,6 +16,8 @@ namespace Domain.AppSettings
         [Required]
         [ValidateObjectMembers]
         public EventsSettings EventsSettings { get; set; }
+
+        public EventMessages EventMessages { get; set; }
     }
 
     public class JwtSettings
@@ -55,5 +57,10 @@ namespace Domain.AppSettings
 
         [Required]
         public int MaxEventPrice { get; set; }
+    }
+
+    public class EventMessages
+    {
+        public string ChangedEventInfoMessage { get; set; } = string.Empty;
     }
 }

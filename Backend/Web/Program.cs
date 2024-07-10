@@ -18,7 +18,6 @@ using Web;
 using Web.Background;
 using Web.Extensions;
 using Web.Mapping;
-using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,9 +46,17 @@ builder.Services.AddScoped<IEventsRepository, EventsBaseRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 
+builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 builder.Services.AddHostedService<BackgroundWorker>();
+
+builder.Services.AddStackExchangeRedisCache(opts =>
+{
+    opts.InstanceName = "local";
+    opts.Configuration = "localhost:6379";
+});
 
 builder.Services
     .AddDbContext<EventContext>(opts =>
@@ -94,7 +101,10 @@ builder.Services.AddDefaultIdentity<IdentityUser>(opts =>
     opts.Password.RequireNonAlphanumeric = false;
 }).AddEntityFrameworkStores<EventContext>();
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(opts =>
+{
+    opts.EnableDetailedErrors = true;
+});
 
 builder.Services.AddCors(opts =>
 {
@@ -102,7 +112,8 @@ builder.Services.AddCors(opts =>
     {
         build.AllowAnyHeader();
         build.AllowAnyMethod();
-        build.AllowAnyOrigin();
+        build.WithOrigins("http://localhost:5173");
+        build.AllowCredentials();
     });
 });
 
@@ -135,7 +146,7 @@ app.UseRouting();
 
 app.UseCors();
 
-app.MapHub<NotificationsHub>("/signal");
+app.MapHub<NotificationsHub>("/notification");
 app.UseExceptionHandlingMiddleware();
 app.UseRequestLogging();
 

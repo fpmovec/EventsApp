@@ -1,12 +1,14 @@
 ﻿using Application.CollectionServices;
 using Application.Models;
 using Application.Repositories;
+using Application.Services;
 using Domain.AppSettings;
 using Domain.Enums;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Web.ViewModels;
 
 namespace Infrastructure.Repositories
 {
@@ -18,7 +20,8 @@ namespace Infrastructure.Repositories
             ILogger<EventsBaseRepository> logger,
             IOptions<AppSettings> options,
             IFilterService<EventBaseModel> filterService,
-            ISortService<EventBaseModel> sortService) 
+            ISortService<EventBaseModel> sortService,
+            INotificationService notificationService)
             : base(eventContext, logger, options, filterService, sortService)
         {
             paginationSettings = options.Value.PaginationSettings;
@@ -80,7 +83,7 @@ namespace Infrastructure.Repositories
             return popularEvents;
         }
 
-        public override async Task UpdateAsync(EventBaseModel entity)
+        public async override Task UpdateAsync(EventBaseModel entity)
         {
             await base.UpdateAsync(entity);
         }

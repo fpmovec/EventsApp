@@ -6,7 +6,6 @@ import {
   Payments,
   Place,
   CalendarMonth,
-  AccessTime,
 } from "@mui/icons-material";
 import Price from "../../Components/Generic/Price/Price";
 import { BlueButton } from "../../Components/Generic/Button/Buttons";

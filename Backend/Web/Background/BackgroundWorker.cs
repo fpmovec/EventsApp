@@ -5,7 +5,7 @@ namespace Web.Background
 {
     public class BackgroundWorker : IHostedService, IDisposable
     {
-        private const long WorkDelayInMiliseconds = 86400000 ;
+        private const long WorkDelayInMiliseconds = 86_400_000 ;
 
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<BackgroundWorker> _logger;

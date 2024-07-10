@@ -17,7 +17,6 @@ const Selector = ({
   handleValue,
   isRequired = false,
   fullWidth = false,
-  defaultValue = "",
 }: Props) => {
 
   return (

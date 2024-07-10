@@ -1,4 +1,5 @@
 ﻿using Application.Models;
+using Application.Services;
 using Application.UnitOfWork;
 using AutoMapper;
 using Domain.Models;
@@ -18,13 +19,20 @@ namespace Web.Controllers
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly INotificationService _notificationService;
 
-        public EventsController(IUnitOfWork unitOfWork, ILogger<EventsController> logger, IMapper mapper, IWebHostEnvironment webHostEnvironment)
+        public EventsController(
+            IUnitOfWork unitOfWork,
+            ILogger<EventsController> logger,
+            IMapper mapper,
+            IWebHostEnvironment webHostEnvironment,
+            INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
             _webHostEnvironment = webHostEnvironment;
+            _notificationService = notificationService;
         }
 
         [Authorize(Roles = nameof(Admin))]
@@ -154,7 +162,11 @@ namespace Web.Controllers
 
             extendedEvent.Category = category;
 
+            var particiapnts = await _unitOfWork.BookingRepository.GetEventParticipants(extendedEvent.Id);
+
             await _unitOfWork.EventsRepository.UpdateAsync(extendedEvent);
+            await _notificationService.NotifyUsersAsync(extendedEvent, particiapnts);
+            await _notificationService.NotifyCurrentUserWithPopupAsync(extendedEvent, particiapnts);
             await _unitOfWork.CompleteAsync();
 
             _logger.LogInformation("Event was sucessfully updated");
