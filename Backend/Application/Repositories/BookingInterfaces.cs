@@ -14,5 +14,7 @@ namespace Application.Repositories
         Task<ICollection<UserBrief>> GetEventParticipants(Guid eventId);
 
         Task<ICollection<Booking>> GetParticipantBookingsAsync(string userId);
+
+        Task UpdateDependingBookingsAsync(EventExtendedModel eventExtendedModel);
    }
 }

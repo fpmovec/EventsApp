@@ -14,36 +14,40 @@ namespace Infrastructure.Services
         private readonly IHubContext<NotificationsHub, INotificationsClient> _hubContext;
         private readonly ICacheService _cacheService;
         private readonly AppSettings _appSettings;
-        private readonly IAuthService _authService;
 
         public NotificationService(
             IHubContext<NotificationsHub, INotificationsClient> hubContext,
             IOptions<AppSettings> appSettings,
-            ICacheService cacheService,
-            IAuthService authService)
+            ICacheService cacheService)
         {
             _hubContext = hubContext;
             _appSettings = appSettings.Value;
             _cacheService = cacheService;
-            _authService = authService;
         }
 
-        public async Task NotifyCurrentUserWithPopupAsync(EventBaseModel eventBaseModel, ICollection<UserBrief> users)
+        public async Task<ICollection<DetailsChangedEvent>> GetAllNotificationsAsync(string userId)
         {
-            string notificationMessage = string.Format(_appSettings.EventMessages.ChangedEventInfoMessage, eventBaseModel.Name);
-            var currentUser = await _authService.GetCurrentUserAsync();
+            ICollection<DetailsChangedEvent> notifications = await _cacheService.GetAsync<DetailsChangedEvent[]>(userId) ?? [];
+
+            return notifications;
+        }
+
+        public async Task NotifyCurrentUserWithPopupAsync(string oldName, Guid eventId, ICollection<UserBrief> users)
+        {
+            string notificationMessage = string.Format(_appSettings.EventMessages.ChangedEventInfoMessage, oldName);
+
             await _hubContext.Clients.All.ReceiveMessageAsync(new DetailsChangedEvent
             {
                 Id = Guid.NewGuid().ToString(),
-                EventId = eventBaseModel.Id,
+                EventId = eventId,
                 Message = notificationMessage,
                 UserIds = users.Select(x => x.Id).ToArray(),
             });
         }
 
-        public async Task NotifyUsersAsync(EventBaseModel eventBaseModel, ICollection<UserBrief> users)
+        public async Task NotifyUsersAsync(string oldName, Guid eventId, ICollection<UserBrief> users)
         {
-            string notificationMessage = string.Format(_appSettings.EventMessages.ChangedEventInfoMessage, eventBaseModel.Name);
+            string notificationMessage = string.Format(_appSettings.EventMessages.ChangedEventInfoMessage, oldName);
 
             foreach (UserBrief user in users)
             {
@@ -52,12 +56,12 @@ namespace Infrastructure.Services
                 if (notifications is null)
                     notifications = [];
 
-                List<DetailsChangedEvent> notificationsList = notifications.ToList();
+                List<DetailsChangedEvent> notificationsList = [..notifications];
 
                 notificationsList.Add(new DetailsChangedEvent
                 {
                     Id = Guid.NewGuid().ToString(),
-                    EventId = eventBaseModel.Id,
+                    EventId = eventId,
                     Message = notificationMessage,
                 });
 

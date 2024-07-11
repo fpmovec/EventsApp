@@ -67,7 +67,6 @@ namespace Web.Controllers
                 category = new() { Name = eventViewModel.CategoryName };
                 await _unitOfWork.CategoryRepository.AddAsync(category);
             }
-                //return BadRequest($"Category {eventViewModel.CategoryName} doesn't exist!");
 
             mappedModel.Category = category;
 
@@ -139,6 +138,7 @@ namespace Web.Controllers
                 _logger.LogError($"Event with id {id} does not exist!");
                 return NotFound();
             }
+            string oldName = extendedEvent.Name;
 
             Image prevImage = extendedEvent.Image;
 
@@ -158,15 +158,17 @@ namespace Web.Controllers
             EventCategory? category = await _unitOfWork.CategoryRepository.GetCategoryByName(eventViewModel.CategoryName);
 
             if (category is null)
-                await _unitOfWork.CategoryRepository.AddAsync(new() { Name = eventViewModel.CategoryName });//return BadRequest($"Category {eventViewModel.CategoryName} doesn't exist!");
+                await _unitOfWork.CategoryRepository.AddAsync(new() { Name = eventViewModel.CategoryName });
 
             extendedEvent.Category = category;
 
             var particiapnts = await _unitOfWork.BookingRepository.GetEventParticipants(extendedEvent.Id);
 
             await _unitOfWork.EventsRepository.UpdateAsync(extendedEvent);
-            await _notificationService.NotifyUsersAsync(extendedEvent, particiapnts);
-            await _notificationService.NotifyCurrentUserWithPopupAsync(extendedEvent, particiapnts);
+            await _notificationService.NotifyUsersAsync(oldName, extendedEvent.Id, particiapnts);
+            await _notificationService.NotifyCurrentUserWithPopupAsync(oldName, extendedEvent.Id, particiapnts);
+            await _unitOfWork.BookingRepository.UpdateDependingBookingsAsync(extendedEvent);
+
             await _unitOfWork.CompleteAsync();
 
             _logger.LogInformation("Event was sucessfully updated");
@@ -199,9 +201,5 @@ namespace Web.Controllers
 
             return Ok(events);
         }
-
-        //[HttpGet("pages")]
-        //public async Task<IActionResult> GetPagesCount()
-        //    => Ok(await _unitOfWork.EventsRepository.GetPagesCountAsync());
     }
 }

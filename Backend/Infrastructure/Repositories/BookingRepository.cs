@@ -55,5 +55,21 @@ namespace Infrastructure.Repositories
                  .Where(b => b.UserId == userId)
                  .ToListAsync();
         }
+
+        public async Task UpdateDependingBookingsAsync(EventExtendedModel eventExtendedModel)
+        {
+            IQueryable<Booking> eventBookings = dbSet.Where(b => b.EventId == eventExtendedModel.Id);
+
+            foreach(Booking booking in eventBookings)
+            {
+                booking.EventName = eventExtendedModel.Name;
+                booking.PricePerOne = eventExtendedModel.Price;
+            }
+
+            dbSet.UpdateRange(eventBookings);
+
+            await Task.CompletedTask;
+        }
+
     }
 }

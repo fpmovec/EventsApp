@@ -2,6 +2,7 @@ import { maxEventPrice } from "../../Constants";
 import { EventItem, EventItemExtended } from "../../Models/Event";
 import { EventsFilterOptions } from "../../Models/FilterOptions";
 
+
 const baseUrl = "https://localhost:7107";
 
 type EventsReturnType = {

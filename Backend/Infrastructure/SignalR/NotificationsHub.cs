@@ -10,6 +10,8 @@ namespace Infrastructure.SignalR
         public async Task SendMessage(DetailsChangedEvent @event)
         {
             await Clients.All.ReceiveMessageAsync(@event);
+
+            logger.LogInformation("Message was sent");
         }
     }
 }

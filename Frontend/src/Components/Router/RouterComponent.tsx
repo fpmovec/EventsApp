@@ -7,6 +7,7 @@ import About from "../../Pages/About/About";
 import Booking from "../../Pages/Booking/Booking";
 import MyTickets from "../../Pages/MyTickets/MyTickets";
 import CreateOrEditEventPage from "../../Pages/CreateOrEditEvent/CreateOrEditEventPage";
+import NotificationsPage from "../../Pages/NotificationsPage/Notifications";
 
 const RouterComponent = () => {
   return (
@@ -18,6 +19,7 @@ const RouterComponent = () => {
       <Route path="/about" element={<About />} />
       <Route path="/booking/:eventId" element={<Booking />} />
       <Route path="/event/edit/:eventId?" element={<CreateOrEditEventPage />}/>
+      <Route path="/notifications" element={<NotificationsPage />} />
       <Route path="/" element={<HomePage />} />
       <Route path="*" element={<HomePage />} />
     </Routes>

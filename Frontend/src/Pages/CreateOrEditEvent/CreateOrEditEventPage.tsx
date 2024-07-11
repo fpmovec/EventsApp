@@ -39,7 +39,7 @@ const CreateOrEditEventPage = () => {
       place: place,
       dateTime: date as Date,
     };
-    console.log(editedEvent);
+
     const update = async () => {
       await UpdateEvent(eventId as string, editedEvent, file!, token);
     };

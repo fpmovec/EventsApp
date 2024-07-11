@@ -6,6 +6,7 @@ import { signOut } from "../../../lib/Redux/Slices";
 import { Logout } from "../../../lib/Requests/POST/Auth";
 import { Menu, MenuItem } from "@mui/material";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
+import { Notifications } from "@mui/icons-material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -44,7 +45,10 @@ const Sign = () => {
           />
         </>
       ) : (
-        <>
+        <div className={styles.profileBlock}>
+          <div className={styles.notification} onClick={() => navigate('/notifications')}>
+            <Notifications color="primary" fontSize="medium"/>
+          </div>
           <div
             className={styles.expanderHeader}
             onClick={(e) => handleClick(e)}
@@ -100,7 +104,7 @@ const Sign = () => {
               Logout
             </MenuItem>
           </Menu>
-        </>
+        </div>
       )}
     </div>
   );

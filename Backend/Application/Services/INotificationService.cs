@@ -5,8 +5,10 @@ namespace Application.Services
 {
     public interface INotificationService
     {
-        Task NotifyUsersAsync(EventBaseModel eventBaseModel, ICollection<UserBrief> users);
+        Task NotifyUsersAsync(string oldName, Guid eventId, ICollection<UserBrief> users);
 
-        Task NotifyCurrentUserWithPopupAsync(EventBaseModel eventBaseModel, ICollection<UserBrief> users);
+        Task NotifyCurrentUserWithPopupAsync(string oldName, Guid eventId, ICollection<UserBrief> users);
+
+        Task<ICollection<DetailsChangedEvent>> GetAllNotificationsAsync(string userId);
     }
 }
