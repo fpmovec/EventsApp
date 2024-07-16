@@ -1,6 +1,7 @@
 ﻿using Application.CollectionServices;
 using Domain.Enums;
 using Domain.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Collections.Frozen;
 using System.Linq;
 
@@ -17,7 +18,7 @@ namespace Infrastructure.CollectionServices.Sort
 
         public IQueryable<EventCategory> Sort(IQueryable<EventCategory> collection, SortType sortType, SortOrder order)
         {
-            Func<EventCategory, object> functor = TryInvokeFunctor(sortType);
+            Func<EventCategory, object> functor = TryGetFunctor(sortType);
 
             IOrderedEnumerable<EventCategory> result = order == SortOrder.Ascending
                 ? collection.OrderBy(functor)
@@ -26,14 +27,14 @@ namespace Infrastructure.CollectionServices.Sort
             return result.AsQueryable();
         }
 
-        private Func<EventCategory, object> TryInvokeFunctor(SortType sortType)
+        private Func<EventCategory, object> TryGetFunctor(SortType sortType)
         {
             if (Functors.TryGetValue(sortType, out var functor))
             {
                 return functor;
             }
 
-            throw new InvalidDataException();
+            return model => model.Id;
         }
     }
 }

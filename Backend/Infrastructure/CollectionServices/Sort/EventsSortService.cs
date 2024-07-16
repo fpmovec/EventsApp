@@ -21,7 +21,7 @@ namespace Infrastructure.CollectionServices.Sort
             SortType sortType,
             SortOrder order = SortOrder.Ascending)
         {
-            Func<EventBaseModel, object> functor = TryInvokeFunctor(sortType);
+            Func<EventBaseModel, object> functor = TryGetFunctor(sortType);
 
             IOrderedEnumerable<EventBaseModel> result = order == SortOrder.Ascending
                 ? collection.OrderBy(functor)
@@ -30,14 +30,14 @@ namespace Infrastructure.CollectionServices.Sort
             return result.AsQueryable();
         }
 
-        private Func<EventBaseModel, object> TryInvokeFunctor(SortType sortType)
+        private Func<EventBaseModel, object> TryGetFunctor(SortType sortType)
         {
             if (Functors.TryGetValue(sortType, out var functor))
             {
                 return functor;
             }
 
-            throw new InvalidDataException();
+            return model => model.Id;
         }
     }
 }

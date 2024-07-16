@@ -18,7 +18,7 @@ namespace Infrastructure.Services
             _userManager = userManager;
         }
 
-        public Task<UserResponse> GetCurrentUserAsync()
+        public async Task<UserResponse> GetCurrentUserAsync()
         {
             ClaimsPrincipal currentUser = _contextAccessor.HttpContext.User;
 
@@ -31,7 +31,7 @@ namespace Infrastructure.Services
             string id = currentUser.Claims.FirstOrDefault(c => c.Type == "Id")!.Value;
             string? phone = currentUser.Claims.FirstOrDefault(c => c.Type == "Phone")?.Value;
 
-            return Task.FromResult(new UserResponse()
+            return await Task.FromResult(new UserResponse()
             {
                 Email = email,
                 Id = id,

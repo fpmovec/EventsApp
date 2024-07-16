@@ -21,9 +21,10 @@ namespace Infrastructure.Repositories
 
         protected override DbSet<EventCategory> dbSet => _eventContext.Categories;
 
-        public async Task<ICollection<EventCategory>> GetAllCategoriesAsync(SortType sortType = SortType.Default, SortOrder order = SortOrder.Ascending)
+        public async Task<IQueryable<EventCategory>> GetAllCategoriesAsync(SortType sortType = SortType.Default, SortOrder order = SortOrder.Ascending)
         {
-            return (await GetAllAsync(filterOptions: new(), sortType: sortType, order: order)).Item1.ToList();
+            var categories = await GetAllAsync(filterOptions: new(), sortType: sortType, order: order);
+            return categories.Item1;
         }
 
         public async Task<EventCategory?> GetCategoryByName(string name)

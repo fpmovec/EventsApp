@@ -64,7 +64,7 @@ namespace Infrastructure
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Image> Images {  get; set; } 
         public DbSet<Participant> Participants { get; set; }
-        public DbSet<EventCategory> Categories { get; set; }
+        public virtual DbSet<EventCategory> Categories { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }

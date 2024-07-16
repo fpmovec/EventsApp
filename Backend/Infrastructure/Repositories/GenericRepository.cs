@@ -61,7 +61,7 @@ namespace Infrastructure.Repositories
             int currentPage = 0)
         {
             IQueryable<TEntity> entities = dbSet;
-
+            //var c = entities.ToList();
             entities = _filterService.FilterWithManyOptions(entities, filterOptions);
 
             _logger.LogInformation("Collection has been filtered");

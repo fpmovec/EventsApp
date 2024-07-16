@@ -25,7 +25,7 @@ namespace Infrastructure.CollectionServices.Filter
 
         public IQueryable<EventBaseModel> Filter(IQueryable<EventBaseModel> collection, FilterType property, object filterValue)
         {
-            Func<EventBaseModel, object, bool> functor = TryInvokeFunctor(property);
+            Func<EventBaseModel, object, bool> functor = TryGetFunctor(property);
             Func<EventBaseModel, bool> sortFunctor = model => functor(model, filterValue);
 
             var events = collection
@@ -51,7 +51,7 @@ namespace Infrastructure.CollectionServices.Filter
             {
                 if (filterOption.Value is not null)
                 {
-                    Func<EventBaseModel, object, bool> functor = TryInvokeFunctor(filterOption.FilterType);
+                    Func<EventBaseModel, object, bool> functor = TryGetFunctor(filterOption.FilterType);
                     Func<EventBaseModel, bool> sortFunctor = model => functor(model, filterOption.Value);
 
                     source = source.ToList().Where(sortFunctor).AsQueryable();
@@ -61,14 +61,14 @@ namespace Infrastructure.CollectionServices.Filter
             return source;
         }
 
-        private Func<EventBaseModel, object, bool> TryInvokeFunctor(FilterType filterProperty)
+        private Func<EventBaseModel, object, bool> TryGetFunctor(FilterType filterProperty)
         {
             if (Functors.TryGetValue(filterProperty, out var functor))
             {
                 return functor;
             }
 
-            throw new InvalidDataException();
+            return (model, value) => true is true;
         }
     }
 }
