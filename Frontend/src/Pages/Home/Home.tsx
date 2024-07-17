@@ -10,6 +10,7 @@ import { GetPopularEvents } from "../../lib/Requests/GET/EventsRequests";
 import { useAppDispath, useAppSelector } from "../../lib/Redux/Hooks";
 import { GetAllCategories } from "../../lib/Requests/GET/Categories";
 import { setCategoriesList } from "../../lib/Redux/Slices";
+import { cities } from "../../lib/Constants";
 
 const HomePage = () => {
   const [date, setDate] = useState<Date>(new Date());
@@ -54,7 +55,7 @@ const HomePage = () => {
             <Selector
               label="City"
               value={city}
-              source={["Minsk", "Moscow", "Mogilev"]}
+              source={cities}
               handleValue={setCity}
               isRequired={true}
             />

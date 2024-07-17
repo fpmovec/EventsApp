@@ -11,6 +11,7 @@ import Calendar from "../../Components/Generic/Calendar/Calendar";
 import { BlueButton } from "../../Components/Generic/Button/Buttons";
 import { useAppSelector } from "../../lib/Redux/Hooks";
 import { CreateEvent, UpdateEvent } from "../../lib/Requests/POST/Event";
+import { cities } from "../../lib/Constants";
 
 const CreateOrEditEventPage = () => {
   const { eventId } = useParams();
@@ -194,7 +195,7 @@ const CreateOrEditEventPage = () => {
                 <Selector
                   label="City"
                   value={place}
-                  source={["Minsk", "Moscow", "Mogilev"]}
+                  source={cities}
                   handleValue={(v) => setPlace(v)}
                   isRequired={true}
                   fullWidth={true}

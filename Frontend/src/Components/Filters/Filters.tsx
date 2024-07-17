@@ -14,6 +14,7 @@ import { TextField } from "@mui/material";
 import { useSearchParams } from "react-router-dom";
 import { SortType } from "../../lib/Utils/SortUtils";
 import {
+  cities,
   maxEventPrice,
   minEventPrice,
   priceSliderStep,
@@ -148,7 +149,7 @@ const Filters = ({ filterOptions, setFilterOptions, onApply }: Props) => {
               <Selector
                 label="City"
                 value={filterOptions.place ?? ""}
-                source={["Minsk", "Moscow", "Mogilev"]}
+                source={cities}
                 handleValue={(v) =>
                   setFilterOptions((prev) => ({ ...prev, place: v }))
                 }

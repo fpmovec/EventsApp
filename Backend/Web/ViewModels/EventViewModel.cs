@@ -17,7 +17,7 @@ namespace Web.ViewModels
         public string Place {  get; set; }
 
         [Required]
-        [Range(0, double.MaxValue)]
+        [Range(0, 5000.0)]
         public double Price { get; set; }
 
         public DateTime Date { get; set; }
