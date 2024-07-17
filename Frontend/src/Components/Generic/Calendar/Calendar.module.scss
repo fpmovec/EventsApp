@@ -1,0 +1,13 @@
+.MuiPickersDay-root.Mui-selected,
+.MuiMultiSectionDigitalClockSection-item.Mui-selected {
+  background-color: $blue !important;
+}
+
+.MuiMultiSectionDigitalClockSection-item.Mui-selected {
+  border-radius: 10px;
+}
+
+.MuiFormControl-fullWidth {
+  max-width: 200px !important;
+}
+

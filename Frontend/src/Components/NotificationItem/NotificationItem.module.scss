@@ -1,0 +1,17 @@
+.item {
+  box-sizing: border-box;
+  width: 70vw;
+  height: auto;
+  min-height: 50px;
+  border: 1.5px solid $blue;
+  border-radius: $border-radius;
+  padding: 10px;
+  margin: 5px;
+  box-shadow: 1px 1px $gray;
+  word-break: break-all;
+
+  & > h6 {
+    font-weight: 300;
+    font-family: "Open Sans";
+  }
+}

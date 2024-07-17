@@ -1,0 +1,59 @@
+.btn {
+    display: flex;
+    min-width: 120px;
+    width: auto;
+    height: 40px;
+    justify-content: center;
+    align-items: center;
+    margin: 0 0.5rem;
+    line-height: 35px;
+    border: 1px solid;
+    border-radius: $border-radius;
+    text-align: center;
+    font-size: 16px;
+    color: #000;
+    text-decoration: none;
+    transition: all 0.35s;
+    box-sizing: border-box;
+    padding: 0 15px 0 15px;
+    cursor: pointer;
+}
+
+.blueButton {
+    border-color: $white;
+    color: $white;
+    transition: all 0.5s;
+    background-color: $blue;
+    &:hover {
+      box-shadow: inset 5em 0 0 0 $white,
+        inset -5em 0 0 0 $white;
+      border-color: $blue;
+      color: $blue;
+    }
+}
+
+.whiteButton {
+    border-color: $blue;
+    color: $blue;
+    transition: all 0.5s;
+    background-color: $white;
+    &:hover {
+      box-shadow: inset 5em 0 0 0 $blue,
+        inset -5em 0 0 0 $blue;
+      border-color: $blue;
+      color: #fff;
+    }
+}
+
+.whiteButton[disabled],
+.blueButton[disabled] {
+    transition: all 0.5s;
+    &:hover {
+      /* box-shadow: inset 5em 0 0 0 $error-red,
+        inset -5em 0 0 0 $error-red;
+      border-color: $error-red; */
+      color: $error-red;
+      background-color: $white;
+      border-color: $error-red;
+    }
+}

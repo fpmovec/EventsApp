@@ -1,0 +1,66 @@
+.item {
+    box-sizing: border-box;
+    width: 70vw;
+    height: 200px;
+    border: 1.5px solid $blue;
+    border-radius: $border-radius;
+    padding: 10px;
+    display: grid;
+    grid-template-rows: 3fr 1fr;
+    margin: 15px;
+    box-shadow: 1px 1px $gray;
+  }
+  
+  .info {
+    box-sizing: border-box;
+    padding-left: 30px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 0.5fr;
+    row-gap: 15px;
+    grid-template-rows: 3fr 1fr;
+    word-wrap: break-word;
+
+    & > ul {
+        list-style-type: disc;
+        justify-self: center;
+
+        & > li {
+            font-weight: 300;
+            font-size: 18px;
+        }
+    }
+  }
+
+  .priceRow {
+    grid-column: span 3;
+    align-self: center;
+    justify-self: flex-end;
+    box-sizing: border-box;
+    padding-right: 130px;
+    font-size: 20px;
+    font-weight: 300;
+  }
+
+  .title {
+    height: 40px;
+    margin-top: 5px;
+    position: relative;
+    & h4 {
+      font-weight: 400;
+      text-align: start;
+    }
+  }
+
+  .title:hover {
+    cursor: pointer;
+  }
+  
+  .title::after {
+    position: absolute;
+    content: "";
+    border-top: 1px solid $gray;
+    width: 100%;
+  }
+  
+
+  
