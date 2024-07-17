@@ -1,13 +1,12 @@
-﻿using Domain.Enums;
-using Microsoft.AspNetCore.Http;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace Domain.Models
 {
     public abstract class EventBaseModel
     {
-        public Guid Id { get; set; }
+        [Key]
+        public int Id { get; set; }
 
         public string Name { get; set; } = string.Empty;
 
@@ -41,7 +40,5 @@ namespace Domain.Models
         [NotMapped]
         public bool IsSoldOut
             => RemainingTicketsCount == 0;
-
-        //public ICollection<Participant> Participants { get; set; }
     }
 }

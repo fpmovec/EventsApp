@@ -10,7 +10,6 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Headers;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using System.Text;
@@ -18,6 +17,7 @@ using Web;
 using Web.Background;
 using Web.Extensions;
 using Web.Mapping;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,7 +61,8 @@ builder.Services.AddStackExchangeRedisCache(opts =>
 builder.Services
     .AddDbContext<EventContext>(opts =>
     {
-        opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    //opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+      opts.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
     });
 
 builder.Services.AddAutoMapper(config =>
@@ -112,6 +113,7 @@ builder.Services.AddCors(opts =>
     {
         build.AllowAnyHeader();
         build.AllowAnyMethod();
+        //build.AllowAnyOrigin();
         build.WithOrigins("http://localhost:5173");
         build.AllowCredentials();
     });
@@ -132,25 +134,20 @@ app.UseStaticFiles(new StaticFileOptions
     }
 });
 
+app.MigrateDatabase();
+
 app.UseImagesCaching();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseRouting();
-
 app.UseCors();
 
-app.MapHub<NotificationsHub>("/notification");
+app.MapHub<NotificationsHub>("api/notification");
 app.UseExceptionHandlingMiddleware();
 app.UseRequestLogging();
 
-//app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();

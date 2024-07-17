@@ -1,10 +1,10 @@
-const baseUrl = "https://localhost:7107";
+import { baseUrl } from "../../Constants";
 
 export const DeleteEvent = async (
   eventId: string,
   token: string
 ): Promise<void> => {
-  await fetch(`${baseUrl}/events/delete/${eventId}`, {
+  await fetch(`${baseUrl}/api/events/delete/${eventId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",

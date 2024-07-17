@@ -5,10 +5,10 @@ namespace Application.Services
 {
     public interface INotificationService
     {
-        Task NotifyUsersAsync(string oldName, Guid eventId, ICollection<UserBrief> users);
+        Task NotifyUsersAsync(string oldName, int eventId, ICollection<UserBrief> users);
 
-        Task NotifyCurrentUserWithPopupAsync(string oldName, Guid eventId, ICollection<UserBrief> users);
+        Task NotifyCurrentUserWithPopupAsync(string oldName, int eventId, ICollection<UserBrief> users);
 
-        Task<ICollection<DetailsChangedEvent>> GetAllNotificationsAsync(string userId);
+        Task<ICollection<DetailsChangedEvent>> GetAllNotificationsAsync(Guid userId);
     }
 }

@@ -1,6 +1,5 @@
+import { baseUrl } from "../../Constants";
 import { EventDTO } from "../../Models/Event";
-
-const baseUrl = "https://localhost:7107";
 
 export const CreateEvent = async (
   data: EventDTO,
@@ -21,7 +20,7 @@ export const CreateEvent = async (
   eventFormData.append("CategoryName", data.categoryName);
   eventFormData.append("ImageFile", file);
 
-  await fetch(`${baseUrl}/events/create`, {
+  await fetch(`${baseUrl}/api/events/create`, {
     method: "POST",
     headers: {
       Authorization: "Bearer " + `${token}`,
@@ -50,7 +49,7 @@ export const UpdateEvent = async (
   eventFormData.append("CategoryName", data.categoryName);
   eventFormData.append("ImageFile", file ?? null);
 
-  await fetch(`${baseUrl}/events/edit/${id}`, {
+  await fetch(`${baseUrl}/api/events/edit/${id}`, {
     method: "PUT",
     headers: {
       Authorization: "Bearer " + `${token}`,

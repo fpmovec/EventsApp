@@ -1,4 +1,5 @@
 import { AuthUser } from "../../Authorization/Auth";
+import { baseUrl } from "../../Constants";
 import { AuthResult } from "../../Models/AuthResponse";
 import { useAppSelector } from "../../Redux/Hooks";
 
@@ -6,8 +7,6 @@ export const GetAccessTokens = (): AuthResult => {
   const result = useAppSelector((state) => state.auth.tokens);
   return result;
 };
-
-const baseUrl = "https://localhost:7107";
 
 export const GetCurrentUser = async (
   token: string

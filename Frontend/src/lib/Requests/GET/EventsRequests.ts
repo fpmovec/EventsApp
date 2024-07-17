@@ -1,9 +1,7 @@
-import { maxEventPrice } from "../../Constants";
+import { baseUrl, maxEventPrice } from "../../Constants";
 import { EventItem, EventItemExtended } from "../../Models/Event";
 import { EventsFilterOptions } from "../../Models/FilterOptions";
 
-
-const baseUrl = "https://localhost:7107";
 
 type EventsReturnType = {
   events: EventItem[];
@@ -32,7 +30,7 @@ export const GetEvents = async (
   };
 
   const response = await fetch(
-    `${baseUrl}/Events/get-all?` +
+    `${baseUrl}/api/Events/get-all?` +
       new URLSearchParams({
         sortType: options.sortType.toString(),
         sortOrder: options.sortOrder.toString(),
@@ -62,7 +60,7 @@ export const GetEvents = async (
 };
 
 export const GetPopularEvents = async (): Promise<EventItem[]> => {
-  const response = await fetch(`${baseUrl}/Events/popular`, {
+  const response = await fetch(`${baseUrl}/api/Events/popular`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -74,7 +72,7 @@ export const GetPopularEvents = async (): Promise<EventItem[]> => {
 };
 
 export const GetPagesCount = async (): Promise<number> => {
-  const response = await fetch(`${baseUrl}/Events/pages`, {
+  const response = await fetch(`${baseUrl}/api/Events/pages`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -86,7 +84,7 @@ export const GetPagesCount = async (): Promise<number> => {
 };
 
 export const GetEventById = async (id: string): Promise<EventItemExtended> => {
-  const response = await fetch(`${baseUrl}/Events/get/${id}`, {
+  const response = await fetch(`${baseUrl}/api/Events/get/${id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

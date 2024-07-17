@@ -4,7 +4,7 @@ namespace Domain.Models
 {
     public class Participant
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         public string? FullName { get; set; }
 

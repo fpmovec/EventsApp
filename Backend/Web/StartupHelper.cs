@@ -1,7 +1,9 @@
 ﻿using Application.CollectionServices;
 using Domain.Models;
+using Infrastructure;
 using Infrastructure.CollectionServices.Filter;
 using Infrastructure.CollectionServices.Sort;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 namespace Web
@@ -59,6 +61,20 @@ namespace Web
             services.AddSingleton<ISortService<Participant>, ParticipantsSortService>();
 
             return services;
+        }
+
+        public static WebApplication MigrateDatabase(this WebApplication app)
+        {
+            using var serviceScope = app.Services
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope();
+
+            using var context = serviceScope.ServiceProvider
+                .GetRequiredService<EventContext>();
+
+            context.Database.Migrate();
+
+            return app;
         }
     }
 }

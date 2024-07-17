@@ -1,4 +1,4 @@
-const baseUrl = "https://localhost:7107";
+import { baseUrl } from "../../Constants";
 
 export const CancelBooking = async (
   bookingId: number,

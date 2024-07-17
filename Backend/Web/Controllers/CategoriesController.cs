@@ -6,7 +6,7 @@ using Roles;
 
 namespace Web.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class CategoriesController : ControllerBase
     {

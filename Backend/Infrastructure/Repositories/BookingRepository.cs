@@ -31,7 +31,7 @@ namespace Infrastructure.Repositories
         public async Task CancelBooking(int bookingId)
             => await DeleteByIdAsync(bookingId);
 
-        public async Task<ICollection<UserBrief>> GetEventParticipants(Guid eventId)
+        public async Task<ICollection<UserBrief>> GetEventParticipants(int eventId)
         {
             var users = await dbSet.AsNoTracking()
                 .Where(b => b.EventId == eventId)

@@ -1,6 +1,5 @@
+import { baseUrl } from "../../Constants";
 import { BookingDTO } from "../../Models/Booking";
-
-const baseUrl = "https://localhost:7107";
 
 export const BookEvent = async (
   data: BookingDTO,

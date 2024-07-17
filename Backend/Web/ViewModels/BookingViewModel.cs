@@ -5,7 +5,7 @@ namespace Web.ViewModels
     public record BookingViewModel
     {
         [Required]
-        public Guid EventId { get; set; }
+        public int EventId { get; set; }
 
         [Required]
         public string UserId { get; set; }

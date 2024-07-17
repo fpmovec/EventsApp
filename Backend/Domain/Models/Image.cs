@@ -9,6 +9,6 @@ namespace Domain.Models
 
         public string Path { get; set; }
 
-        public Guid EventId { get; set; }
+        public int EventId { get; set; }
     }
 }

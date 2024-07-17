@@ -17,7 +17,7 @@ namespace Web.Controllers
 
         [Authorize]
         [HttpGet("get/{userId}")]
-        public async Task<IActionResult> GetAllNotificationsAsync(string userId)
+        public async Task<IActionResult> GetAllNotificationsAsync(Guid userId)
         {
             var notifications = await _notificationService.GetAllNotificationsAsync(userId);
 

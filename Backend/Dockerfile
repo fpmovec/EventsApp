@@ -1,12 +1,11 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER $APP_UID
 WORKDIR /app/backend
-EXPOSE 8080
-EXPOSE 8081
+EXPOSE 5299
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+ARG BUILD_CONFIGURATION=Release
 COPY ["./Web/Web.csproj", "./Web/"]
 COPY ["./Infrastructure/Infrastructure.csproj", "./Infrastructure/"]
 COPY ["./Domain/Domain.csproj", "./Domain/"]

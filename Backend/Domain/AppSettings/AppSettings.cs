@@ -14,7 +14,6 @@ namespace Domain.AppSettings
         public PaginationSettings PaginationSettings { get; set; }
 
         [Required]
-        [ValidateObjectMembers]
         public EventsSettings EventsSettings { get; set; }
 
         public EventMessages EventMessages { get; set; }

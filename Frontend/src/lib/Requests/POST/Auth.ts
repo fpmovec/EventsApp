@@ -1,11 +1,6 @@
-import { useDispatch } from "react-redux";
+import { baseUrl } from "../../Constants";
 import { AuthResult } from "../../Models/AuthResponse";
 import { LoginUserDTO, RegisterUserDTO } from "../../Models/RegisterLogin";
-import { useAppSelector } from "../../Redux/Hooks";
-import { refresh } from "../../Redux/Slices";
-
-//const token = GetAccessTokens().mainToken;
-const baseUrl = "https://localhost:7107";
 
 export const Login = async (data: LoginUserDTO): Promise<AuthResult> => {
   let result: AuthResult = { mainToken: "", refreshToken: "" };
@@ -66,24 +61,4 @@ export const Logout = async (token: string): Promise<void> => {
     },
     credentials: "omit",
   });
-};
-
-export const CheckTokenAndRefresh = async <T>(
-  request: () => Response
-): Promise<T> => {
-  let response = request();
-  const currentTokens = useAppSelector((state) => state.auth.tokens);
-  const dispatch = useDispatch();
-
-  if (response.status === 401) {
-    const tokens = await Refresh(currentTokens);
-    dispatch(refresh(tokens));
-
-    response = request();
-    if (response.status === 401) return await response.json();
-  }
-
-  const result = await response.json();
-
-  return result as T;
 };

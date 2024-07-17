@@ -25,14 +25,14 @@ namespace Infrastructure.Services
             _cacheService = cacheService;
         }
 
-        public async Task<ICollection<DetailsChangedEvent>> GetAllNotificationsAsync(string userId)
+        public async Task<ICollection<DetailsChangedEvent>> GetAllNotificationsAsync(Guid userId)
         {
-            ICollection<DetailsChangedEvent> notifications = await _cacheService.GetAsync<DetailsChangedEvent[]>(userId) ?? [];
+            ICollection<DetailsChangedEvent> notifications = await _cacheService.GetAsync<DetailsChangedEvent[]>(userId.ToString()) ?? [];
 
             return notifications;
         }
 
-        public async Task NotifyCurrentUserWithPopupAsync(string oldName, Guid eventId, ICollection<UserBrief> users)
+        public async Task NotifyCurrentUserWithPopupAsync(string oldName, int eventId, ICollection<UserBrief> users)
         {
             string notificationMessage = string.Format(_appSettings.EventMessages.ChangedEventInfoMessage, oldName);
 
@@ -45,7 +45,7 @@ namespace Infrastructure.Services
             });
         }
 
-        public async Task NotifyUsersAsync(string oldName, Guid eventId, ICollection<UserBrief> users)
+        public async Task NotifyUsersAsync(string oldName, int eventId, ICollection<UserBrief> users)
         {
             string notificationMessage = string.Format(_appSettings.EventMessages.ChangedEventInfoMessage, oldName);
 

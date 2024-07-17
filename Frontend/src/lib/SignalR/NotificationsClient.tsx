@@ -4,6 +4,7 @@ import { DetailsChangedEvent } from "../Models/Notifications";
 import { IconButton, Snackbar } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { useAppSelector } from "../Redux/Hooks";
+import { baseUrl } from "../Constants";
 
 const NotificationsClient = () => {
   const [connection, setConnection] = useState<HubConnection>();
@@ -26,7 +27,7 @@ const NotificationsClient = () => {
 
   useEffect(() => {
     const newConnection = new HubConnectionBuilder()
-      .withUrl(`https://localhost:7107/notification`)
+      .withUrl(`${baseUrl}/api/notification`)
       .withAutomaticReconnect()
       .build();
 

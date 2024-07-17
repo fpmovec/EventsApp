@@ -1,7 +1,7 @@
-const baseUrl = "https://localhost:7107";
+import { baseUrl } from "../../Constants";
 
 export const GetAllCategories = async (): Promise<string[]> => {
-  const response = await fetch(`${baseUrl}/categories/get-all`, {
+  const response = await fetch(`${baseUrl}/api/categories/get-all`, {
     method: "GET",
     credentials: "omit",
     headers: {

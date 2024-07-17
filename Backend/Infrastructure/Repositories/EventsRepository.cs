@@ -12,7 +12,7 @@ using Web.ViewModels;
 
 namespace Infrastructure.Repositories
 {
-    public class EventsBaseRepository : GenericRepository<EventBaseModel, Guid>, IEventsRepository
+    public class EventsBaseRepository : GenericRepository<EventBaseModel, int>, IEventsRepository
     {
         private readonly PaginationSettings paginationSettings;
         public EventsBaseRepository(
@@ -49,7 +49,7 @@ namespace Infrastructure.Repositories
             return (events.Item1.ToList(), events.Item2);
         }
 
-        public async Task<EventExtendedModel?> GetExtendedEventByIdAsync(Guid id)
+        public async Task<EventExtendedModel?> GetExtendedEventByIdAsync(int id)
         {
             EventExtendedModel? eventExtended = await dbSetExtended
                 .Include(e => e.Image)
@@ -59,7 +59,7 @@ namespace Infrastructure.Repositories
             return eventExtended;
         }
 
-        public async Task BookTickets(Guid eventId, int bookedTickets)
+        public async Task BookTickets(int eventId, int bookedTickets)
         {
             EventExtendedModel extendedEvent = await dbSetExtended.FindAsync(eventId);
 
@@ -88,7 +88,7 @@ namespace Infrastructure.Repositories
             await base.UpdateAsync(entity);
         }
 
-        public async Task CancelTickets(Guid eventId, int bookedTickets)
+        public async Task CancelTickets(int eventId, int bookedTickets)
         {
             EventExtendedModel extendedEvent = await dbSetExtended.FindAsync(eventId);
 

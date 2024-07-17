@@ -1,8 +1,5 @@
-import { Refresh } from "@mui/icons-material";
+import { baseUrl } from "../../Constants";
 import { DetailsChangedEvent } from "../../Models/Notifications";
-import { AuthResult } from "../../Models/AuthResponse";
-
-const baseUrl = "https://localhost:7107";
 
 export const GetNotificationsByUserId = async (
   token: string,

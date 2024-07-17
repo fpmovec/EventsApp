@@ -11,7 +11,7 @@ using Web.ViewModels;
 
 namespace Web.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class EventsController : ControllerBase
     {
@@ -95,8 +95,8 @@ namespace Web.Controllers
             return Ok(new { Events = events.Item1, pages = events.Item2});
         }
 
-        [HttpGet("get/{id:Guid}")]
-        public async Task<IActionResult> GetEventInformation(Guid id)
+        [HttpGet("get/{id}")]
+        public async Task<IActionResult> GetEventInformation(int id)
         {
             EventExtendedModel? extendedEvent = await _unitOfWork.EventsRepository.GetExtendedEventByIdAsync(id);
 
@@ -111,8 +111,8 @@ namespace Web.Controllers
             return Ok(extendedEvent);
         }
 
-        [HttpGet("participants/{eventId:Guid}")]
-        public async Task<IActionResult> GetParticipantsByEventId(Guid eventId)
+        [HttpGet("participants/{eventId}")]
+        public async Task<IActionResult> GetParticipantsByEventId(int eventId)
         {
             ICollection<UserBrief> users = await _unitOfWork.BookingRepository.GetEventParticipants(eventId);
 
@@ -120,9 +120,9 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = nameof(Admin))]
-        [HttpPut("edit/{id:Guid}")]
+        [HttpPut("edit/{id}")]
         public async Task<IActionResult> EditEvent(
-            [FromRoute]Guid id,
+            [FromRoute]int id,
             [FromForm]EventViewModel eventViewModel)
         {
             if(!ModelState.IsValid)
@@ -177,8 +177,8 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = nameof(Admin))]
-        [HttpDelete("delete/{id:Guid}")]
-        public async Task<IActionResult> DeleteEventAsync(Guid id)
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteEventAsync(int id)
         {
             EventBaseModel? eventBase = await _unitOfWork.EventsRepository.GetByIdAsync(id);
 
