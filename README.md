@@ -14,6 +14,7 @@
 - Docker
 - SignalR
 - Redis
+- Background Service
 
  ## Main API Endpoints
   
