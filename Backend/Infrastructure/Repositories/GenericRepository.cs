@@ -1,8 +1,8 @@
 ﻿using Application.CollectionServices;
-using Application.Generic;
-using Application.Models;
-using Domain.AppSettings;
-using Domain.Enums;
+using Domain.Repositories;
+using Entities.AppSettings;
+using Entities.Enums;
+using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -44,12 +44,7 @@ namespace Infrastructure.Repositories
         {
             TEntity? entity = await dbSet.FindAsync(id);
 
-            if (entity is not null)
-            {
-                dbSet.Remove(entity);
-
-                _logger.LogInformation("Entity has been deleted from DB");
-            }
+           dbSet.Remove(entity);
 
             _logger.LogWarning("Entity hasn't been deleted because of the null value");
         }
@@ -61,7 +56,7 @@ namespace Infrastructure.Repositories
             int currentPage = 0)
         {
             IQueryable<TEntity> entities = dbSet;
-            //var c = entities.ToList();
+
             entities = _filterService.FilterWithManyOptions(entities, filterOptions);
 
             _logger.LogInformation("Collection has been filtered");
@@ -76,7 +71,6 @@ namespace Infrastructure.Repositories
             if (currentPage is not 0)
             {
                 (ent, pages) = SelectItemsForPage(entities, currentPage);
-                entities = ent;
             }
             await Task.CompletedTask;
             return (ent, pages);

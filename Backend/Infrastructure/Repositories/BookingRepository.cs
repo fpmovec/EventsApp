@@ -1,12 +1,10 @@
 ﻿using Application.CollectionServices;
-using Application.Repositories;
-using Domain.AppSettings;
-using Domain.Models;
-using Microsoft.AspNetCore.Identity;
+using Domain.Repositories;
+using Entities.AppSettings;
+using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Net.WebSockets;
 using Web.ViewModels;
 
 namespace Infrastructure.Repositories

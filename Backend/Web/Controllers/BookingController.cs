@@ -1,7 +1,7 @@
 ﻿using Application.Services;
-using Application.UnitOfWork;
 using AutoMapper;
-using Domain.Models;
+using Domain.UnitOfWork;
+using Entities.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Roles;
@@ -32,7 +32,7 @@ namespace Web.Controllers
 
         [Authorize]
         [HttpPost("book")]
-        public async Task<IActionResult> BookEvent([FromBody]BookingViewModel viewModel)
+        public async Task<IActionResult> BookEvent([FromBody]BookingViewModel viewModel, CancellationToken cancellationToken = default)
         {
             if (!ModelState.IsValid)
             {
@@ -58,7 +58,7 @@ namespace Web.Controllers
 
             await _unitOfWork.BookingRepository.BookEventAsync(booking);
             await _unitOfWork.EventsRepository.BookTickets(bookedEvent.Id, booking.PersonsQuantity);
-            await _unitOfWork.CompleteAsync();
+            await _unitOfWork.CompleteAsync(cancellationToken);
 
             _logger.LogInformation("Event has been booked");
 
@@ -67,7 +67,7 @@ namespace Web.Controllers
 
         [Authorize]
         [HttpDelete("cancel/{id:int}")]
-        public async Task<IActionResult> CancelBooking([FromRoute]int id, [FromBody]string userId)
+        public async Task<IActionResult> CancelBooking([FromRoute]int id, [FromBody]string userId, CancellationToken cancellationToken = default)
         {
             Booking? booking = await _unitOfWork.BookingRepository.GetByIdAsync(id);
 
@@ -85,7 +85,7 @@ namespace Web.Controllers
 
             await _unitOfWork.BookingRepository.CancelBooking(booking.Id);
             await _unitOfWork.EventsRepository.CancelTickets(booking.EventId, booking.PersonsQuantity);
-            await _unitOfWork.CompleteAsync();
+            await _unitOfWork.CompleteAsync(cancellationToken);
 
             _logger.LogInformation("Booking was sucessfully cancelled!");
             return Ok();

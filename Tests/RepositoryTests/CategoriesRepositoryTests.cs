@@ -1,8 +1,7 @@
 ﻿using Application.CollectionServices;
-using Application.Models;
-using Domain.AppSettings;
-using Domain.Enums;
-using Domain.Models;
+using Entities.AppSettings;
+using Entities.Enums;
+using Entities.Models;
 using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;

@@ -1,7 +1,4 @@
-﻿using Domain.Models;
-using Newtonsoft.Json;
-using System.Text.Json.Serialization;
-using Web.ViewModels;
+﻿using Web.ViewModels;
 
 namespace Web.Middleware
 {
@@ -25,7 +22,6 @@ namespace Web.Middleware
 
             _logger.LogCritical($"Exception was thrown! Exception message: {ex.Message} \n Inner exception message: {ex.InnerException?.Message}");
             context.Response.StatusCode = statusCode;
-            //string errorResponse =  JsonConvert.SerializeObject(new ErrorModel(statusCode, ex.Message));
 
             await context.Response.WriteAsJsonAsync(new ErrorModel(statusCode, ex.Message));
         }

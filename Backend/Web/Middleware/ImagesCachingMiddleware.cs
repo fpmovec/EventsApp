@@ -9,7 +9,7 @@
 
             if (ImageFormats.Any(path.EndsWith))
             {
-                TimeSpan maxAge = new TimeSpan(7, 0, 0, 0); // 7 days
+                TimeSpan maxAge = new TimeSpan(7, 0, 0, 0);
                 context.Response.Headers.Append("Cache-Control", "max-age=" + maxAge.TotalSeconds.ToString("0"));
             }
 

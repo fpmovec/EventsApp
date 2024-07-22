@@ -1,14 +1,12 @@
 ﻿using Application.CollectionServices;
-using Application.Models;
-using Application.Repositories;
 using Application.Services;
-using Domain.AppSettings;
-using Domain.Enums;
-using Domain.Models;
+using Domain.Repositories;
+using Entities.AppSettings;
+using Entities.Enums;
+using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Web.ViewModels;
 
 namespace Infrastructure.Repositories
 {
@@ -20,8 +18,7 @@ namespace Infrastructure.Repositories
             ILogger<EventsBaseRepository> logger,
             IOptions<AppSettings> options,
             IFilterService<EventBaseModel> filterService,
-            ISortService<EventBaseModel> sortService,
-            INotificationService notificationService)
+            ISortService<EventBaseModel> sortService)
             : base(eventContext, logger, options, filterService, sortService)
         {
             paginationSettings = options.Value.PaginationSettings;
@@ -32,15 +29,6 @@ namespace Infrastructure.Repositories
 
         private DbSet<EventExtendedModel> dbSetExtended
             => _eventContext.ExtendedEvents;
-
-        //public async Task<ICollection<EventBaseModel>> GetEventsByParticipantIdAsync(Guid id)
-        //{
-        //    return await dbSetExtended.Where(e => e.Participants.Any(c => c.Id == id))
-        //        .Include(e => e.Category)
-        //        .Include(e => e.Image)
-        //        .Select(e => (EventBaseModel)e)
-        //        .ToListAsync();
-        //}
 
         public async Task<(ICollection<EventBaseModel>, int)> GetFilteredEventsAsync(List<FilterOption> filterOptions, SortType sortType = SortType.Default, SortOrder order = SortOrder.Ascending, int currentPage = 0)
         {
@@ -74,8 +62,7 @@ namespace Infrastructure.Repositories
                 .Include(e => e.Category)
                 .OrderByDescending(e => e.BookedTicketsCount)
                 .ThenBy(e => e.Date)
-                //.Where(e => e.MaxParticipantsCount != e.BookedTicketsCount)
-                //.Where(e => e.Date > DateTime.UtcNow)
+                .Where(e => e.Date > DateTime.UtcNow)
                 .Take(5)
                 .Select(e => (EventBaseModel)e)
                 .ToListAsync();

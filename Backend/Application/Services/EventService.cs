@@ -1,0 +1,161 @@
+﻿using Application.Extensions;
+using Application.Interfaces;
+using Application.ViewModels;
+using AutoMapper;
+using Domain.Repositories;
+using Domain.UnitOfWork;
+using Entities.Exceptions;
+using Entities.Models;
+using Web.ViewModels;
+
+namespace Application.Services
+{
+    public class EventService : IEventService
+    {
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+        private readonly INotificationService _notificationService;
+
+        public EventService(
+            IUnitOfWork unitOfWork,
+            IMapper mapper,
+            INotificationService notificationService)
+        {
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _notificationService = notificationService;
+        }
+
+        public async Task CreateEventAsync(
+            EventViewModel eventViewModel,
+            string webRootPath,
+            CancellationToken cancellationToken)
+        {
+            EventExtendedModel mappedModel = _mapper.Map<EventExtendedModel>(eventViewModel);
+
+            if (eventViewModel.ImageFile is not null)
+            {
+                ImageInfo imageInfo = await eventViewModel.ImageFile.AddImageAsync(webRootPath);
+
+                mappedModel.Image = new() { Name = imageInfo.Name, Path = imageInfo.Path };
+            }
+            else
+            {
+                mappedModel.Image = new()
+                {
+                    Name = "no-image",
+                    Path = Path.Combine("images", "no-image.jpg")
+                };
+            }
+
+            EventCategory? category = await _unitOfWork.CategoryRepository.GetCategoryByName(eventViewModel.CategoryName);
+
+            if (category is null)
+            {
+                category = new() { Name = eventViewModel.CategoryName };
+                await _unitOfWork.CategoryRepository.AddAsync(category);
+            }
+
+            mappedModel.Category = category;
+
+            await _unitOfWork.EventsRepository.AddAsync(mappedModel);
+            await _unitOfWork.CompleteAsync(cancellationToken);
+        }
+
+        public async Task DeleteEventByIdAsync(int id, CancellationToken cancellationToken)
+        {
+            EventBaseModel? eventBase = await _unitOfWork.EventsRepository.GetByIdAsync(id);
+
+            if (eventBase is null)
+            {
+                throw new NotFoundException(Entities.Enums.ExceptionSubject.Event);
+            }
+
+            await _unitOfWork.EventsRepository.DeleteByIdAsync(id);
+            await _unitOfWork.CompleteAsync(cancellationToken);
+        }
+
+        public async Task<EventExtendedModel> EditEventAsync(
+            int id, EventViewModel eventViewModel, string webRootPath, CancellationToken cancellationToken)
+        {
+            EventExtendedModel? extendedEvent = await _unitOfWork.EventsRepository.GetExtendedEventByIdAsync(id);
+
+            if (extendedEvent is null)
+            {
+                throw new NotFoundException(Entities.Enums.ExceptionSubject.Event);
+            }
+
+            string oldName = extendedEvent.Name;
+
+            Image prevImage = extendedEvent.Image;
+
+            extendedEvent = _mapper.Map(eventViewModel, extendedEvent);
+
+            if (eventViewModel.ImageFile is not null)
+            {
+                ImageInfo imageInfo = await eventViewModel.ImageFile.AddImageAsync(webRootPath);
+
+                extendedEvent.Image = new() { Name = imageInfo.Name, Path = imageInfo.Path };
+            }
+            else
+            {
+                extendedEvent.Image = prevImage;
+            }
+
+            EventCategory? category = await _unitOfWork.CategoryRepository.GetCategoryByName(eventViewModel.CategoryName);
+
+            if (category is null)
+            {
+                category = new() { Name = eventViewModel.CategoryName };
+                await _unitOfWork.CategoryRepository.AddAsync(category);
+            }
+
+            extendedEvent.Category = category;
+
+            var particiapnts = await _unitOfWork.BookingRepository.GetEventParticipants(extendedEvent.Id);
+
+            await _unitOfWork.EventsRepository.UpdateAsync(extendedEvent);
+            await _notificationService.NotifyUsersAsync(oldName, extendedEvent.Id, particiapnts);
+            await _notificationService.NotifyCurrentUserWithPopupAsync(oldName, extendedEvent.Id, particiapnts);
+            await _unitOfWork.BookingRepository.UpdateDependingBookingsAsync(extendedEvent);
+
+            await _unitOfWork.CompleteAsync(cancellationToken);
+
+            return extendedEvent;
+        }
+
+        public async Task<EventExtendedModel?> GetEventInfoAsync(int id, CancellationToken cancellationToken)
+        {
+            EventExtendedModel? eventExtended =  await _unitOfWork.EventsRepository.GetExtendedEventByIdAsync(id);
+
+            if (eventExtended is null)
+            {
+                throw new NotFoundException(Entities.Enums.ExceptionSubject.Event);
+            }
+
+            return eventExtended;
+        }
+
+        public async Task<FilteredEventsResponse?> GetFilteredEventsAsync(
+            FilterOptionsViewModel options, CancellationToken cancellationToken)
+        {
+            List<FilterOption> filterOptions = [];
+
+            if (options is null)
+                throw new BadRequestException();
+
+            filterOptions = _mapper.Map<List<FilterOption>>(options);
+
+            (ICollection<EventBaseModel> events, int pages) = await _unitOfWork.EventsRepository.GetFilteredEventsAsync(
+                filterOptions,
+                options.SortType, options.SortOrder, options.CurrentPage);
+
+            return new() { Events = events, Pages = pages };
+        }
+
+        public async Task<ICollection<EventBaseModel>> GetMostPopularAsync(CancellationToken cancellationToken)
+        {
+           return await _unitOfWork.EventsRepository.GetMostPopularAsync();
+        }
+    }
+}
