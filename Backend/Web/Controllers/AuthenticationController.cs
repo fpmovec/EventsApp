@@ -1,9 +1,7 @@
 ﻿using Application.Services;
-using Domain.Models;
+using Entities.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
 using Web.Filters;
 using Web.ViewModels;
 
@@ -13,23 +11,21 @@ namespace Web.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<AuthenticationController> _logger;
-        private readonly IJwtService _jwtService;
+        private readonly IAuthService _authService;
 
         public AuthenticationController(
-            UserManager<IdentityUser> userManager,
-            IJwtService jwtService,
-            ILogger<AuthenticationController> logger)
+            ILogger<AuthenticationController> logger,
+            IAuthService authService)
         {
-            _userManager = userManager;
             _logger = logger;
-            _jwtService = jwtService;
+            _authService = authService;
         }
 
         [AnonymousOnly]
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterUser([FromBody] RegisterViewModel registerViewModel)
+        public async Task<IActionResult> RegisterUser(
+            [FromBody] RegisterViewModel registerViewModel, CancellationToken cancellationToken = default)
         {
             if (!ModelState.IsValid)
             {
@@ -37,33 +33,15 @@ namespace Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            IdentityUser? user = await _userManager.FindByEmailAsync(registerViewModel.Email);
+            AuthTokens tokens = await _authService.RegisterUserAsync(registerViewModel, cancellationToken);
 
-            if (user is not null)
-            {
-                _logger.LogError($"User with name \"{registerViewModel.Email}\" is already exist!");
-                return BadRequest($"User with email \"{registerViewModel.Email}\" already exists");
-            }
-
-            IdentityUser newUser = new() { Email = registerViewModel.Email, UserName = registerViewModel.Name, PhoneNumber = registerViewModel.Phone };
-
-            IdentityResult isSucessfullyCreated = await _userManager.CreateAsync(newUser, registerViewModel.Password);
-
-            if (isSucessfullyCreated.Succeeded)
-            {
-                AuthTokens tokens = await _jwtService.GenerateJwtTokensAsync(newUser);
-
-                _logger.LogInformation("User was sucessfully registered!");
-
-                return Ok(tokens);
-            }
-
-            return BadRequest(isSucessfullyCreated.Errors.FirstOrDefault());
+            return Ok(tokens);
         }
 
         [AnonymousOnly]
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginViewModel loginViewModel)
+        public async Task<IActionResult> Login(
+            [FromBody] LoginViewModel loginViewModel, CancellationToken cancellationToken = default)
         {
             if (!ModelState.IsValid)
             {
@@ -71,30 +49,15 @@ namespace Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            IdentityUser? user = await _userManager.FindByEmailAsync(loginViewModel.Email);
-
-            if (user is null)
-            {
-                _logger.LogInformation($"User with email \"{loginViewModel.Email} doe not exist\"");
-                return NotFound($"User with email \"{loginViewModel.Email} does not exist\"");
-            }
-
-            bool isPasswordCorrect = await _userManager.CheckPasswordAsync(user, loginViewModel.Password);
-
-            if (!isPasswordCorrect)
-            {
-                _logger.LogError("Invalid password");
-                return BadRequest("Invalid password");
-            }
-
-            AuthTokens tokens = await _jwtService.GenerateJwtTokensAsync(user);
+            AuthTokens tokens = await _authService.LoginUserAsync(loginViewModel, cancellationToken);
 
             return Ok(tokens);
         }
 
         [Authorize]
         [HttpPost("refresh")]
-        public async Task<IActionResult> RefreshToken([FromBody] TokenRequest tokenRequest)
+        public async Task<IActionResult> RefreshToken(
+            [FromBody] TokenRequest tokenRequest, CancellationToken cancellationToken = default)
         {
             if (!ModelState.IsValid)
             {
@@ -102,45 +65,20 @@ namespace Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            AuthTokens? tokens = await _jwtService.VerifyAndGenerateTokenAsync(new()
-            {
-                MainToken = tokenRequest.MainToken,
-                RefreshToken = tokenRequest.RefreshToken
-            }, _userManager);
-
-            if(tokens is null)
-            {
-                _logger.LogError("Tokens are invalid");
-                return BadRequest("Tokens are invalid");
-            }
+            AuthTokens tokens = await _authService.RefreshTokenAsync(tokenRequest, cancellationToken);
 
             return Ok(tokens);
         }
 
         [Authorize]
         [HttpDelete("logout")]
-        public async Task<IActionResult> LogOut()
+        public async Task<IActionResult> LogOut(CancellationToken cancellationToken = default)
         {
-            if (!HttpContext.User.Identity.IsAuthenticated)
-            {
-                _logger.LogError("Unathorized! You cannot log out");
-                return Unauthorized();
-            }
+            await _authService.LogoutAsync(cancellationToken);
 
-            string currentUserId = HttpContext.User.Identities.First().Claims.FirstOrDefault(c => c.Type == "Id").Value;
+            _logger.LogInformation("You logged out");
 
-            IdentityUser? currentUser = await _userManager.FindByIdAsync(currentUserId);
-
-            if (currentUser is not null)
-            {
-                await _jwtService.DeleteUserRefreshTokensAsync(currentUser.Id);
-                _logger.LogInformation("You logged out");
-                
-                return Ok();
-            }
-
-            _logger.LogError("Server Error");
-            return BadRequest();
+            return Ok();
         }
     }
 }

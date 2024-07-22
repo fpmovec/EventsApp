@@ -1,8 +1,8 @@
 ﻿using Application.CollectionServices;
-using Application.Generic;
-using Application.Models;
-using Domain.AppSettings;
-using Domain.Enums;
+using Domain.Repositories;
+using Entities.AppSettings;
+using Entities.Enums;
+using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -33,23 +33,18 @@ namespace Infrastructure.Repositories
 
         protected abstract DbSet<TEntity> dbSet { get; }
 
-        public async Task AddAsync(TEntity entity)
+        public async Task AddAsync(TEntity entity, CancellationToken cancellationToken)
         {
-            await dbSet.AddAsync(entity);
+            await dbSet.AddAsync(entity, cancellationToken);
 
             _logger.LogInformation("Entity has been added");
         }
 
-        public async Task DeleteByIdAsync(TId id)
+        public async Task DeleteByIdAsync(TId id, CancellationToken cancellationToken)
         {
-            TEntity? entity = await dbSet.FindAsync(id);
+            TEntity? entity = await dbSet.FindAsync(id, cancellationToken);
 
-            if (entity is not null)
-            {
-                dbSet.Remove(entity);
-
-                _logger.LogInformation("Entity has been deleted from DB");
-            }
+           dbSet.Remove(entity);
 
             _logger.LogWarning("Entity hasn't been deleted because of the null value");
         }
@@ -61,7 +56,7 @@ namespace Infrastructure.Repositories
             int currentPage = 0)
         {
             IQueryable<TEntity> entities = dbSet;
-            //var c = entities.ToList();
+
             entities = _filterService.FilterWithManyOptions(entities, filterOptions);
 
             _logger.LogInformation("Collection has been filtered");
@@ -76,14 +71,13 @@ namespace Infrastructure.Repositories
             if (currentPage is not 0)
             {
                 (ent, pages) = SelectItemsForPage(entities, currentPage);
-                entities = ent;
             }
             await Task.CompletedTask;
             return (ent, pages);
         }
 
-        public async Task<TEntity?> GetByIdAsync(TId id)
-            => await dbSet.FindAsync(id);
+        public async Task<TEntity?> GetByIdAsync(TId id, CancellationToken cancellationToken)
+            => await dbSet.FindAsync(id, cancellationToken);
 
         public async virtual Task UpdateAsync(TEntity entity)
         {

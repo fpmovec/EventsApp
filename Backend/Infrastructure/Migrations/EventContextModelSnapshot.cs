@@ -22,7 +22,7 @@ namespace Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.Models.Booking", b =>
+            modelBuilder.Entity("Entities.Models.Booking", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -73,7 +73,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("Bookings", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Models.EventBaseModel", b =>
+            modelBuilder.Entity("Entities.Models.EventBaseModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -111,7 +111,7 @@ namespace Infrastructure.Migrations
                     b.UseTptMappingStrategy();
                 });
 
-            modelBuilder.Entity("Domain.Models.EventCategory", b =>
+            modelBuilder.Entity("Entities.Models.EventCategory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -128,7 +128,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("Categories", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Models.Image", b =>
+            modelBuilder.Entity("Entities.Models.Image", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -155,7 +155,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("Images", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Models.Participant", b =>
+            modelBuilder.Entity("Entities.Models.Participant", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
@@ -177,7 +177,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("Participants", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Models.RefreshToken", b =>
+            modelBuilder.Entity("Entities.Models.RefreshToken", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -414,9 +414,9 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Models.EventExtendedModel", b =>
+            modelBuilder.Entity("Entities.Models.EventExtendedModel", b =>
                 {
-                    b.HasBaseType("Domain.Models.EventBaseModel");
+                    b.HasBaseType("Entities.Models.EventBaseModel");
 
                     b.Property<int>("BookedTicketsCount")
                         .HasColumnType("integer");
@@ -427,9 +427,9 @@ namespace Infrastructure.Migrations
                     b.ToTable("ExtendedEvents", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Models.Booking", b =>
+            modelBuilder.Entity("Entities.Models.Booking", b =>
                 {
-                    b.HasOne("Domain.Models.EventExtendedModel", null)
+                    b.HasOne("Entities.Models.EventExtendedModel", null)
                         .WithMany()
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -440,9 +440,9 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("Domain.Models.EventBaseModel", b =>
+            modelBuilder.Entity("Entities.Models.EventBaseModel", b =>
                 {
-                    b.HasOne("Domain.Models.EventCategory", "Category")
+                    b.HasOne("Entities.Models.EventCategory", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -451,11 +451,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("Domain.Models.Image", b =>
+            modelBuilder.Entity("Entities.Models.Image", b =>
                 {
-                    b.HasOne("Domain.Models.EventBaseModel", null)
+                    b.HasOne("Entities.Models.EventBaseModel", null)
                         .WithOne("Image")
-                        .HasForeignKey("Domain.Models.Image", "EventId")
+                        .HasForeignKey("Entities.Models.Image", "EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -511,16 +511,16 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Models.EventExtendedModel", b =>
+            modelBuilder.Entity("Entities.Models.EventExtendedModel", b =>
                 {
-                    b.HasOne("Domain.Models.EventBaseModel", null)
+                    b.HasOne("Entities.Models.EventBaseModel", null)
                         .WithOne()
-                        .HasForeignKey("Domain.Models.EventExtendedModel", "Id")
+                        .HasForeignKey("Entities.Models.EventExtendedModel", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Models.EventBaseModel", b =>
+            modelBuilder.Entity("Entities.Models.EventBaseModel", b =>
                 {
                     b.Navigation("Image")
                         .IsRequired();

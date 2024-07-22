@@ -1,4 +1,4 @@
-﻿using Domain.Enums;
+﻿using Entities.Enums;
 using System.Collections.Frozen;
 
 namespace Application.CollectionServices

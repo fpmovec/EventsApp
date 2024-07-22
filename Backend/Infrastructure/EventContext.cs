@@ -1,4 +1,4 @@
-﻿using Domain.Models;
+﻿using Entities.Models;
 using Infrastructure.ModelsConfiguration;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -12,7 +12,8 @@ namespace Infrastructure
         public EventContext(DbContextOptions<EventContext> opts) : base(opts)
         { }
 
-        private Expression<Func<DateTime, DateTime>> dateToUTC = src => src.Kind == DateTimeKind.Utc ? src : DateTime.SpecifyKind(src, DateTimeKind.Utc);
+        private readonly Expression<Func<DateTime, DateTime>> dateToUTC = 
+            src => src.Kind == DateTimeKind.Utc ? src : DateTime.SpecifyKind(src, DateTimeKind.Utc);
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -48,12 +49,6 @@ namespace Infrastructure
                 .HasForeignKey(u => u.UserId)
                 .IsRequired(false);
 
-            //modelBuilder.Entity<Participant>()
-            //    .HasMany<Booking>()
-            //    .WithOne()
-            //    .HasForeignKey(t => t.ParticipantId)
-            //    .IsRequired();
-
             modelBuilder.Entity<EventBaseModel>()
                 .HasOne(e => e.Image)
                 .WithOne()
@@ -87,7 +82,6 @@ namespace Infrastructure
         public DbSet<EventExtendedModel> ExtendedEvents { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Image> Images {  get; set; } 
-        public DbSet<Participant> Participants { get; set; }
         public virtual DbSet<EventCategory> Categories { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
     }

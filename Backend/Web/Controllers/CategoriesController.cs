@@ -1,5 +1,6 @@
-﻿using Application.UnitOfWork;
-using Domain.Models;
+﻿using Application.Interfaces;
+using Domain.UnitOfWork;
+using Entities.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Roles;
@@ -11,40 +12,19 @@ namespace Web.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly ILogger<EventsController> _logger;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ICategoryService _categoryService;
 
-        public CategoriesController(IUnitOfWork unitOfWork, ILogger<EventsController> logger)
+        public CategoriesController(ILogger<EventsController> logger, ICategoryService categoryService)
         {
-            _unitOfWork = unitOfWork;
             _logger = logger;
+            _categoryService = categoryService;
         }
 
-        [Authorize(Roles = nameof(Roles.Admin))]
+        [Authorize(Roles = nameof(Admin))]
         [HttpPost("create")]
-        public async Task<IActionResult> CreateCategoryAsync(string name)
+        public async Task<IActionResult> CreateCategoryAsync(string name, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(name))
-            {
-                _logger.LogError("Error. Category name is empty!");
-                return BadRequest("Category name cannot be empty");
-            }
-                
-
-            EventCategory? category = await _unitOfWork.CategoryRepository.GetCategoryByName(name);
-
-            if (category is not null)
-            {
-                _logger.LogError($"Error. Category {name} is already exist!");
-                return BadRequest("Category is already exist");
-            }
-                
-            category = new()
-            {
-                Name = name
-            };
-
-            await _unitOfWork.CategoryRepository.AddAsync(category);
-            await _unitOfWork.CompleteAsync();
+            EventCategory category = await _categoryService.CreateCategoryAsync(name, cancellationToken);
 
             _logger.LogInformation("Category was sucessfully added");
 
@@ -52,57 +32,35 @@ namespace Web.Controllers
         }
 
         [HttpGet("get-all")]
-        public async Task<IActionResult> GetAllCategoriesAsync()
+        public async Task<IActionResult> GetAllCategoriesAsync(CancellationToken cancellationToken = default)
         {
-            var categories = await _unitOfWork.CategoryRepository.GetAllCategoriesAsync();
-            _logger.LogInformation("All categories were obtained");
-            return Ok(categories.Select(c => c.Name));
+            var categories = await _categoryService.GetCategoriesNamesAsync(cancellationToken);
+
+            _logger.LogInformation($"Categories were obtained");
+
+            return Ok(categories);
         }
 
-        [Authorize(Roles = nameof(Roles.Admin))]
+        [Authorize(Roles = nameof(Admin))]
         [HttpDelete("delete/{id:int}")]
-        public async Task<IActionResult> DeleteCategoryByIdAsync(int id)
+        public async Task<IActionResult> DeleteCategoryByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            EventCategory? category = await _unitOfWork.CategoryRepository.GetByIdAsync(id);
+            await  _categoryService.DeleteCategoryByIdAsync(id, cancellationToken);
 
-            if (category is null)
-            {
-                _logger.LogError("Error. Category with the following id is missing");
-                return NotFound("Category with the following id is missing");
-            }
+            _logger.LogInformation($"Category was deleted");
 
-            await _unitOfWork.CategoryRepository.DeleteByIdAsync(id);
-            await _unitOfWork.CompleteAsync();
-
-            _logger.LogInformation($"Category {category.Name} deleted");
-
-            return Ok(category.Name);
+            return Ok();
         }
 
         [Authorize(Roles = nameof(Admin))]
         [HttpDelete("deleteByName/{name}")]
-        public async Task<IActionResult> DeleteCategoryByNameAsync(string? name)
+        public async Task<IActionResult> DeleteCategoryByNameAsync(string name, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(name))
-            {
-                _logger.LogError("Category ame cannot be empty");
-                return BadRequest();
-            }
+            await _categoryService.DeleteCategoryByNameAsync(name, cancellationToken);
 
-            EventCategory? category = await _unitOfWork.CategoryRepository.GetCategoryByName(name);
+            _logger.LogInformation($"Category was deleted");
 
-            if (category is null)
-            {
-                _logger.LogError("Error. Category with the following name is missing");
-                return NotFound("Category with the following name is missing");
-            }
-
-            await _unitOfWork.CategoryRepository.DeleteByIdAsync(category.Id);
-            await _unitOfWork.CompleteAsync();
-
-            _logger.LogInformation($"Category {category.Name} was deleted");
-
-            return Ok(category.Name);
+            return Ok();
         }
     }
 }

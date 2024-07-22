@@ -1,6 +1,6 @@
 ﻿using Application.Services;
-using Domain.AppSettings;
-using Domain.Models;
+using Entities.AppSettings;
+using Entities.Models;
 using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -73,7 +73,7 @@ namespace Infrastructure.Services
 
             try
             {
-                _tokenValidationParameters.ValidateLifetime = true; // for testing
+                _tokenValidationParameters.ValidateLifetime = true;
 
                 ClaimsPrincipal? tokenInVerification = tokenHandler.ValidateToken(
                     tokenRequest.MainToken, _tokenValidationParameters, out var securityValidatedToken);

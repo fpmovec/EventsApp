@@ -1,6 +1,5 @@
-﻿using Application.Models;
-using AutoMapper;
-using Domain.Models;
+﻿using AutoMapper;
+using Entities.Models;
 using Web.ViewModels;
 
 namespace Web.Mapping

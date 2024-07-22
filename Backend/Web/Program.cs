@@ -1,11 +1,8 @@
-using Application.Repositories;
 using Application.Services;
-using Application.UnitOfWork;
-using Domain.AppSettings;
+using Entities.AppSettings;
 using Infrastructure;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
-using Infrastructure.SignalR;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Headers;
@@ -18,6 +15,10 @@ using Web.Background;
 using Web.Extensions;
 using Web.Mapping;
 using Microsoft.EntityFrameworkCore;
+using Domain.UnitOfWork;
+using Domain.Repositories;
+using Web.Hubs;
+using Application.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,9 +47,13 @@ builder.Services.AddScoped<IEventsRepository, EventsBaseRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 
+builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
+
 builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<INotificationService, NotificationService<NotificationsHub>>();
 
 builder.Services.AddHostedService<BackgroundWorker>();
 

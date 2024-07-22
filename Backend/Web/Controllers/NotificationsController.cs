@@ -17,9 +17,9 @@ namespace Web.Controllers
 
         [Authorize]
         [HttpGet("get/{userId}")]
-        public async Task<IActionResult> GetAllNotificationsAsync(Guid userId)
+        public async Task<IActionResult> GetAllNotificationsAsync(Guid userId, CancellationToken cancellationToken = default)
         {
-            var notifications = await _notificationService.GetAllNotificationsAsync(userId);
+            var notifications = await _notificationService.GetAllNotificationsAsync(userId, cancellationToken);
 
             return Ok(notifications);
         }

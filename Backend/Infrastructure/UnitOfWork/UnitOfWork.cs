@@ -1,5 +1,5 @@
-﻿using Application.Repositories;
-using Application.UnitOfWork;
+﻿using Domain.Repositories;
+using Domain.UnitOfWork;
 using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.UnitOfWork
@@ -28,9 +28,10 @@ namespace Infrastructure.UnitOfWork
         public ICategoryRepository CategoryRepository { get; private set; }
 
         public IBookingRepository BookingRepository { get; private set; }
-        public async Task CompleteAsync()
+
+        public async Task CompleteAsync(CancellationToken cancellationToken)
         {
-            await _eventContext.SaveChangesAsync();
+            await _eventContext.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Changes have been saved!");
         }
 

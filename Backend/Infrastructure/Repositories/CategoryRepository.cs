@@ -1,8 +1,8 @@
 ﻿using Application.CollectionServices;
-using Application.Repositories;
-using Domain.AppSettings;
-using Domain.Enums;
-using Domain.Models;
+using Domain.Repositories;
+using Entities.AppSettings;
+using Entities.Enums;
+using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -27,7 +27,9 @@ namespace Infrastructure.Repositories
             return categories.Item1;
         }
 
-        public async Task<EventCategory?> GetCategoryByName(string name)
-            => await dbSet.Where(c => c.Name.Equals(name)).FirstOrDefaultAsync();
+        public async Task<EventCategory?> GetCategoryByNameAsync(string name, CancellationToken cancellationToken)
+            => await dbSet
+                     .Where(c => c.Name.Equals(name))
+                     .FirstOrDefaultAsync(cancellationToken);
     }
 }

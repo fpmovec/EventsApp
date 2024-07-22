@@ -1,46 +1,31 @@
 ﻿using Application.CollectionServices;
-using Application.Models;
-using Application.Repositories;
 using Application.Services;
-using Domain.AppSettings;
-using Domain.Enums;
-using Domain.Models;
+using Domain.Repositories;
+using Entities.AppSettings;
+using Entities.Enums;
+using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Web.ViewModels;
 
 namespace Infrastructure.Repositories
 {
     public class EventsBaseRepository : GenericRepository<EventBaseModel, int>, IEventsRepository
     {
-        private readonly PaginationSettings paginationSettings;
         public EventsBaseRepository(
             EventContext eventContext,
             ILogger<EventsBaseRepository> logger,
             IOptions<AppSettings> options,
             IFilterService<EventBaseModel> filterService,
-            ISortService<EventBaseModel> sortService,
-            INotificationService notificationService)
+            ISortService<EventBaseModel> sortService)
             : base(eventContext, logger, options, filterService, sortService)
-        {
-            paginationSettings = options.Value.PaginationSettings;
-        }
+        { }
 
         protected override DbSet<EventBaseModel> dbSet
             => _eventContext.Events;
 
         private DbSet<EventExtendedModel> dbSetExtended
             => _eventContext.ExtendedEvents;
-
-        //public async Task<ICollection<EventBaseModel>> GetEventsByParticipantIdAsync(Guid id)
-        //{
-        //    return await dbSetExtended.Where(e => e.Participants.Any(c => c.Id == id))
-        //        .Include(e => e.Category)
-        //        .Include(e => e.Image)
-        //        .Select(e => (EventBaseModel)e)
-        //        .ToListAsync();
-        //}
 
         public async Task<(ICollection<EventBaseModel>, int)> GetFilteredEventsAsync(List<FilterOption> filterOptions, SortType sortType = SortType.Default, SortOrder order = SortOrder.Ascending, int currentPage = 0)
         {
@@ -49,24 +34,17 @@ namespace Infrastructure.Repositories
             return (events.Item1.ToList(), events.Item2);
         }
 
-        public async Task<EventExtendedModel?> GetExtendedEventByIdAsync(int id)
+        public async Task<EventExtendedModel?> GetExtendedEventByIdAsync(int id, CancellationToken cancellationToken)
         {
             EventExtendedModel? eventExtended = await dbSetExtended
                 .Include(e => e.Image)
                 .Include(e => e.Category)
-                .FirstOrDefaultAsync(e => e.Id == id);
+                .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
 
             return eventExtended;
         }
 
-        public async Task BookTickets(int eventId, int bookedTickets)
-        {
-            EventExtendedModel extendedEvent = await dbSetExtended.FindAsync(eventId);
-
-            extendedEvent.BookedTicketsCount += bookedTickets;
-        }
-
-        public async Task<ICollection<EventBaseModel>> GetMostPopularAsync()
+        public async Task<ICollection<EventBaseModel>> GetMostPopularAsync(CancellationToken cancellationToken)
         {
             var popularEvents = await dbSetExtended
                 .AsNoTracking()
@@ -74,25 +52,12 @@ namespace Infrastructure.Repositories
                 .Include(e => e.Category)
                 .OrderByDescending(e => e.BookedTicketsCount)
                 .ThenBy(e => e.Date)
-                //.Where(e => e.MaxParticipantsCount != e.BookedTicketsCount)
-                //.Where(e => e.Date > DateTime.UtcNow)
+                .Where(e => e.Date > DateTime.UtcNow)
                 .Take(5)
                 .Select(e => (EventBaseModel)e)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             return popularEvents;
-        }
-
-        public async override Task UpdateAsync(EventBaseModel entity)
-        {
-            await base.UpdateAsync(entity);
-        }
-
-        public async Task CancelTickets(int eventId, int bookedTickets)
-        {
-            EventExtendedModel extendedEvent = await dbSetExtended.FindAsync(eventId);
-
-            extendedEvent.BookedTicketsCount -= bookedTickets;
         }
     }
 }
