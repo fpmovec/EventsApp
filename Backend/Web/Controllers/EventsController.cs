@@ -14,17 +14,14 @@ namespace Web.Controllers
     public class EventsController : ControllerBase
     {
         private readonly ILogger<EventsController> _logger;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IEventService _eventService;
 
         public EventsController(
-            IUnitOfWork unitOfWork,
             ILogger<EventsController> logger,
             IWebHostEnvironment webHostEnvironment,
             IEventService eventService)
         {
-            _unitOfWork = unitOfWork;
             _logger = logger;
             _webHostEnvironment = webHostEnvironment;
             _eventService = eventService;
@@ -75,14 +72,6 @@ namespace Web.Controllers
             return Ok(extendedEvent);
         }
 
-        [HttpGet("participants/{eventId}")]
-        public async Task<IActionResult> GetParticipantsByEventId(int eventId, CancellationToken cancellationToken = default)
-        {
-            ICollection<UserBrief> users = await _unitOfWork.BookingRepository.GetEventParticipants(eventId);
-
-            return Ok(users);
-        }
-
         [Authorize(Roles = nameof(Admin))]
         [HttpPut("edit/{id}")]
         public async Task<IActionResult> EditEvent(
@@ -119,6 +108,8 @@ namespace Web.Controllers
         public async Task<IActionResult> GetMostPopular(CancellationToken cancellationToken = default)
         {
             ICollection<EventBaseModel> events = await _eventService.GetMostPopularAsync(cancellationToken);
+
+            _logger.LogInformation("Popular events were obtained");
 
             return Ok(events);
         }

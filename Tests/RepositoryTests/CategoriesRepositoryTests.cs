@@ -40,7 +40,7 @@ namespace Tests.RepositoryTests
                 _sortMock.Object);
 
             var c = dbSetMock.Object.ToList();
-            EventCategory? category = await repo.GetCategoryByName(name);
+            EventCategory? category = await repo.GetCategoryByNameAsync(name, default);
             Assert.NotNull(category);
         }
 
@@ -64,7 +64,7 @@ namespace Tests.RepositoryTests
                 _filterMock.Object,
                 _sortMock.Object);
 
-            EventCategory? category = await repo.GetCategoryByName(name);
+            EventCategory? category = await repo.GetCategoryByNameAsync(name, default);
             Assert.Null(category);
         }
 
@@ -121,7 +121,7 @@ namespace Tests.RepositoryTests
                 _filterMock.Object,
                 _sortMock.Object);
 
-            var category = await repo.GetByIdAsync(id);
+            var category = await repo.GetByIdAsync(id, default);
 
             Assert.True(category is not null);
             Assert.Equal(id, category.Id);

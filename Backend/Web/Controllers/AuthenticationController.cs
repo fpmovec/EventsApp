@@ -24,7 +24,8 @@ namespace Web.Controllers
 
         [AnonymousOnly]
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterUser([FromBody] RegisterViewModel registerViewModel, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> RegisterUser(
+            [FromBody] RegisterViewModel registerViewModel, CancellationToken cancellationToken = default)
         {
             if (!ModelState.IsValid)
             {
@@ -39,7 +40,8 @@ namespace Web.Controllers
 
         [AnonymousOnly]
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginViewModel loginViewModel, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Login(
+            [FromBody] LoginViewModel loginViewModel, CancellationToken cancellationToken = default)
         {
             if (!ModelState.IsValid)
             {
@@ -54,7 +56,8 @@ namespace Web.Controllers
 
         [Authorize]
         [HttpPost("refresh")]
-        public async Task<IActionResult> RefreshToken([FromBody] TokenRequest tokenRequest, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> RefreshToken(
+            [FromBody] TokenRequest tokenRequest, CancellationToken cancellationToken = default)
         {
             if (!ModelState.IsValid)
             {
@@ -72,6 +75,8 @@ namespace Web.Controllers
         public async Task<IActionResult> LogOut(CancellationToken cancellationToken = default)
         {
             await _authService.LogoutAsync(cancellationToken);
+
+            _logger.LogInformation("You logged out");
 
             return Ok();
         }

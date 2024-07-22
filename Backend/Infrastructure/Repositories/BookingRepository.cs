@@ -22,14 +22,14 @@ namespace Infrastructure.Repositories
 
         protected override DbSet<Booking> dbSet => _eventContext.Bookings;
 
-        public async Task BookEventAsync(Booking booking)
-            => await AddAsync(booking);
+        public async Task BookEventAsync(Booking booking, CancellationToken cancellationToken)
+            => await AddAsync(booking, cancellationToken);
 
 
-        public async Task CancelBooking(int bookingId)
-            => await DeleteByIdAsync(bookingId);
+        public async Task CancelBookingAsync(int bookingId, CancellationToken cancellationToken)
+            => await DeleteByIdAsync(bookingId, cancellationToken);
 
-        public async Task<ICollection<UserBrief>> GetEventParticipants(int eventId)
+        public async Task<ICollection<UserBrief>> GetEventParticipantsAsync(int eventId, CancellationToken cancellationToken)
         {
             var users = await dbSet.AsNoTracking()
                 .Where(b => b.EventId == eventId)
@@ -42,16 +42,16 @@ namespace Infrastructure.Repositories
                     Birthday = b.Birthday,
                 })
                 .Distinct()
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             return users;
         }
 
-        public async Task<ICollection<Booking>> GetParticipantBookingsAsync(string userId)
+        public async Task<ICollection<Booking>> GetParticipantBookingsAsync(string userId, CancellationToken cancellationToken)
         {
             return await dbSet.AsNoTracking()
                  .Where(b => b.UserId == userId)
-                 .ToListAsync();
+                 .ToListAsync(cancellationToken);
         }
 
         public async Task UpdateDependingBookingsAsync(EventExtendedModel eventExtendedModel)

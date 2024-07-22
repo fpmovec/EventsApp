@@ -23,9 +23,9 @@ namespace Application.Services
             _cacheService = cacheService;
         }
 
-        public async Task<ICollection<DetailsChangedEvent>> GetAllNotificationsAsync(Guid userId)
+        public async Task<ICollection<DetailsChangedEvent>> GetAllNotificationsAsync(Guid userId, CancellationToken cancellationToken)
         {
-            ICollection<DetailsChangedEvent> notifications = await _cacheService.GetAsync<DetailsChangedEvent[]>(userId.ToString()) ?? [];
+            ICollection<DetailsChangedEvent> notifications = await _cacheService.GetAsync<DetailsChangedEvent[]>(userId.ToString(), cancellationToken) ?? [];
 
             return notifications;
         }
@@ -43,13 +43,13 @@ namespace Application.Services
             });
         }
 
-        public async Task NotifyUsersAsync(string oldName, int eventId, ICollection<UserBrief> users)
+        public async Task NotifyUsersAsync(string oldName, int eventId, ICollection<UserBrief> users, CancellationToken cancellationToken)
         {
             string notificationMessage = string.Format(_appSettings.EventMessages.ChangedEventInfoMessage, oldName);
 
             foreach (UserBrief user in users)
             {
-                var notifications = await _cacheService.GetAsync<DetailsChangedEvent[]>(user.Id);
+                var notifications = await _cacheService.GetAsync<DetailsChangedEvent[]>(user.Id, cancellationToken);
 
                 if (notifications is null)
                     notifications = [];
@@ -63,7 +63,7 @@ namespace Application.Services
                     Message = notificationMessage,
                 });
 
-                await _cacheService.SetAsync(user.Id, notificationsList.ToArray());
+                await _cacheService.SetAsync(user.Id, notificationsList.ToArray(), cancellationToken);
             }
         }
     }

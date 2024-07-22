@@ -36,6 +36,8 @@ namespace Web.Controllers
         {
             var categories = await _categoryService.GetCategoriesNamesAsync(cancellationToken);
 
+            _logger.LogInformation($"Categories were obtained");
+
             return Ok(categories);
         }
 
@@ -55,6 +57,8 @@ namespace Web.Controllers
         public async Task<IActionResult> DeleteCategoryByNameAsync(string name, CancellationToken cancellationToken = default)
         {
             await _categoryService.DeleteCategoryByNameAsync(name, cancellationToken);
+
+            _logger.LogInformation($"Category was deleted");
 
             return Ok();
         }

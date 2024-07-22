@@ -1,5 +1,7 @@
 ﻿using Application.Interfaces;
 using Domain.UnitOfWork;
+using Entities.Enums;
+using Entities.Exceptions;
 using Entities.Models;
 
 namespace Application.Services
@@ -20,7 +22,7 @@ namespace Application.Services
                 throw new ArgumentNullException("name");
             }
 
-            EventCategory? category = await _unitOfWork.CategoryRepository.GetCategoryByName(name);
+            EventCategory? category = await _unitOfWork.CategoryRepository.GetCategoryByNameAsync(name, cancellationToken);
 
             if (category is not null)
             {
@@ -29,7 +31,7 @@ namespace Application.Services
 
             category = new() { Name = name };
 
-            await _unitOfWork.CategoryRepository.AddAsync(category);
+            await _unitOfWork.CategoryRepository.AddAsync(category, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
 
             return category;
@@ -37,27 +39,27 @@ namespace Application.Services
 
         public async Task DeleteCategoryByIdAsync(int id, CancellationToken cancellationToken)
         {
-            EventCategory? category = await _unitOfWork.CategoryRepository.GetByIdAsync(id);
+            EventCategory? category = await _unitOfWork.CategoryRepository.GetByIdAsync(id, cancellationToken);
 
             if (category is null)
             {
 
             }
 
-            await _unitOfWork.CategoryRepository.DeleteByIdAsync(id);
+            await _unitOfWork.CategoryRepository.DeleteByIdAsync(id, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
         }
 
         public async Task DeleteCategoryByNameAsync(string name, CancellationToken cancellationToken)
         {
-            EventCategory? category = await _unitOfWork.CategoryRepository.GetCategoryByName(name);
+            EventCategory? category = await _unitOfWork.CategoryRepository.GetCategoryByNameAsync(name, cancellationToken);
 
             if (category is null)
             {
-
+                throw new NotFoundException(ExceptionSubject.Category);
             }
 
-            await _unitOfWork.CategoryRepository.DeleteByIdAsync(category.Id);
+            await _unitOfWork.CategoryRepository.DeleteByIdAsync(category.Id, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
         }
 

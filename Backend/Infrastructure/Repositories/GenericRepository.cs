@@ -33,16 +33,16 @@ namespace Infrastructure.Repositories
 
         protected abstract DbSet<TEntity> dbSet { get; }
 
-        public async Task AddAsync(TEntity entity)
+        public async Task AddAsync(TEntity entity, CancellationToken cancellationToken)
         {
-            await dbSet.AddAsync(entity);
+            await dbSet.AddAsync(entity, cancellationToken);
 
             _logger.LogInformation("Entity has been added");
         }
 
-        public async Task DeleteByIdAsync(TId id)
+        public async Task DeleteByIdAsync(TId id, CancellationToken cancellationToken)
         {
-            TEntity? entity = await dbSet.FindAsync(id);
+            TEntity? entity = await dbSet.FindAsync(id, cancellationToken);
 
            dbSet.Remove(entity);
 
@@ -76,8 +76,8 @@ namespace Infrastructure.Repositories
             return (ent, pages);
         }
 
-        public async Task<TEntity?> GetByIdAsync(TId id)
-            => await dbSet.FindAsync(id);
+        public async Task<TEntity?> GetByIdAsync(TId id, CancellationToken cancellationToken)
+            => await dbSet.FindAsync(id, cancellationToken);
 
         public async virtual Task UpdateAsync(TEntity entity)
         {

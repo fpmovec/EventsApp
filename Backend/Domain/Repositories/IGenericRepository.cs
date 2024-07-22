@@ -7,12 +7,12 @@ namespace Domain.Repositories
     {
         Task<(IQueryable<TEntity>, int)> GetAllAsync(List<FilterOption> filterOptions, SortType sortType, SortOrder order, int currentPage);
 
-        Task<TEntity?> GetByIdAsync(TId id);
+        Task<TEntity?> GetByIdAsync(TId id, CancellationToken cancellationToken);
 
-        Task AddAsync(TEntity entity);
+        Task AddAsync(TEntity entity, CancellationToken cancellationToken);
 
         Task UpdateAsync(TEntity entity);
 
-        Task DeleteByIdAsync(TId id);
+        Task DeleteByIdAsync(TId id, CancellationToken cancellationToken);
     }
 }

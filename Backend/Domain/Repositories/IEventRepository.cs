@@ -10,12 +10,8 @@ namespace Domain.Repositories
             SortOrder order = SortOrder.Ascending,
             int currentPage = 0);
 
-        Task<EventExtendedModel?> GetExtendedEventByIdAsync(int id);
+        Task<EventExtendedModel?> GetExtendedEventByIdAsync(int id, CancellationToken cancellationToken);
 
-        Task<ICollection<EventBaseModel>> GetMostPopularAsync();
-
-        Task BookTickets(int eventId, int bookedTickets);
-
-        Task CancelTickets(int eventId, int bookedTickets);
+        Task<ICollection<EventBaseModel>> GetMostPopularAsync(CancellationToken cancellationToken);
     }
 }

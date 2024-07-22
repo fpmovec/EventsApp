@@ -7,6 +7,6 @@ namespace Domain.Repositories
     {
         public Task<IQueryable<EventCategory>> GetAllCategoriesAsync(SortType sortType = SortType.Default, SortOrder order = SortOrder.Ascending);
 
-        public Task<EventCategory?> GetCategoryByName(string name);
+        public Task<EventCategory?> GetCategoryByNameAsync(string name, CancellationToken cancellationToken);
     }
 }
