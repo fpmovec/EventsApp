@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using System.Reflection.Metadata;
 
 namespace Infrastructure
 {
@@ -27,54 +28,14 @@ namespace Infrastructure
         private void ApplyModelsConfiguration(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new EventModelConfiguration());
+            modelBuilder.ApplyConfiguration(new EventExtendedModelConfiguration());
+            modelBuilder.ApplyConfiguration(new RefreshTokenModelConfiguration());
+            modelBuilder.ApplyConfiguration(new IdentityUserModelConfiguration());
+            modelBuilder.ApplyConfiguration(new BookingModelConfiguration());
         }
 
         private void ConfigureRelations(ModelBuilder modelBuilder)
         {
-            var sourceDate = 
-
-            modelBuilder.Entity<EventExtendedModel>()
-                            .HasMany<Booking>()
-                            .WithOne()
-                            .HasForeignKey(t => t.EventId)
-                            .IsRequired()
-                            .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<EventBaseModel>()
-                .HasKey(e => e.Id);
-
-            modelBuilder.Entity<IdentityUser>()
-                .HasMany<Booking>()
-                .WithOne()
-                .HasForeignKey(u => u.UserId)
-                .IsRequired(false);
-
-            modelBuilder.Entity<EventBaseModel>()
-                .HasOne(e => e.Image)
-                .WithOne()
-                .HasForeignKey<Image>(i => i.EventId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<EventBaseModel>()
-                .HasOne(e => e.Category)
-                .WithMany();
-
-            modelBuilder.Entity<Booking>()
-                .Property(b => b.CreatedDate)
-                .HasConversion(dateToUTC, dateToUTC);
-
-            modelBuilder.Entity<EventBaseModel>()
-                .Property(e => e.Date)
-                .HasConversion(dateToUTC, dateToUTC);
-
-            modelBuilder.Entity<RefreshToken>()
-                .Property(r => r.CreatedAt)
-                .HasConversion(dateToUTC, dateToUTC);
-
-            modelBuilder.Entity<RefreshToken>()
-                .Property(r => r.ExpiryDate)
-                .HasConversion(dateToUTC, dateToUTC);
-
             base.OnModelCreating(modelBuilder);
         }
 
