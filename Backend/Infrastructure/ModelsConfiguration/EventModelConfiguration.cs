@@ -21,9 +21,6 @@ namespace Infrastructure.ModelsConfiguration
 
             modelBuilder.Property(e => e.Price)
                 .IsRequired();
-
-            modelBuilder.Property(e => e.Category)
-                .IsRequired();
         }
     }
 }

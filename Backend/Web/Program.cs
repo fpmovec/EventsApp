@@ -146,7 +146,6 @@ app.UseStaticFiles(new StaticFileOptions
 app.MigrateDatabase();
 app.PopulateDatabase();
 
-
 app.UseImagesCaching();
 
 app.UseSwagger();
