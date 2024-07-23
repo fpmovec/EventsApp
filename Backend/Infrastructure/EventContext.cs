@@ -20,8 +20,8 @@ namespace Infrastructure
             modelBuilder.Entity<EventBaseModel>().ToTable("EventsBase");
             modelBuilder.Entity<EventExtendedModel>().ToTable("ExtendedEvents");
 
-            ConfigureRelations(modelBuilder);
             ApplyModelsConfiguration(modelBuilder);
+            ConfigureRelations(modelBuilder);
         }
 
         private void ApplyModelsConfiguration(ModelBuilder modelBuilder)
