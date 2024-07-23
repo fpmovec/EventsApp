@@ -32,9 +32,6 @@ namespace Web.Controllers
         public async Task<IActionResult> CreateEvent(
             [FromForm]EventViewModel eventViewModel, CancellationToken cancellationToken = default)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             await _eventService.CreateEventAsync(eventViewModel, _webHostEnvironment.WebRootPath, cancellationToken);
 
             _logger.LogInformation("Event has been sucessfully created");
@@ -79,12 +76,6 @@ namespace Web.Controllers
             [FromForm]EventViewModel eventViewModel,
             CancellationToken cancellationToken = default)
         {
-            if(!ModelState.IsValid)
-            {
-                _logger.LogError("Event model isn't valid!");
-                return BadRequest();
-            }
-
             EventExtendedModel extendedEvent =
                 await _eventService.EditEventAsync(id, eventViewModel, _webHostEnvironment.WebRootPath, cancellationToken);
 

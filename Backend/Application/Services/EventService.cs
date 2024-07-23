@@ -6,6 +6,8 @@ using Domain.Repositories;
 using Domain.UnitOfWork;
 using Entities.Exceptions;
 using Entities.Models;
+using FluentValidation;
+using FluentValidation.Results;
 using Web.ViewModels;
 
 namespace Application.Services
@@ -15,15 +17,18 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notificationService;
+        private readonly IValidator<EventViewModel> _validator;
 
         public EventService(
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            IValidator<EventViewModel> validator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notificationService = notificationService;
+            _validator = validator;
         }
 
         public async Task BookTickets(int eventId, int bookedTickets, CancellationToken cancellationToken)
@@ -55,6 +60,13 @@ namespace Application.Services
             string webRootPath,
             CancellationToken cancellationToken)
         {
+            ValidationResult validationResult = await _validator.ValidateAsync(eventViewModel, cancellationToken);
+
+            if (!validationResult.IsValid)
+            {
+                throw new BadRequestException("EventViewModel is invalid");
+            }
+
             EventExtendedModel mappedModel = _mapper.Map<EventExtendedModel>(eventViewModel);
 
             if (eventViewModel.ImageFile is not null)
@@ -102,6 +114,13 @@ namespace Application.Services
         public async Task<EventExtendedModel> EditEventAsync(
             int id, EventViewModel eventViewModel, string webRootPath, CancellationToken cancellationToken)
         {
+            ValidationResult validationResult = await _validator.ValidateAsync(eventViewModel, cancellationToken);
+
+            if (!validationResult.IsValid)
+            {
+                throw new BadRequestException("EventViewModel is invalid");
+            }
+
             EventExtendedModel? extendedEvent = await _unitOfWork.EventsRepository.GetExtendedEventByIdAsync(id, cancellationToken);
 
             if (extendedEvent is null)
