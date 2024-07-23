@@ -2,7 +2,7 @@
 using Entities.Models;
 using Web.ViewModels;
 
-namespace Web.Mapping
+namespace Infrastructure.Mappings
 {
     public class MappingProfile : Profile
     {

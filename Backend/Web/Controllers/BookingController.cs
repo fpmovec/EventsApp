@@ -30,12 +30,6 @@ namespace Web.Controllers
         public async Task<IActionResult> BookEvent(
             [FromBody]BookingViewModel viewModel, CancellationToken cancellationToken = default)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogError("Booking model is not valid!");
-                return BadRequest(ModelState);
-            }
-
             await _bookingService.BookEventAsync(viewModel, cancellationToken);
 
             _logger.LogInformation("Event has been booked");

@@ -3,6 +3,8 @@ using AutoMapper;
 using Domain.UnitOfWork;
 using Entities.Exceptions;
 using Entities.Models;
+using FluentValidation;
+using FluentValidation.Results;
 using Web.ViewModels;
 
 namespace Application.Services
@@ -12,16 +14,27 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEventService _eventService;
         private readonly IMapper _mapper;
+        private readonly IValidator<BookingViewModel> _validator;
 
-        public BookingService(IMapper mapper, IUnitOfWork unitOfWork, IEventService eventService)
+        public BookingService(
+            IMapper mapper,
+            IUnitOfWork unitOfWork,
+            IEventService eventService,
+            IValidator<BookingViewModel> validator)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _eventService = eventService;
+            _validator = validator;
         }
 
         public async Task BookEventAsync(BookingViewModel viewModel, CancellationToken cancellationToken)
         {
+            ValidationResult validationResult = await _validator.ValidateAsync(viewModel, cancellationToken);
+
+            if (!validationResult.IsValid)
+                throw new BadRequestException("BookingViewModel is invalid");
+
             var bookedEvent = await _unitOfWork.EventsRepository.GetByIdAsync(viewModel.EventId, cancellationToken);
 
             if (bookedEvent is null)

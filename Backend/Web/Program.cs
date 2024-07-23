@@ -13,12 +13,15 @@ using System.Text;
 using Web;
 using Web.Background;
 using Web.Extensions;
-using Web.Mapping;
 using Microsoft.EntityFrameworkCore;
 using Domain.UnitOfWork;
 using Domain.Repositories;
 using Web.Hubs;
 using Application.Interfaces;
+using Infrastructure.Mappings;
+using FluentValidation;
+using Web.ViewModels;
+using Application.FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +58,9 @@ builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<INotificationService, NotificationService<NotificationsHub>>();
 
+builder.Services.AddScoped<IValidator<EventViewModel>, EventViewModelValidator>();
+builder.Services.AddScoped<IValidator<BookingViewModel>, BookingViewModelValidator>();
+
 builder.Services.AddHostedService<BackgroundWorker>();
 
 builder.Services.AddStackExchangeRedisCache(opts =>
@@ -66,8 +72,7 @@ builder.Services.AddStackExchangeRedisCache(opts =>
 builder.Services
     .AddDbContext<EventContext>(opts =>
     {
-    //opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-      opts.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+        opts.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
     });
 
 builder.Services.AddAutoMapper(config =>
@@ -118,7 +123,6 @@ builder.Services.AddCors(opts =>
     {
         build.AllowAnyHeader();
         build.AllowAnyMethod();
-        //build.AllowAnyOrigin();
         build.WithOrigins("http://localhost:5173");
         build.AllowCredentials();
     });
@@ -140,6 +144,8 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.MigrateDatabase();
+app.PopulateDatabase();
+
 
 app.UseImagesCaching();
 
