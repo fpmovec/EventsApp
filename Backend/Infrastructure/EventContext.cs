@@ -13,9 +13,6 @@ namespace Infrastructure
         public EventContext(DbContextOptions<EventContext> opts) : base(opts)
         { }
 
-        private readonly Expression<Func<DateTime, DateTime>> dateToUTC = 
-            src => src.Kind == DateTimeKind.Utc ? src : DateTime.SpecifyKind(src, DateTimeKind.Utc);
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<EventBaseModel>().ToTable("EventsBase");
