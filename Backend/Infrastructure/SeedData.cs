@@ -1,4 +1,4 @@
-﻿using Entities.Models;
+﻿using Domain.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

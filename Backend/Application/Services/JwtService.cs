@@ -1,7 +1,5 @@
-﻿using Application.Services;
-using Entities.AppSettings;
-using Entities.Models;
-using Infrastructure.Extensions;
+﻿using Domain.AppSettings;
+using Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -10,31 +8,33 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Roles;
+using Domain.UnitOfWork;
+using Application.Extensions;
 
-namespace Infrastructure.Services
+namespace Application.Services
 {
     public class JwtService : IJwtService
     {
         private const string AdminTestEmail = "admin@example.com";
 
         private readonly JwtSettings _jwtSettings;
-        private readonly EventContext _eventContext;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly TokenValidationParameters _tokenValidationParameters;
 
         public JwtService(
             IOptions<AppSettings> options,
-            EventContext eventContext,
-            TokenValidationParameters tokenValidationParameters)
+            TokenValidationParameters tokenValidationParameters,
+            IUnitOfWork unitOfWork)
         {
             _jwtSettings = options.Value.JwtSettings;
-            _eventContext = eventContext;
             _tokenValidationParameters = tokenValidationParameters;
+            _unitOfWork = unitOfWork;
         }
 
-        public async Task<AuthTokens> GenerateJwtTokensAsync(IdentityUser user)
+        public async Task<AuthTokens> GenerateJwtTokensAsync(IdentityUser user, CancellationToken cancellationToken)
         {
-           var jwtHandler = new JwtSecurityTokenHandler();
-           byte[] key = Encoding.UTF8.GetBytes(_jwtSettings.SecretKey);
+            var jwtHandler = new JwtSecurityTokenHandler();
+            byte[] key = Encoding.UTF8.GetBytes(_jwtSettings.SecretKey);
 
             SecurityTokenDescriptor tokenDescriptor = new()
             {
@@ -62,12 +62,13 @@ namespace Infrastructure.Services
 
             SecurityToken token = jwtHandler.CreateToken(tokenDescriptor);
             string jwtToken = jwtHandler.WriteToken(token);
-            string refreshToken = await GetAndSaveRefreshToken(token.Id, user.Id);
+            string refreshToken = await GetAndSaveRefreshToken(token.Id, user.Id, cancellationToken);
 
             return new() { MainToken = jwtToken, RefreshToken = refreshToken };
         }
 
-        public async Task<AuthTokens?> VerifyAndGenerateTokenAsync(AuthTokens tokenRequest, UserManager<IdentityUser> userManager)
+        public async Task<AuthTokens?> VerifyAndGenerateTokenAsync(
+            AuthTokens tokenRequest, UserManager<IdentityUser> userManager, CancellationToken cancellationToken)
         {
             JwtSecurityTokenHandler tokenHandler = new();
 
@@ -99,8 +100,8 @@ namespace Infrastructure.Services
                     return null;
                 }
 
-                RefreshToken? storedRefreshToken = await _eventContext.RefreshTokens
-                    .FirstOrDefaultAsync(t => t.Token == tokenRequest.RefreshToken);
+                RefreshToken? storedRefreshToken = await _unitOfWork.JwtRepository
+                    .GetByTokenAsync(tokenRequest.RefreshToken, cancellationToken);
 
                 if (storedRefreshToken is null ||
                     storedRefreshToken.IsUsed ||
@@ -118,8 +119,8 @@ namespace Infrastructure.Services
 
                 storedRefreshToken.IsUsed = true;
 
-                _eventContext.RefreshTokens.Update(storedRefreshToken);
-                await _eventContext.SaveChangesAsync();
+                await _unitOfWork.JwtRepository.UpdateAsync(storedRefreshToken);
+                await _unitOfWork.CompleteAsync(cancellationToken);
 
                 IdentityUser? user = await userManager.FindByIdAsync(storedRefreshToken.UserId);
 
@@ -128,7 +129,7 @@ namespace Infrastructure.Services
                     return null;
                 }
 
-                return await GenerateJwtTokensAsync(user);
+                return await GenerateJwtTokensAsync(user, cancellationToken);
             }
             catch (Exception)
             {
@@ -136,25 +137,22 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task DeleteUserRefreshTokensAsync(string userId)
+        public async Task DeleteUserRefreshTokensAsync(string userId, CancellationToken cancellationToken)
         {
-            await _eventContext.RefreshTokens.Where(r => r.UserId.Equals(userId)).ExecuteDeleteAsync();
-            await _eventContext.SaveChangesAsync();
+            await _unitOfWork.JwtRepository.DeleteRefreshTokensByUserId(userId, cancellationToken);
+            await _unitOfWork.CompleteAsync(cancellationToken);
         }
 
-        public async Task ClearUnusedRefreshTokensAsync()
+        public async Task ClearUnusedRefreshTokensAsync(CancellationToken cancellationToken)
         {
-            if (_eventContext.RefreshTokens.Any())
+            if (await _unitOfWork.JwtRepository.IsRefreshTokensExists())
             {
-                await _eventContext.RefreshTokens
-                    .Where(r => r.IsUsed || (r.ExpiryDate < DateTime.UtcNow))
-                    .ExecuteDeleteAsync();
-
-                await _eventContext.SaveChangesAsync();
+                await _unitOfWork.JwtRepository.DeleteExpiredRefreshTokensAsync(cancellationToken);
+                await _unitOfWork.CompleteAsync(cancellationToken);
             }
         }
 
-        private async Task<string> GetAndSaveRefreshToken(string id, string userId)
+        private async Task<string> GetAndSaveRefreshToken(string id, string userId, CancellationToken cancellationToken)
         {
             RefreshToken refreshToken = new()
             {
@@ -167,8 +165,8 @@ namespace Infrastructure.Services
                 UserId = userId
             };
 
-            await _eventContext.RefreshTokens.AddAsync(refreshToken);
-            await _eventContext.SaveChangesAsync();
+            await _unitOfWork.JwtRepository.AddAsync(refreshToken, cancellationToken);
+            await _unitOfWork.CompleteAsync(cancellationToken);
 
             return refreshToken.Token;
         }

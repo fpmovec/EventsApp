@@ -1,8 +1,7 @@
 using Application.Services;
-using Entities.AppSettings;
+using Domain.AppSettings;
 using Infrastructure;
 using Infrastructure.Repositories;
-using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Headers;
@@ -43,16 +42,18 @@ builder.Services.AddModelsFilters();
 builder.Services.AddModelsSort();
 
 builder.Services.AddScoped<FilterOptionsConverter>();
-builder.Services.AddScoped<IJwtService, JwtService>();
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IEventsRepository, EventsBaseRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<IJwtRepository, JwtRepository>();
 
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IJwtService, JwtService>();
 
 builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<IAuthService, AuthService>();

@@ -1,5 +1,5 @@
 ﻿using Domain.UnitOfWork;
-using Entities.Models;
+using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Roles;

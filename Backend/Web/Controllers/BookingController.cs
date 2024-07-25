@@ -2,7 +2,7 @@
 using Application.Services;
 using AutoMapper;
 using Domain.UnitOfWork;
-using Entities.Models;
+using Domain.Models;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

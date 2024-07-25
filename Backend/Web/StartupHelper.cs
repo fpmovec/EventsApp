@@ -1,7 +1,7 @@
 ﻿using Application.CollectionServices;
 using Application.CollectionServices.Filter;
 using Application.CollectionServices.Sort;
-using Entities.Models;
+using Domain.Models;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -48,6 +48,7 @@ namespace Web
             services.AddSingleton<IFilterService<EventBaseModel>, EventsFilterService>();
             services.AddSingleton<IFilterService<EventCategory>, CategoriesFilterService>();
             services.AddSingleton<IFilterService<Booking>, BookingFilterService>();
+            services.AddSingleton<IFilterService<RefreshToken>, TokensFilterService>();
 
             return services;
         }
@@ -57,6 +58,7 @@ namespace Web
             services.AddSingleton<ISortService<EventBaseModel>, EventsSortService>();
             services.AddSingleton<ISortService<EventCategory>, CategoriesSortService>();
             services.AddSingleton<ISortService<Booking>, BookingSortService>();
+            services.AddSingleton<ISortService<RefreshToken>, TokensSortService>();
 
             return services;
         }

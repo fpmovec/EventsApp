@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Entities.Enums
+namespace Domain.Enums
 {
     public enum SortType
     {

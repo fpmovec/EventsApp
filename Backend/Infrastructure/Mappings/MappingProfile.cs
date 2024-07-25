@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Entities.Models;
+using Domain.Models;
 using Web.ViewModels;
 
 namespace Infrastructure.Mappings

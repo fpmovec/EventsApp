@@ -4,11 +4,12 @@ using Application.ViewModels;
 using AutoMapper;
 using Domain.Repositories;
 using Domain.UnitOfWork;
-using Entities.Exceptions;
-using Entities.Models;
+using Domain.Exceptions;
+using Domain.Models;
 using FluentValidation;
 using FluentValidation.Results;
 using Web.ViewModels;
+using Domain.Exceptions.ExceptionMessages;
 
 namespace Application.Services
 {
@@ -36,7 +37,7 @@ namespace Application.Services
             EventExtendedModel? bookedEvent = await _unitOfWork.EventsRepository.GetExtendedEventByIdAsync(eventId, cancellationToken);
 
             if (bookedEvent is null)
-                throw new NotFoundException(Entities.Enums.ExceptionSubject.Event);
+                throw new NotFoundException(NotFoundExceptionMessages.EventNotFound);
 
             bookedEvent.BookedTicketsCount =+ bookedTickets;
 
@@ -48,7 +49,7 @@ namespace Application.Services
             EventExtendedModel? bookedEvent = await _unitOfWork.EventsRepository.GetExtendedEventByIdAsync(eventId, cancellationToken);
 
             if (bookedEvent is null)
-                throw new NotFoundException(Entities.Enums.ExceptionSubject.Event);
+                throw new NotFoundException(NotFoundExceptionMessages.EventNotFound);
 
             bookedEvent.BookedTicketsCount =- bookedTickets;
 
@@ -104,7 +105,7 @@ namespace Application.Services
 
             if (eventBase is null)
             {
-                throw new NotFoundException(Entities.Enums.ExceptionSubject.Event);
+                throw new NotFoundException(NotFoundExceptionMessages.EventNotFound);
             }
 
             await _unitOfWork.EventsRepository.DeleteByIdAsync(id, cancellationToken);
@@ -125,7 +126,7 @@ namespace Application.Services
 
             if (extendedEvent is null)
             {
-                throw new NotFoundException(Entities.Enums.ExceptionSubject.Event);
+                throw new NotFoundException(NotFoundExceptionMessages.EventNotFound);
             }
 
             string oldName = extendedEvent.Name;
@@ -173,7 +174,7 @@ namespace Application.Services
 
             if (eventExtended is null)
             {
-                throw new NotFoundException(Entities.Enums.ExceptionSubject.Event);
+                throw new NotFoundException(NotFoundExceptionMessages.EventNotFound);
             }
 
             return eventExtended;

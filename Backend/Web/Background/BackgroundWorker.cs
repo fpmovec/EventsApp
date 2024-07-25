@@ -25,7 +25,7 @@ namespace Web.Background
             using IServiceScope scope = _serviceProvider.CreateScope();
             IJwtService jwtService = scope.ServiceProvider.GetRequiredService<IJwtService>();
 
-            await jwtService.ClearUnusedRefreshTokensAsync();
+            await jwtService.ClearUnusedRefreshTokensAsync(default);
 
             _logger.LogInformation("Expired refresh tokens have been removed");
         }

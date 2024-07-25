@@ -1,6 +1,6 @@
-﻿using Entities.Enums;
+﻿using Domain.Enums;
 
-namespace Entities.Models
+namespace Domain.Models
 {
     public class FilterOption
     {

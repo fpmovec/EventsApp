@@ -1,5 +1,5 @@
 ﻿using Application;
-using Entities.Models;
+using Domain.Models;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Web.Hubs

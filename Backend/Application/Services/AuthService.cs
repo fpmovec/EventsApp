@@ -1,6 +1,7 @@
 ﻿using Domain.Exceptions;
-using Entities.Exceptions;
-using Entities.Models;
+using Domain.Exceptions;
+using Domain.Exceptions.ExceptionMessages;
+using Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Roles;
@@ -53,7 +54,7 @@ namespace Application.Services
             IdentityUser? user = await _userManager.FindByIdAsync(id);
 
             if (user is null)
-                throw new NotFoundException(Entities.Enums.ExceptionSubject.User);
+                throw new NotFoundException(NotFoundExceptionMessages.UserNotFound);
 
             return new()
             {
@@ -73,17 +74,17 @@ namespace Application.Services
 
             if (user is null)
             {
-                throw new NotFoundException(Entities.Enums.ExceptionSubject.User);
+                throw new NotFoundException(NotFoundExceptionMessages.UserNotFound);
             }
 
             bool isPasswordCorrect = await _userManager.CheckPasswordAsync(user, loginViewModel.Password);
 
             if (!isPasswordCorrect)
             {
-                throw new BadRequestException("Password is incorrect!");
+                throw new BadRequestException(BadRequestExceptionMessages.InvalidPassword);
             }
 
-            AuthTokens tokens = await _jwtService.GenerateJwtTokensAsync(user);
+            AuthTokens tokens = await _jwtService.GenerateJwtTokensAsync(user, cancellationToken);
 
             return tokens;
         }
@@ -101,7 +102,7 @@ namespace Application.Services
 
             if (currentUser is not null)
             {
-                await _jwtService.DeleteUserRefreshTokensAsync(currentUser.Id);
+                await _jwtService.DeleteUserRefreshTokensAsync(currentUser.Id, cancellationToken);
             }
         }
 
@@ -111,11 +112,11 @@ namespace Application.Services
             {
                 MainToken = tokenRequest.MainToken,
                 RefreshToken = tokenRequest.RefreshToken
-            }, _userManager);
+            }, _userManager, cancellationToken);
 
             if (tokens is null)
             {
-                throw new BadRequestException("Session has expired!");
+                throw new BadRequestException(BadRequestExceptionMessages.ExpiredSession);
             }
             else return tokens;
         }
@@ -126,7 +127,7 @@ namespace Application.Services
 
             if (user is not null)
             {
-                throw new AlreadyExistsException(Entities.Enums.ExceptionSubject.User);
+                throw new AlreadyExistsException(AlreadyExistsExceptionMessages.UserAlreadyExists);
             }
 
             IdentityUser newUser = new() { Email = registerViewModel.Email, UserName = registerViewModel.Name, PhoneNumber = registerViewModel.Phone };
@@ -135,7 +136,7 @@ namespace Application.Services
 
             if (isSucessfullyCreated.Succeeded)
             {
-                AuthTokens tokens = await _jwtService.GenerateJwtTokensAsync(newUser);
+                AuthTokens tokens = await _jwtService.GenerateJwtTokensAsync(newUser, cancellationToken);
 
                 return tokens;
             }

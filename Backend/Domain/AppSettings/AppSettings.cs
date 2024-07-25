@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
 
-namespace Entities.AppSettings
+namespace Domain.AppSettings
 {
     public class AppSettings
     {

@@ -1,11 +1,12 @@
 ﻿using Application.Interfaces;
 using AutoMapper;
 using Domain.UnitOfWork;
-using Entities.Exceptions;
-using Entities.Models;
+using Domain.Exceptions;
+using Domain.Models;
 using FluentValidation;
 using FluentValidation.Results;
 using Web.ViewModels;
+using Domain.Exceptions.ExceptionMessages;
 
 namespace Application.Services
 {
@@ -39,7 +40,7 @@ namespace Application.Services
 
             if (bookedEvent is null)
             {
-                throw new NotFoundException(Entities.Enums.ExceptionSubject.Event);
+                throw new NotFoundException(NotFoundExceptionMessages.EventNotFound);
             }
 
             Booking booking = new()
@@ -62,7 +63,7 @@ namespace Application.Services
 
             if (booking is null)
             {
-                throw new NotFoundException(Entities.Enums.ExceptionSubject.Booking);
+                throw new NotFoundException(NotFoundExceptionMessages.BookingNotFound);
             }
 
             if (booking.UserId != userId)

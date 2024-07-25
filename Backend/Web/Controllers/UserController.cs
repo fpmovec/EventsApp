@@ -1,5 +1,5 @@
 ﻿using Application.Services;
-using Entities.Models;
+using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.Metadata.Ecma335;

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Entities.Models
+namespace Domain.Models
 {
     public class Image
     {

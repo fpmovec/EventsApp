@@ -60,7 +60,7 @@ namespace Tests.AuthenticationTests
 
             _jwtServiceMock.Verify(
                 j => j.GenerateJwtTokensAsync(It.Is<IdentityUser>(
-                    s => s.Email == newUser.Email || s.UserName == newUser.UserName)), Times.Once());
+                    s => s.Email == newUser.Email || s.UserName == newUser.UserName), default), Times.Once());
 
             Assert.NotNull(result as OkObjectResult);
         }

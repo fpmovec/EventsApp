@@ -1,4 +1,4 @@
-﻿using Entities.Models;
+﻿using Domain.Models;
 using Web.ViewModels;
 
 namespace Domain.Repositories

@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Extensions
+﻿namespace Application.Extensions
 {
     public static class DateTimeExtensions
     {
@@ -8,3 +8,4 @@
             .ToUniversalTime();
     }
 }
+

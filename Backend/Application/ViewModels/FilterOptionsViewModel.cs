@@ -1,4 +1,4 @@
-﻿using Entities.Enums;
+﻿using Domain.Enums;
 
 namespace Web.ViewModels
 {

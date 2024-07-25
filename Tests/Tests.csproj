@@ -27,7 +27,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Backend\Application\Application.csproj" />
-    <ProjectReference Include="..\Backend\Entities\Entities.csproj" />
     <ProjectReference Include="..\Backend\Infrastructure\Infrastructure.csproj" />
     <ProjectReference Include="..\Backend\Web\Web.csproj" />
   </ItemGroup>
