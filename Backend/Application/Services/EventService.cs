@@ -4,11 +4,12 @@ using Application.ViewModels;
 using AutoMapper;
 using Domain.Repositories;
 using Domain.UnitOfWork;
-using Entities.Exceptions;
-using Entities.Models;
+using Domain.Exceptions;
+using Domain.Models;
 using FluentValidation;
 using FluentValidation.Results;
-using Web.ViewModels;
+using Web.DTO;
+using Domain.Exceptions.ExceptionMessages;
 
 namespace Application.Services
 {
@@ -17,13 +18,13 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notificationService;
-        private readonly IValidator<EventViewModel> _validator;
+        private readonly IValidator<EventDTO> _validator;
 
         public EventService(
             IUnitOfWork unitOfWork,
             IMapper mapper,
             INotificationService notificationService,
-            IValidator<EventViewModel> validator)
+            IValidator<EventDTO> validator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -36,7 +37,7 @@ namespace Application.Services
             EventExtendedModel? bookedEvent = await _unitOfWork.EventsRepository.GetExtendedEventByIdAsync(eventId, cancellationToken);
 
             if (bookedEvent is null)
-                throw new NotFoundException(Entities.Enums.ExceptionSubject.Event);
+                throw new NotFoundException(NotFoundExceptionMessages.EventNotFound);
 
             bookedEvent.BookedTicketsCount =+ bookedTickets;
 
@@ -48,7 +49,7 @@ namespace Application.Services
             EventExtendedModel? bookedEvent = await _unitOfWork.EventsRepository.GetExtendedEventByIdAsync(eventId, cancellationToken);
 
             if (bookedEvent is null)
-                throw new NotFoundException(Entities.Enums.ExceptionSubject.Event);
+                throw new NotFoundException(NotFoundExceptionMessages.EventNotFound);
 
             bookedEvent.BookedTicketsCount =- bookedTickets;
 
@@ -56,7 +57,7 @@ namespace Application.Services
         }
 
         public async Task CreateEventAsync(
-            EventViewModel eventViewModel,
+            EventDTO eventViewModel,
             string webRootPath,
             CancellationToken cancellationToken)
         {
@@ -104,7 +105,7 @@ namespace Application.Services
 
             if (eventBase is null)
             {
-                throw new NotFoundException(Entities.Enums.ExceptionSubject.Event);
+                throw new NotFoundException(NotFoundExceptionMessages.EventNotFound);
             }
 
             await _unitOfWork.EventsRepository.DeleteByIdAsync(id, cancellationToken);
@@ -112,7 +113,7 @@ namespace Application.Services
         }
 
         public async Task<EventExtendedModel> EditEventAsync(
-            int id, EventViewModel eventViewModel, string webRootPath, CancellationToken cancellationToken)
+            int id, EventDTO eventViewModel, string webRootPath, CancellationToken cancellationToken)
         {
             ValidationResult validationResult = await _validator.ValidateAsync(eventViewModel, cancellationToken);
 
@@ -125,7 +126,7 @@ namespace Application.Services
 
             if (extendedEvent is null)
             {
-                throw new NotFoundException(Entities.Enums.ExceptionSubject.Event);
+                throw new NotFoundException(NotFoundExceptionMessages.EventNotFound);
             }
 
             string oldName = extendedEvent.Name;
@@ -167,25 +168,25 @@ namespace Application.Services
             return extendedEvent;
         }
 
-        public async Task<EventExtendedModel?> GetEventInfoAsync(int id, CancellationToken cancellationToken)
+        public async Task<EventExtendedModel> GetEventInfoAsync(int id, CancellationToken cancellationToken)
         {
             EventExtendedModel? eventExtended =  await _unitOfWork.EventsRepository.GetExtendedEventByIdAsync(id, cancellationToken);
 
             if (eventExtended is null)
             {
-                throw new NotFoundException(Entities.Enums.ExceptionSubject.Event);
+                throw new NotFoundException(NotFoundExceptionMessages.EventNotFound);
             }
 
             return eventExtended;
         }
 
-        public async Task<FilteredEventsResponse?> GetFilteredEventsAsync(
-            FilterOptionsViewModel options, CancellationToken cancellationToken)
+        public async Task<FilteredEventsResponse> GetFilteredEventsAsync(
+            FilterOptionsDTO options, CancellationToken cancellationToken)
         {
             List<FilterOption> filterOptions = [];
 
             if (options is null)
-                throw new BadRequestException();
+                throw new BadRequestException("Options are invalid!");
 
             filterOptions = _mapper.Map<List<FilterOption>>(options);
 

@@ -7,6 +7,7 @@ namespace Domain.UnitOfWork
         IEventsRepository EventsRepository { get; }
         ICategoryRepository CategoryRepository { get; }
         IBookingRepository BookingRepository { get; }
+        IJwtRepository JwtRepository { get; }
         Task CompleteAsync(CancellationToken cancellationToken);
     }
 }

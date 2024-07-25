@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Web.ViewModels;
+using Web.DTO;
 
 namespace Application.Extensions
 {

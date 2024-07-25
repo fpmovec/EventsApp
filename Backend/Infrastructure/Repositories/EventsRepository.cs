@@ -1,9 +1,8 @@
 ﻿using Application.CollectionServices;
-using Application.Services;
 using Domain.Repositories;
-using Entities.AppSettings;
-using Entities.Enums;
-using Entities.Models;
+using Domain.AppSettings;
+using Domain.Enums;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

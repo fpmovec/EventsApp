@@ -1,10 +1,9 @@
-﻿namespace Entities.Exceptions
+﻿namespace Domain.Exceptions
 {
     [Serializable]
     public class BadRequestException : Exception
     {
-        private const string MessageTemplate = "Bad request! Check provided data";
-        public BadRequestException() : base(MessageTemplate) { }
+        public BadRequestException() : base() { }
 
         public BadRequestException(string message) : base(message) { }
 

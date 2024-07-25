@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Web.Controllers;
-using Web.ViewModels;
+using Web.DTO;
 
 namespace Tests.AuthenticationTests
 {
@@ -37,7 +37,7 @@ namespace Tests.AuthenticationTests
 
             _userManagerMock.Setup(um => um.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(new IdentityUser());
 
-            IActionResult? result = await authController.RegisterUser(new RegisterViewModel(name, password, email, phone));
+            IActionResult? result = await authController.RegisterUser(new RegisterDTO(name, password, email, phone));
 
             result = result as BadRequestObjectResult;
 
@@ -60,7 +60,7 @@ namespace Tests.AuthenticationTests
 
             _jwtServiceMock.Verify(
                 j => j.GenerateJwtTokensAsync(It.Is<IdentityUser>(
-                    s => s.Email == newUser.Email || s.UserName == newUser.UserName)), Times.Once());
+                    s => s.Email == newUser.Email || s.UserName == newUser.UserName), default), Times.Once());
 
             Assert.NotNull(result as OkObjectResult);
         }

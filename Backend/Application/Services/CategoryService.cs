@@ -1,8 +1,9 @@
 ﻿using Application.Interfaces;
 using Domain.UnitOfWork;
-using Entities.Enums;
-using Entities.Exceptions;
-using Entities.Models;
+using Domain.Enums;
+using Domain.Exceptions;
+using Domain.Models;
+using Domain.Exceptions.ExceptionMessages;
 
 namespace Application.Services
 {
@@ -19,14 +20,14 @@ namespace Application.Services
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw new ArgumentNullException("name");
+                throw new NullObjectException("Name cannot be null!");
             }
 
             EventCategory? category = await _unitOfWork.CategoryRepository.GetCategoryByNameAsync(name, cancellationToken);
 
             if (category is not null)
             {
-
+                throw new AlreadyExistsException(AlreadyExistsExceptionMessages.CategoryAlreadyExists);
             }
 
             category = new() { Name = name };
@@ -43,7 +44,7 @@ namespace Application.Services
 
             if (category is null)
             {
-
+                throw new NullObjectException(NullObjectExceptionMessages.NullCategory);
             }
 
             await _unitOfWork.CategoryRepository.DeleteByIdAsync(id, cancellationToken);
@@ -56,7 +57,7 @@ namespace Application.Services
 
             if (category is null)
             {
-                throw new NotFoundException(ExceptionSubject.Category);
+                throw new NotFoundException(NotFoundExceptionMessages.CategoryNotFound);
             }
 
             await _unitOfWork.CategoryRepository.DeleteByIdAsync(category.Id, cancellationToken);

@@ -1,5 +1,5 @@
-﻿using Entities.Models;
-using Web.ViewModels;
+﻿using Domain.Models;
+using Web.DTO;
 
 namespace Application.Services
 {

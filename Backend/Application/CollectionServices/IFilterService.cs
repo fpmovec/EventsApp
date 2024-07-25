@@ -1,5 +1,5 @@
-﻿using Entities.Enums;
-using Entities.Models;
+﻿using Domain.Enums;
+using Domain.Models;
 using System.Collections.Frozen;
 
 namespace Application.CollectionServices

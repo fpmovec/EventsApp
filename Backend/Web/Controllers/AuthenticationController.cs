@@ -1,9 +1,9 @@
 ﻿using Application.Services;
-using Entities.Models;
+using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Filters;
-using Web.ViewModels;
+using Web.DTO;
 
 namespace Web.Controllers
 {
@@ -25,14 +25,8 @@ namespace Web.Controllers
         [AnonymousOnly]
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser(
-            [FromBody] RegisterViewModel registerViewModel, CancellationToken cancellationToken = default)
+            [FromBody] RegisterDTO registerViewModel, CancellationToken cancellationToken = default)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogError($"Invalid data");
-                return BadRequest(ModelState);
-            }
-
             AuthTokens tokens = await _authService.RegisterUserAsync(registerViewModel, cancellationToken);
 
             return Ok(tokens);
@@ -41,14 +35,8 @@ namespace Web.Controllers
         [AnonymousOnly]
         [HttpPost("login")]
         public async Task<IActionResult> Login(
-            [FromBody] LoginViewModel loginViewModel, CancellationToken cancellationToken = default)
+            [FromBody] LoginDTO loginViewModel, CancellationToken cancellationToken = default)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogError("Invalid data");
-                return BadRequest(ModelState);
-            }
-
             AuthTokens tokens = await _authService.LoginUserAsync(loginViewModel, cancellationToken);
 
             return Ok(tokens);
@@ -59,12 +47,6 @@ namespace Web.Controllers
         public async Task<IActionResult> RefreshToken(
             [FromBody] TokenRequest tokenRequest, CancellationToken cancellationToken = default)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogError("Invalid data");
-                return BadRequest(ModelState);
-            }
-
             AuthTokens tokens = await _authService.RefreshTokenAsync(tokenRequest, cancellationToken);
 
             return Ok(tokens);

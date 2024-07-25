@@ -1,9 +1,9 @@
 ﻿using Domain.UnitOfWork;
-using Entities.Models;
+using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Roles;
-using Web.ViewModels;
+using Web.DTO;
 using Application.Interfaces;
 using Application.ViewModels;
 
@@ -30,7 +30,7 @@ namespace Web.Controllers
         [Authorize(Roles = nameof(Admin))]
         [HttpPost("create")]
         public async Task<IActionResult> CreateEvent(
-            [FromForm]EventViewModel eventViewModel, CancellationToken cancellationToken = default)
+            [FromForm]EventDTO eventViewModel, CancellationToken cancellationToken = default)
         {
             await _eventService.CreateEventAsync(eventViewModel, _webHostEnvironment.WebRootPath, cancellationToken);
 
@@ -41,12 +41,9 @@ namespace Web.Controllers
 
         [HttpGet("get-all")]
         public async Task<IActionResult> GetFilteredEvents(
-            [FromQuery]FilterOptionsViewModel options, CancellationToken cancellationToken = default)
+            [FromQuery]FilterOptionsDTO options, CancellationToken cancellationToken = default)
         {
-            FilteredEventsResponse? response = await _eventService.GetFilteredEventsAsync(options, cancellationToken);
-
-            if (response is null)
-                return BadRequest();
+            FilteredEventsResponse response = await _eventService.GetFilteredEventsAsync(options, cancellationToken);
 
             _logger.LogInformation("Events were obtained");
 
@@ -56,13 +53,7 @@ namespace Web.Controllers
         [HttpGet("get/{id}")]
         public async Task<IActionResult> GetEventInformation(int id, CancellationToken cancellationToken = default)
         {
-            EventExtendedModel? extendedEvent = await _eventService.GetEventInfoAsync(id, cancellationToken);
-
-            if (extendedEvent is null)
-            {
-                _logger.LogError("Event doesn't exist");
-                return NotFound();
-            }
+            EventExtendedModel extendedEvent = await _eventService.GetEventInfoAsync(id, cancellationToken);
 
             _logger.LogInformation("Extended event was obtained");
 
@@ -73,7 +64,7 @@ namespace Web.Controllers
         [HttpPut("edit/{id}")]
         public async Task<IActionResult> EditEvent(
             [FromRoute]int id,
-            [FromForm]EventViewModel eventViewModel,
+            [FromForm]EventDTO eventViewModel,
             CancellationToken cancellationToken = default)
         {
             EventExtendedModel extendedEvent =

@@ -1,8 +1,8 @@
-﻿using Entities.AppSettings;
-using Entities.Models;
+﻿using Domain.AppSettings;
+using Domain.Models;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
-using Web.ViewModels;
+using Web.DTO;
 
 namespace Application.Services
 {

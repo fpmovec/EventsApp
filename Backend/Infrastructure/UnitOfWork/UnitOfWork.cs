@@ -1,4 +1,5 @@
-﻿using Domain.Repositories;
+﻿using Application.Services;
+using Domain.Repositories;
 using Domain.UnitOfWork;
 using Microsoft.Extensions.Logging;
 
@@ -14,13 +15,15 @@ namespace Infrastructure.UnitOfWork
             ILogger<UnitOfWork> logger,
             IEventsRepository eventsRepository,
             ICategoryRepository categoryRepository,
-            IBookingRepository bookingRepository)
+            IBookingRepository bookingRepository,
+            IJwtRepository jwtRepository)
         {
             _eventContext = eventContext;
             _logger = logger;
             EventsRepository = eventsRepository;
             CategoryRepository = categoryRepository;
             BookingRepository = bookingRepository;
+            JwtRepository = jwtRepository;
         }
 
         public IEventsRepository EventsRepository { get; private set; }
@@ -28,6 +31,8 @@ namespace Infrastructure.UnitOfWork
         public ICategoryRepository CategoryRepository { get; private set; }
 
         public IBookingRepository BookingRepository { get; private set; }
+
+        public IJwtRepository JwtRepository { get; private set; }
 
         public async Task CompleteAsync(CancellationToken cancellationToken)
         {

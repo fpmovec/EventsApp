@@ -1,11 +1,12 @@
 ﻿using Application.Interfaces;
 using AutoMapper;
 using Domain.UnitOfWork;
-using Entities.Exceptions;
-using Entities.Models;
+using Domain.Exceptions;
+using Domain.Models;
 using FluentValidation;
 using FluentValidation.Results;
-using Web.ViewModels;
+using Web.DTO;
+using Domain.Exceptions.ExceptionMessages;
 
 namespace Application.Services
 {
@@ -14,13 +15,13 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEventService _eventService;
         private readonly IMapper _mapper;
-        private readonly IValidator<BookingViewModel> _validator;
+        private readonly IValidator<BookingDTO> _validator;
 
         public BookingService(
             IMapper mapper,
             IUnitOfWork unitOfWork,
             IEventService eventService,
-            IValidator<BookingViewModel> validator)
+            IValidator<BookingDTO> validator)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
@@ -28,7 +29,7 @@ namespace Application.Services
             _validator = validator;
         }
 
-        public async Task BookEventAsync(BookingViewModel viewModel, CancellationToken cancellationToken)
+        public async Task BookEventAsync(BookingDTO viewModel, CancellationToken cancellationToken)
         {
             ValidationResult validationResult = await _validator.ValidateAsync(viewModel, cancellationToken);
 
@@ -39,7 +40,7 @@ namespace Application.Services
 
             if (bookedEvent is null)
             {
-                throw new NotFoundException(Entities.Enums.ExceptionSubject.Event);
+                throw new NotFoundException(NotFoundExceptionMessages.EventNotFound);
             }
 
             Booking booking = new()
@@ -62,7 +63,7 @@ namespace Application.Services
 
             if (booking is null)
             {
-                throw new NotFoundException(Entities.Enums.ExceptionSubject.Booking);
+                throw new NotFoundException(NotFoundExceptionMessages.BookingNotFound);
             }
 
             if (booking.UserId != userId)

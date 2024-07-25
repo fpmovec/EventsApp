@@ -1,5 +1,5 @@
 ﻿using Application.Services;
-using Entities.Models;
+using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.Metadata.Ecma335;
@@ -20,12 +20,7 @@ namespace Web.Controllers
         [HttpGet("current")]
         public async Task<IActionResult> GetCurrentUser()
         {
-            UserResponse? user = await _authService.GetCurrentUserAsync();
-
-            if (user == null)
-            {
-                return Unauthorized();
-            }
+            UserResponse user = await _authService.GetCurrentUserAsync();
 
             return Ok(user);
         }
@@ -38,12 +33,7 @@ namespace Web.Controllers
         [HttpGet("get/{id}")]
         public async Task<IActionResult> GetUserInfoById(string id)
         {
-            UserResponse? user = await _authService.GetUserByIdAsync(id);
-
-            if (user is null)
-            {
-                return NotFound("User does not exist!");
-            }
+            UserResponse user = await _authService.GetUserByIdAsync(id);
 
             return Ok(user);
         }
