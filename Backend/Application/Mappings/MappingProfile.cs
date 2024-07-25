@@ -1,20 +1,20 @@
 ﻿using AutoMapper;
 using Domain.Models;
-using Web.ViewModels;
+using Web.DTO;
 
-namespace Infrastructure.Mappings
+namespace Application.Mappings
 {
     public class MappingProfile : Profile
     {
         public MappingProfile()
         {
-            CreateMap<EventViewModel, EventExtendedModel>()
+            CreateMap<EventDTO, EventExtendedModel>()
                 .ReverseMap();
 
-            CreateMap<FilterOptionsViewModel, List<FilterOption>>()
+            CreateMap<FilterOptionsDTO, List<FilterOption>>()
                 .ConvertUsing<FilterOptionsConverter>();
 
-            CreateMap<BookingViewModel, Booking>()
+            CreateMap<BookingDTO, Booking>()
                 .ForMember(b => b.CreatedDate, ops => ops.MapFrom(b => DateTime.Now));
         }
     }

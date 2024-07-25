@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
-using Web.ViewModels;
+using Web.DTO;
 
 namespace Application.FluentValidation
 {
-    public class BookingViewModelValidator : AbstractValidator<BookingViewModel>
+    public class BookingDTOValidator : AbstractValidator<BookingDTO>
     {
-        public BookingViewModelValidator()
+        public BookingDTOValidator()
         {
             RuleFor(b => b.EventId)
                  .NotEmpty();

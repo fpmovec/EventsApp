@@ -1,8 +1,8 @@
 ﻿using Domain.Enums;
 
-namespace Web.ViewModels
+namespace Web.DTO
 {
-    public record FilterOptionsViewModel
+    public record FilterOptionsDTO
     {
         public SortType SortType { get; set; } = SortType.Default;
         public SortOrder SortOrder { get; set; } = SortOrder.Ascending;

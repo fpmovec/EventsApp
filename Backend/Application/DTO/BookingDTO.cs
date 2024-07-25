@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Web.ViewModels
+namespace Web.DTO
 {
-    public record BookingViewModel
+    public record BookingDTO
     {
         public int EventId { get; set; }
 

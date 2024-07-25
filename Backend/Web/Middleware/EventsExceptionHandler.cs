@@ -1,4 +1,4 @@
-﻿using Web.ViewModels;
+﻿using Web.DTO;
 
 namespace Web.Middleware
 {

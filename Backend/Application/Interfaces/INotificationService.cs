@@ -1,5 +1,5 @@
 ﻿using Domain.Models;
-using Web.ViewModels;
+using Web.DTO;
 
 namespace Application.Services
 {

@@ -2,7 +2,7 @@
 using Domain.Models;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
-using Web.ViewModels;
+using Web.DTO;
 
 namespace Application.Services
 {

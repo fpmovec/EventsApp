@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
-using Web.ViewModels;
+using Web.DTO;
 
 namespace Application.FluentValidation
 {
-    public class EventViewModelValidator : AbstractValidator<EventViewModel>
+    public class EventDTOValidator : AbstractValidator<EventDTO>
     {
-        public EventViewModelValidator()
+        public EventDTOValidator()
         {
             RuleFor(e => e.Name)
                .NotEmpty()

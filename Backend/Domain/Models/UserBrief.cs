@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
-namespace Web.ViewModels
+namespace Web.DTO
 {
     public class UserBrief : IEquatable<UserBrief>
     {

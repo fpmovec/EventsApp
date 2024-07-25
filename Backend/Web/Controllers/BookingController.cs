@@ -7,7 +7,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Roles;
-using Web.ViewModels;
+using Web.DTO;
 
 namespace Web.Controllers
 {
@@ -28,7 +28,7 @@ namespace Web.Controllers
         [Authorize]
         [HttpPost("book")]
         public async Task<IActionResult> BookEvent(
-            [FromBody]BookingViewModel viewModel, CancellationToken cancellationToken = default)
+            [FromBody]BookingDTO viewModel, CancellationToken cancellationToken = default)
         {
             await _bookingService.BookEventAsync(viewModel, cancellationToken);
 

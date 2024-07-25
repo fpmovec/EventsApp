@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace Web.ViewModels
+namespace Web.DTO
 {
-    public record EventViewModel
+    public record EventDTO
     {
         public string Name { get; set; }
 

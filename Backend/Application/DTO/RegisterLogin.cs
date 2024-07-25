@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Web.ViewModels
+namespace Web.DTO
 {
-    public record LoginViewModel(
+    public record LoginDTO(
         [Required]string Email,
         [Required]string Password);
 
-    public record RegisterViewModel(
+    public record RegisterDTO(
         [Required]string Name,
         [Required]string Password,
         [Required][EmailAddress]string Email,

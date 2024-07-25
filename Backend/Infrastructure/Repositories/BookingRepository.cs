@@ -5,7 +5,7 @@ using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Web.ViewModels;
+using Web.DTO;
 
 namespace Infrastructure.Repositories
 {

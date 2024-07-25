@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Web.ViewModels
+namespace Web.DTO
 {
     public record TokenRequest(
         [Required] string MainToken,
